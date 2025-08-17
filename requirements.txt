@@ -1,0 +1,4 @@
+pypdf
+tqdm
+sentence-transformers
+faiss-cpu
