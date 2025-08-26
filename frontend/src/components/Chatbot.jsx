@@ -1,22 +1,21 @@
 import { useState } from "react";
-import './chatbot.css';
+import './chatbot.scss';
 export default function Chatbot() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
 
   const handleSend = () => {
-    if (!input.trim()) return;
-    setMessages([...messages, { sender: "user", text: input }]);
-    
-    // Simulate bot response
-    setMessages(prev => [
-      ...prev,
-      { sender: "user", text: input },
-      { sender: "bot", text: "This is a simulated bot response." }
-    ]);
+  if (!input.trim()) return;
+  
+  // Update the state with both user and bot messages at the same time
+  setMessages(prev => [
+    ...prev,
+    { sender: "user", text: input },
+    { sender: "bot", text: "This is a simulated bot response." }
+  ]);
 
-    setInput(""); // Clear input
-  };
+  setInput(""); // Clear input
+};
 
   return (
     <div className="chat-container">
