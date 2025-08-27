@@ -1,0 +1,97 @@
+.pdf-uploader {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+}
+
+h3 {
+  text-align: center;
+  color: #333;
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.drag-drop-zone {
+  width: 100%;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 2px dashed #4caf50;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.drag-drop-zone.dragging {
+  background-color: #e8f5e9; /* Highlight when dragging */
+}
+
+input[type="file"] {
+  display: none; /* Hide the default file input */
+}
+
+button {
+  padding: 10px 20px;
+  width: 100%;
+  max-width: 200px;
+  border: none;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+button:disabled {
+  background-color: #aaa;
+}
+
+button:hover:enabled {
+  background-color: #45a049;
+}
+
+button:focus {
+  outline: none;
+}
+
+button:active {
+  background-color: #388e3c;
+}
+
+.message {
+  margin: 5px 0;
+  padding: 10px;
+  border-radius: 6px;
+  background-color: #d1f7d5;
+  width: 100%;
+  max-width: 320px;
+  text-align: left;
+}
+
+.message.bot {
+  background-color: #f1f1f1;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  margin-right: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
+}

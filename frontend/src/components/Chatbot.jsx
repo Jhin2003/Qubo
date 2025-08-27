@@ -1,21 +1,44 @@
 import { useState } from "react";
 import './chatbot.scss';
+
 export default function Chatbot() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
 
-  const handleSend = () => {
-  if (!input.trim()) return;
-  
-  // Update the state with both user and bot messages at the same time
-  setMessages(prev => [
-    ...prev,
-    { sender: "user", text: input },
-    { sender: "bot", text: "This is a simulated bot response." }
-  ]);
+  const handleSend = async () => {
+    if (!input.trim()) return;
 
-  setInput(""); // Clear input
-};
+    // Update the state with the user message
+    setMessages((prev) => [
+      ...prev,
+      { sender: "user", text: input }
+    ]);
+
+    // Send the message to the backend (FastAPI)
+    try {
+      const response = await fetch('http://localhost:8000/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify([
+          ...messages.map(msg => ({ sender: msg.sender, text: msg.text })),
+          { sender: "user", text: input }
+        ])
+      });
+
+      const data = await response.json();
+      // Update the state with the bot's response
+      setMessages((prev) => [
+        ...prev,
+        { sender: "bot", text: data.response }
+      ]);
+
+      setInput(""); // Clear input field
+    } catch (error) {
+      console.error("Error communicating with the backend:", error);
+    }
+  };
 
   return (
     <div className="chat-container">
