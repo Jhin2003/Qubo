@@ -5,7 +5,11 @@ from typing import List
 import shutil
 import os
 
+
+
 from app.services.file_service import process_pdf_chunks
+from app.services.retrieval_service import search_vectorstore
+from app.services.llm_service import generate_response
 
 app = FastAPI()
 
@@ -29,16 +33,22 @@ class Message(BaseModel):
 
 # Directory to store uploaded PDFs
 UPLOAD_DIR = "data_store/pdfs"
-OUTPUT_DIR = "chunked_output"
+OUTPUT_DIR = "data_store/chunked_output"
+index_dir = "data_store/vector_database"
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-# POST endpoint to send messages
+
 @app.post("/chat")
 async def chat(messages: List[Message]):
     user_message = messages[-1].text  # Get the last user message
-    bot_response = "Simulated bot response for: " + user_message
-
+    
+    # Retrieve relevant chunks from the vector store
+    relevant_chunks = search_vectorstore(user_message, index_dir, k=3)  # Top 3 results
+    llm_response = await generate_response(relevant_chunks, user_message)
+   
+    bot_response = f"{llm_response}"
+ 
     # Store the messages in the global list
     messages_store.append({"sender": "user", "text": user_message})
     messages_store.append({"sender": "bot", "text": bot_response})
@@ -67,7 +77,7 @@ async def upload_file(file: UploadFile = File(...)):
         output_path = os.path.join(OUTPUT_DIR, f"{file.filename}_chunks.jsonl")
 
         # Process the PDF and generate chunks
-        num_chunks = process_pdf_chunks(file_path, output_path)
+        num_chunks = process_pdf_chunks(file_path, output_path, file.filename, index_dir=index_dir)
 
         # Return a response with the number of chunks and output file info
         return {
