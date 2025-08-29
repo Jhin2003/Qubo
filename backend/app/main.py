@@ -5,6 +5,8 @@ from typing import List
 import shutil
 import os
 
+from app.services.file_service import process_pdf_chunks
+
 app = FastAPI()
 
 # Allow CORS for all origins (for development)
@@ -27,6 +29,8 @@ class Message(BaseModel):
 
 # Directory to store uploaded PDFs
 UPLOAD_DIR = "data_store/pdfs"
+OUTPUT_DIR = "chunked_output"
+
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # POST endpoint to send messages
@@ -48,6 +52,7 @@ async def get_chat():
 
 
 
+
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
     # Define the file path where the PDF will be saved
@@ -57,9 +62,23 @@ async def upload_file(file: UploadFile = File(...)):
         # Save the file to the designated path
         with open(file_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
-        return {"filename": file.filename, "message": "File uploaded successfully!"}
+
+        # Define the output file path for chunked data
+        output_path = os.path.join(OUTPUT_DIR, f"{file.filename}_chunks.jsonl")
+
+        # Process the PDF and generate chunks
+        num_chunks = process_pdf_chunks(file_path, output_path)
+
+        # Return a response with the number of chunks and output file info
+        return {
+            "filename": file.filename,
+            "chunks_processed": num_chunks,
+            "output_file": output_path,
+            "message": "File uploaded and processed successfully!"
+        }
+
     except Exception as e:
-        return {"error": f"Failed to upload file: {str(e)}"}
+        return {"error": f"Failed to upload and process file: {str(e)}"}
 
 
 
