@@ -16,7 +16,7 @@ async def generate_response(context: str, query: str):
     Use the provided context to answer the question as accurately as possible. 
 
     - If the context contains relevant information, base your answer strictly on it. 
-    - If the context does not contain the answer, respond using your own knowledge. 
+    - If the context does not contain the answer, say you cannot find relevant information and respond using your own knowledge. 
     - Be clear and concise.
 
     Context:
