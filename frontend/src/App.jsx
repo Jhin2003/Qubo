@@ -6,6 +6,7 @@ import './App.scss'
 import Container from './components/Container'
 import Chatbot from './components/Chatbot'
 import FileUploader from './components/FileUploader'
+import SideMenu from './components/SideMenu'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -13,7 +14,7 @@ function App() {
   return (
     <>
     <Container>
-      <FileUploader />
+      <SideMenu />
       <Chatbot />
     </Container>
     </>

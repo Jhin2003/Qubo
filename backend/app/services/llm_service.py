@@ -11,7 +11,23 @@ async def generate_response(context: str, query: str):
     llm = Ollama(model="mistral:instruct")
 
     
-    prompt = f"Context: {context}\n\nQuestion: {query}\n\nAnswer:"
+    prompt = f"""
+    You are a helpful assistant. 
+    Use the provided context to answer the question as accurately as possible. 
+
+    - If the context contains relevant information, base your answer strictly on it. 
+    - If the context does not contain the answer, respond using your own knowledge. 
+    - Be clear and concise.
+
+    Context:
+    {context}
+
+    Question:
+    {query}
+
+    Answer:
+    """
+
 
     # Generate the response using the LLM
     response = llm(prompt)

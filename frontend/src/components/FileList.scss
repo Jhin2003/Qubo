@@ -1,0 +1,36 @@
+.file-list-container {
+  width: 100%;         /* adjust width */
+  
+  padding: 12px;
+
+}
+
+.file-list-title {
+  margin-bottom: 8px;
+  font-size: 16px;
+ 
+  color: #ffffff;
+}
+
+.file-list-scroll {
+  max-height: 200px;    /* controls scroll height */
+  overflow-y: auto;     /* enables scrolling */
+   /* prevent scrollbar overlap */
+}
+
+.file-item {
+  display: flex;
+  justify-content: flex-start; 
+  padding: 6px;
+
+}
+
+.file-item a {
+  color: #ff6600; /* your orange border theme */
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.file-item a:hover {
+  text-decoration: underline;
+}

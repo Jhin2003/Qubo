@@ -1,116 +1,208 @@
-import React, { useState } from 'react';
-import './fileUploader.scss';  // Ensure you have the corresponding styles
+import React, { useCallback, useMemo, useRef, useState } from "react";
+import "./fileUploader.scss"; // keep using your existing stylesheet
 
-export default function FileUploader({ onUpload }) {
-  const [file, setFile] = useState(null);
+/**
+ * Multi-file PDF uploader with drag & drop, list management, and "Send All".
+ *
+ * Props
+ * - uploadUrl?: string (default: "http://localhost:8000/upload")
+ * - onUpload?: (result: any) => void  // called after successful upload
+ */
+export default function FileUploader({ uploadUrl = "http://localhost:8000/upload", onUpload }) {
+  const [files, setFiles] = useState([]); // File[]
   const [isUploading, setIsUploading] = useState(false);
-  const [isDragging, setIsDragging] = useState(false); // Track dragging state
+  const [isDragging, setIsDragging] = useState(false);
+  const inputRef = useRef(null);
 
-  // Handle file input change
+  const accept = "application/pdf";
+
+  const addFiles = useCallback((fileList) => {
+    if (!fileList || fileList.length === 0) return;
+
+    const incoming = Array.from(fileList);
+
+    // Filter only PDFs and dedupe by name + size + lastModified
+    const filtered = incoming.filter((f) => {
+      const isPdf = f.type === accept || f.name.toLowerCase().endsWith(".pdf");
+      if (!isPdf) {
+        alert(`❌ Skipped non-PDF: ${f.name}`);
+      }
+      return isPdf;
+    });
+
+    setFiles((prev) => {
+      const map = new Map(prev.map((p) => [`${p.name}-${p.size}-${p.lastModified}`, p]));
+      for (const f of filtered) {
+        const key = `${f.name}-${f.size}-${f.lastModified}`;
+        if (!map.has(key)) map.set(key, f);
+      }
+      return Array.from(map.values());
+    });
+  }, []);
+
+  // Handlers: file input
   const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile && selectedFile.type === 'application/pdf') {
-      setFile(selectedFile);
-    } else {
-      alert('Please upload a valid PDF file.');
-    }
+    addFiles(e.target.files);
+    // reset the input so selecting the same files again re-triggers change
+    e.target.value = "";
   };
 
-  // Handle drag over
+  // Drag & drop
   const handleDragOver = (e) => {
     e.preventDefault();
-    setIsDragging(true);  // Set dragging state to true when dragging over
+    setIsDragging(true);
   };
 
-  // Handle drag leave
-  const handleDragLeave = () => {
-    setIsDragging(false);  // Reset dragging state when leaving the area
-  };
+  const handleDragLeave = () => setIsDragging(false);
 
-  // Handle file drop
   const handleDrop = (e) => {
     e.preventDefault();
-    setIsDragging(false);  // Reset dragging state
-    const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile && droppedFile.type === 'application/pdf') {
-      setFile(droppedFile);
-    } else {
-      alert('Please drop a valid PDF file.');
-    }
+    setIsDragging(false);
+    addFiles(e.dataTransfer.files);
   };
 
-  // Handle file upload
-  const handleUpload = async () => {
-    if (!file) return;
+  // Remove one file
+  const removeFile = (idx) => {
+    setFiles((prev) => prev.filter((_, i) => i !== idx));
+  };
 
+  // Clear all
+  const clearAll = () => setFiles([]);
+
+  // Upload all in one request as multipart/form-data
+  const handleSendAll = async () => {
+    if (files.length === 0 || isUploading) return;
     setIsUploading(true);
 
     const formData = new FormData();
-    formData.append('file', file);
+    // backend can read as `files` (array). If your server expects `file[]`, change below
+    files.forEach((f) => formData.append("files", f));
 
     try {
-      const response = await fetch('http://localhost:8000/upload', {
-        method: 'POST',
+      const res = await fetch(uploadUrl, {
+        method: "POST",
         body: formData,
       });
 
-      if (response.ok) {
-        alert('File uploaded successfully!');
-      } else {
-        alert('Failed to upload file');
-      }
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      alert('An error occurred during the upload.');
+      if (!res.ok) throw new Error(`Upload failed with status ${res.status}`);
+
+      const data = await safeJson(res);
+      alert("✅ Files uploaded successfully!");
+      onUpload && onUpload(data);
+      clearAll();
+    } catch (err) {
+      console.error("Error uploading files:", err);
+      alert(`⚠️ An error occurred during upload: ${err.message}`);
     } finally {
       setIsUploading(false);
     }
   };
 
-  return (
-    <div className="pdf-uploader">
-      <h3>Upload a PDF</h3>
+  const totalSize = useMemo(() => files.reduce((acc, f) => acc + f.size, 0), [files]);
 
-      {/* Drag-and-Drop Zone */}
+  const prettyBytes = (num) => {
+    if (!Number.isFinite(num)) return "0 B";
+    const units = ["B", "KB", "MB", "GB", "TB"];
+    let i = 0;
+    while (num >= 1024 && i < units.length - 1) {
+      num /= 1024;
+      i++;
+    }
+    return `${num.toFixed(num < 10 && i > 0 ? 1 : 0)} ${units[i]}`;
+  };
+
+  return (
+    <div className="pdf-uploader" aria-live="polite">
+      <h3>Upload PDFs</h3>
+
+      {/* Drag-and-Drop Zone (clickable) */}
       <div
-        className={`drag-drop-zone ${isDragging ? 'dragging' : ''}`}
+        role="button"
+        tabIndex={0}
+        className={`drag-drop-zone ${isDragging ? "dragging" : ""}`}
+        onClick={() => inputRef.current?.click()}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") inputRef.current?.click();
+        }}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
+        aria-label="Drag and drop PDF files here or click to select"
       >
-        {file ? (
-          <div>File selected: {file.name}</div>
+        {files.length > 0 ? (
+          <div className="file-list">
+            <ul>
+              {files.map((f, i) => (
+                <li key={`${f.name}-${f.size}-${f.lastModified}`} className="file-item">
+                  <div className="file-meta">
+                    <span className="file-name">{f.name}</span>
+                    <span className="file-size">{prettyBytes(f.size)}</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="remove-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeFile(i);
+                    }}
+                    aria-label={`Remove ${f.name}`}
+                  >
+                    Remove
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <div className="summary-row">
+              <span>{files.length} file{files.length > 1 ? "s" : ""} selected</span>
+              <span>Total: {prettyBytes(totalSize)}</span>
+            </div>
+          </div>
         ) : (
-          <p>Drag and drop a PDF file here, or click to select</p>
+          <p>Drag and drop PDF files here, or click to select</p>
         )}
       </div>
 
       {/* Hidden file input */}
       <input
-        type="file"
-        accept="application/pdf"
-        onChange={handleFileChange}
-        style={{ display: 'none' }}
+        ref={inputRef}
         id="file-input"
+        type="file"
+        accept={accept}
+        multiple
+        onChange={handleFileChange}
+        style={{ display: "none" }}
       />
 
-      {/* Upload button triggers file selection and upload */}
-      <button
-        onClick={() => {
-          document.getElementById('file-input').click(); // Trigger file input
-        }}
-        disabled={isUploading || file === null} // Disable button when uploading or no file
-      >
-        Select PDF
-      </button>
+      {/* Controls */}
+      <div className="actions">
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          disabled={isUploading}
+        >
+          Select PDFs
+        </button>
 
-      {/* Upload PDF button to trigger file upload */}
-      <button
-        onClick={handleUpload} // Call handleUpload when button is clicked
-        disabled={isUploading || !file}
-      >
-        {isUploading ? 'Uploading...' : 'Upload PDF'}
-      </button>
+        <button type="button" onClick={clearAll} disabled={isUploading || files.length === 0}>
+          Clear
+        </button>
+
+        <button
+          type="button"
+          onClick={handleSendAll}
+          disabled={isUploading || files.length === 0}
+        >
+          {isUploading ? "Uploading..." : "Send All"}
+        </button>
+      </div>
     </div>
   );
+}
+
+async function safeJson(res) {
+  try {
+    return await res.json();
+  } catch (_) {
+    return null;
+  }
 }
