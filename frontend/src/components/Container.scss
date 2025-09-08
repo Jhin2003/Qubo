@@ -1,6 +1,11 @@
-.container{
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-  
+.container {
+  display: flex;
+  //grid-template-columns: 1fr 6fr;   /* left panel smaller, right panel bigger */
+  //grid-template-rows: 1fr auto;   /* top-left grows, bottom-left fixed */
+ 
+  height: 100vh;
+
+
+  background-color: #f9f9f9;
 }
+
