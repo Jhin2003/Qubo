@@ -4,7 +4,7 @@ from typing import List, Tuple
 import re
 
 from langchain.vectorstores import FAISS
-from langchain.embeddings import HuggingFaceEmbeddings
+
 
 from .loaders import get_vectorstore, get_cross_encoder
 

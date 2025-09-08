@@ -1,20 +1,27 @@
 .file-list-container {
-  width: 100%;         /* adjust width */
-  
-  padding: 12px;
+  width: 100%;
+  flex: 1;      /* adjust width */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;        /* space between title and list */
 
 }
 
 .file-list-title {
-  margin-bottom: 8px;
   font-size: 16px;
+  font-weight: 400;
+  margin-bottom: 8px;
+    
  
-  color: #ffffff;
+  color: #ebebeb;
 }
 
 .file-list-scroll {
-  max-height: 200px;    /* controls scroll height */
-  overflow-y: auto;     /* enables scrolling */
+   flex: 1;
+  
+    /* controls scroll height */
+  overflow-y: auto;  
+  max-height: 400px;   /* enables scrolling */
    /* prevent scrollbar overlap */
 }
 

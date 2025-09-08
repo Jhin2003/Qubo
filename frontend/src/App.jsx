@@ -5,7 +5,7 @@ import './App.scss'
 
 import Container from './components/Container'
 import Chatbot from './components/Chatbot'
-import FileUploader from './components/FileUploader'
+import FileUploader from './components/FileUploaderDialog'
 import SideMenu from './components/SideMenu'
 
 function App() {

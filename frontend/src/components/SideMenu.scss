@@ -1,16 +1,17 @@
-$collapsed-w: 84px;
+$collapsed-w: 64px;
 $expanded-w: 280px;
 
 .side-menu {
-  box-sizing: border-box;
+  width: $collapsed-w;
   display: flex;
+  align-items: flex-start;
   flex-direction: column;
   gap: 10px;
   background: #303030;
-  border-right: 1px solid #2a2a2a;
+
   transition: width 0.28s ease;
   padding: 12px;
-  width: $collapsed-w;
+  
   will-change: width;
 
   &.open {
@@ -25,14 +26,21 @@ $expanded-w: 280px;
   }
 
   .menu-toggle {
-    background: #444;
+    width: 36px;
+    height: 36px;
+    background: transparent;
     color: #fff;
     border: none;
-    padding: 6px 8px;
-    border-radius: 6px;
+  
+    border-radius:20px;
     cursor: pointer;
-    margin-bottom: 10px;
     &:hover { background: #555; }
+
+    img{
+      width: 24px;
+      height: 24px;
+     
+    }
   }
 
   // Reveal labels when expanded by click or hover intent

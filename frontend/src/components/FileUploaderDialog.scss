@@ -1,0 +1,30 @@
+.uploader-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999; /* higher than your side menu */
+}
+
+.uploader-dialog {
+  background: #1f1f1f;
+  color: #fff;
+  width: min(720px, 92vw);
+  max-height: 90vh;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.4);
+  display: flex;
+  flex-direction: column;
+  outline: none;
+}
+
+.uploader-header, .uploader-footer {
+  padding: 12px 16px;
+  border-bottom: 1px solid #2a2a2a;
+}
+.uploader-footer { border-top: 1px solid #2a2a2a; border-bottom: 0; display: flex; gap: 10px; justify-content: flex-end; }
+.uploader-body { padding: 16px; overflow: auto; }
+.uploader-close { background: transparent; color: #fff; border: 0; width: 36px; height: 36px; font-size: 22px; border-radius: 8px; cursor: pointer; }
+.uploader-close:hover { background: #333; }

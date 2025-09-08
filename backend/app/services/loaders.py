@@ -1,4 +1,5 @@
 from functools import lru_cache
+
 from langchain.vectorstores import FAISS
 from langchain.embeddings import HuggingFaceEmbeddings
 from sentence_transformers import CrossEncoder
@@ -23,3 +24,29 @@ def get_vectorstore(allow_unsafe: bool = False):
         emb,
         allow_dangerous_deserialization=bool(allow_unsafe)
     )
+
+
+def warmup():
+    # Embeddings: force a real encode to finish loading/compiling
+    emb = get_embedder()
+    try:
+        emb.embed_documents(["__warmup__"])
+    except Exception:
+        # fallback for older LangChain versions
+        emb.client.encode(["__warmup__"], convert_to_numpy=True, normalize_embeddings=False)
+
+    # Cross-encoder: force a real predict
+    ce = get_cross_encoder()
+    ce.predict([("__warmup__", "__warmup__")])
+
+    # FAISS: load if present
+    try:
+        _ = get_vectorstore(allow_unsafe=True)
+    except Exception as e:
+        print(f"Skipping FAISS warmup: {e}")
+
+
+def invalidate_all():
+    get_vectorstore.cache_clear()
+    get_embedder.cache_clear()
+    get_cross_encoder.cache_clear()
