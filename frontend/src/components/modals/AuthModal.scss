@@ -1,0 +1,85 @@
+/* src/components/LoginModal.scss */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55); // slate-ish overlay
+  display: grid;
+  place-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  position: relative;
+  width: min(90vw, 420px);
+  background: #414040;
+  border-radius: 16px;
+  padding: 24px 24px 28px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+
+}
+
+.modal__close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  border: none;
+  background: transparent;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.modal__title {
+  margin: 0 0 12px 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.modal__form {
+  display: grid;
+  gap: 12px;
+}
+
+.modal__label {
+  font-size: 0.9rem;
+  display: grid;
+  gap: 6px;
+}
+
+.modal__input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1.5px solid #39455b;
+  outline: none;
+  color: #000;
+}
+
+.modal__input:focus {
+  border-color: #ff9800;
+  box-shadow: 0 0 0 3px rgba(255,152,0,0.25);
+}
+
+.modal__error {
+  color: #b91c1c;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+.modal__submit {
+  margin-top: 6px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+  background: #d7de09; // orange primary
+  color: #000;         // good contrast with orange
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.modal__submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

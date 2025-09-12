@@ -12,12 +12,7 @@ async def generate_response(context: str, query: str):
 
     
     prompt = f"""
-    You are a helpful assistant. 
-    Use the provided context to answer the question as accurately as possible. 
-
-    - If the context contains relevant information, base your answer strictly on it. 
-    - If the context does not contain the answer, say you cannot find relevant information and respond using your own knowledge. 
-    - Be clear and concise.
+    You are a helpful assistant. Only answer on relevant context, if context is not relevant say "I cannot find relevant information".
 
     Context:
     {context}
@@ -26,6 +21,33 @@ async def generate_response(context: str, query: str):
     {query}
 
     Answer:
+    """
+
+
+    # Generate the response using the LLM
+    response = llm(prompt)
+
+
+    return response
+
+
+# LLM setup (using Ollama in this case)
+async def generate_question(context: str, query: str):
+    # Initialize the LLM (you can use any LLM here)
+    llm = Ollama(model="mistral:instruct")
+
+    
+    prompt = f"""
+ 
+    your task is to remove irrelevant context based on the question.
+
+    Context:
+    {context}
+
+    Question:
+    {query}
+
+    Summarized Context:
     """
 
 

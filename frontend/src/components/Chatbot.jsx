@@ -1,12 +1,35 @@
-// ...existing imports
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Use useNavigate for navigation
+import Header from "./Header";
 import "./chatbot.scss";
 
 export default function Chatbot() {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [messages, setMessages] = useState([]); // Chat messages state
+  const [input, setInput] = useState(""); // User input state
+  const [loading, setLoading] = useState(false); // Loading state
 
+  const navigate = useNavigate(); // Initialize useNavigate hook for navigation
+
+  // Persist messages in localStorage
+  useEffect(() => {
+    const savedMessages = JSON.parse(localStorage.getItem("chatMessages"));
+    if (savedMessages) {
+      console.log("Loaded messages from localStorage:", savedMessages);
+      setMessages(savedMessages); // Load saved messages from localStorage
+    } else {
+      console.log("No saved messages in localStorage");
+    }
+  }, []); // Only run once when the component mounts
+
+  // Save messages to localStorage whenever they change
+  useEffect(() => {
+    if (messages.length > 0) {
+      console.log("Saving messages to localStorage:", messages);
+      localStorage.setItem("chatMessages", JSON.stringify(messages)); // Save messages to localStorage
+    }
+  }, [messages]); // Save to localStorage every time messages are updated
+
+  // Handle sending message
   const handleSend = async () => {
     if (!input.trim() || loading) return;
 
@@ -36,16 +59,18 @@ export default function Chatbot() {
     }
   };
 
+  // Handle click on a source to navigate to the PDF viewer
+  const handleSourceClick = (fileName, page) => {
+    navigate(`/view-pdf?file=${fileName}&page=${page}`);
+  };
+
   return (
     <div className="chat-container">
-      <h1 className="brand-name">Qubo</h1>
+      <Header />
 
       <div className="chat-box">
         {messages.map((msg, idx) => (
-          <div
-            key={idx}
-            className={msg.sender === "user" ? "message user" : "message bot"}
-          >
+          <div key={idx} className={msg.sender === "user" ? "message user" : "message bot"}>
             <div>{msg.text}</div>
             {msg.sender === "bot" && msg.sources && msg.sources.length > 0 && (
               <div className="sources">
@@ -53,7 +78,9 @@ export default function Chatbot() {
                 <ul>
                   {msg.sources.map(([src, page], i) => (
                     <li key={i}>
-                      {src} (p. {page})
+                      <button onClick={() => handleSourceClick(src, page)} className="source-link">
+                        {src} (p. {page})
+                      </button>
                     </li>
                   ))}
                 </ul>
@@ -62,24 +89,17 @@ export default function Chatbot() {
           </div>
         ))}
 
-        {/* 👇 Thinking bubble while waiting */}
+        {/* Thinking bubble while waiting */}
         {loading && (
-          <div
-            className="message bot thinking"
-            aria-live="polite"
-            aria-label="Assistant is thinking"
-          >
-            <div className="typing-dots" aria-hidden="true">
+          <div className="message bot thinking" aria-live="polite" aria-label="Assistant is thinking">
+            <div className="typing-dots">
               <span></span><span></span><span></span>
-            </div>
-            <div className="typing-shimmer" aria-hidden="true">
-              <div className="shimmer-line"></div>
-              <div className="shimmer-line short"></div>
             </div>
           </div>
         )}
       </div>
 
+      {/* Chat input */}
       <div className="chat-input">
         <div className="input-wrapper">
           <input
@@ -88,13 +108,10 @@ export default function Chatbot() {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
-            // optional: prevent typing during loading
-            // disabled={loading}
           />
           {input.trim() && (
             <button onClick={handleSend} disabled={loading}>
               {loading ? (
-                // optional tiny spinner in the button
                 <svg viewBox="0 0 24 24" width="18" height="18" className="btn-spinner">
                   <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="3" fill="none" />
                 </svg>

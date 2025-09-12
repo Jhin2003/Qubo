@@ -1,24 +1,29 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.scss'
 
-import Container from './components/Container'
-import Chatbot from './components/Chatbot'
-import FileUploader from './components/FileUploaderDialog'
-import SideMenu from './components/SideMenu'
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Container from './components/Container';
+import Chatbot from './components/Chatbot';
+import SideMenu from './components/SideMenu';
+import PdfViewer from './components/PdfViewer'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-    <Container>
-      <SideMenu />
-      <Chatbot />
-    </Container>
-    </>
-  )
+    <Router>
+      <Routes>
+        {/* Define route for viewing PDF */}
+        <Route path="/view-pdf" element={<PdfViewer />} />
+
+        {/* Default route */}
+        <Route path="/" element={
+          <Container>
+            <SideMenu />
+            <Chatbot />
+          </Container>
+        } />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;

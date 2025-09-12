@@ -31,6 +31,7 @@ def warmup():
     emb = get_embedder()
     try:
         emb.embed_documents(["__warmup__"])
+        print("Done warmup of embedder.")
     except Exception:
         # fallback for older LangChain versions
         emb.client.encode(["__warmup__"], convert_to_numpy=True, normalize_embeddings=False)

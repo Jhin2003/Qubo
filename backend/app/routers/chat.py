@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import List
 from app.services.retrieval_service import search_vectorstore
-from app.services.llm_service import generate_response
+from app.services.llm_service import generate_response, generate_question
 
 router = APIRouter()
 
@@ -21,11 +21,11 @@ async def chat(messages: List[Message]):
     context, sources = search_vectorstore(
         user_message,
         index_dir="data_store/vector_database",
-   
     )
 
     # Pass only the context to the LLM
-    llm_response = await generate_response(context, user_message)
+    llm_response = await generate_question(context, user_message)
+ 
 
     # Build bot response (LLM answer + optional sources text if you want)
     bot_response = f"{llm_response}"
