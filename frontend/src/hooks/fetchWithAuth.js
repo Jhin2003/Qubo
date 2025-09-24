@@ -4,10 +4,15 @@ export const useFetch = () => {
   const { token, logOut } = useJWTAuth(); // We no longer need refreshAuthToken
 
   const fetchWithAuth = async (url, options = {}) => {
+    // Default headers object
     const headers = {
       ...options.headers,
-      "Authorization": `Bearer ${token}`,
     };
+
+    // If token is available, add the Authorization header
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
 
     try {
       const response = await fetch(url, { ...options, headers });

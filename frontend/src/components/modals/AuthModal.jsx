@@ -3,14 +3,24 @@ import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import "./AuthModal.scss"; // reuse your styles
 
+
+import { useUser } from "../../context/UserContext";
+
+
 export default function AuthModal({ isOpen, onClose, onSuccess }) {
   const [mode, setMode] = useState("login"); // "login" | "signup"
-  const [email, setEmail] = useState("");    // use email consistently with backend
+  const [username, setUsername] = useState(""); // use email consistently with backend
+  const [email, setEmail] = useState(""); // use email consistently with backend
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState(""); // for signup
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const dialogRef = useRef(null);
+
+
+  // Inside AuthModal component
+// Inside AuthModal component
+const { login } = useUser();
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
@@ -24,7 +34,8 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
 
   // Focus first input
   useEffect(() => {
-    if (isOpen && dialogRef.current) dialogRef.current.querySelector("input")?.focus();
+    if (isOpen && dialogRef.current)
+      dialogRef.current.querySelector("input")?.focus();
   }, [isOpen, mode]);
 
   const handleBackdropClick = (e) => {
@@ -50,20 +61,23 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
         const res = await fetch(`${API_URL}/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({ username, email, password }),
         });
         if (!res.ok) throw new Error((await res.text()) || "Sign up failed.");
         // Optional: auto-login after signup
         const loginRes = await fetch(`${API_URL}/token`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({ username,email, password }),
         });
-        if (!loginRes.ok) throw new Error("Account created, but auto-login failed.");
+        if (!loginRes.ok)
+          throw new Error("Account created, but auto-login failed.");
         const data = await loginRes.json();
         localStorage.setItem("auth_token", data.access_token);
-        if (data.refresh_token) localStorage.setItem("refresh_token", data.refresh_token);
-        onSuccess?.({ mode, ...data });
+        if (data.refresh_token)
+          localStorage.setItem("refresh_token", data.refresh_token);
+        
+      login({ mode, ...data });
         onClose();
         return;
       }
@@ -72,13 +86,16 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
       const res = await fetch(`${API_URL}/token`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, email, password }),
       });
-      if (!res.ok) throw new Error((await res.text()) || "Invalid credentials.");
+      if (!res.ok)
+        throw new Error((await res.text()) || "Invalid credentials.");
       const data = await res.json();
       localStorage.setItem("auth_token", data.access_token);
-      if (data.refresh_token) localStorage.setItem("refresh_token", data.refresh_token);
-      onSuccess?.({ mode, ...data });
+      if (data.refresh_token)
+        localStorage.setItem("refresh_token", data.refresh_token);
+      
+      login({ mode, ...data });
       onClose();
     } catch (err) {
       setError(err.message || "Something went wrong.");
@@ -90,7 +107,12 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
   if (!isOpen) return null;
 
   return ReactDOM.createPortal(
-    <div className="modal-backdrop" data-backdrop="true" onMouseDown={handleBackdropClick} aria-hidden="false">
+    <div
+      className="modal-backdrop"
+      data-backdrop="true"
+      onMouseDown={handleBackdropClick}
+      aria-hidden="false"
+    >
       <div
         className="modal"
         role="dialog"
@@ -99,13 +121,37 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
         ref={dialogRef}
         onMouseDown={(e) => e.stopPropagation()}
       >
-        <button className="modal__close" aria-label="Close dialog" onClick={onClose}>×</button>
+        <button
+          className="modal__close"
+          aria-label="Close dialog"
+          onClick={onClose}
+        >
+          ×
+        </button>
 
-        <h2 id="auth-title" className="modal__title">
+        <h2 id="auth_logo" className="modal__title">
+          Qubo
+        </h2>
+
+        <h2 id="auth_title" className="modal__title">
           {mode === "login" ? "Login" : "Create an account"}
         </h2>
 
         <form className="modal__form" onSubmit={handleSubmit}>
+
+          <label className="modal__label">
+            Username
+            <input
+              type="text"
+              autoComplete="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className="modal__input"
+              disabled={submitting}
+            />
+          </label>
+
           <label className="modal__label">
             Email
             <input
@@ -123,7 +169,9 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
             Password
             <input
               type="password"
-              autoComplete={mode === "login" ? "current-password" : "new-password"}
+              autoComplete={
+                mode === "login" ? "current-password" : "new-password"
+              }
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -152,18 +200,30 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
           {error ? <p className="modal__error">{error}</p> : null}
 
           <button className="modal__submit" type="submit" disabled={submitting}>
-            {submitting ? (mode === "login" ? "Logging in..." : "Creating account...") : (mode === "login" ? "Login" : "Sign Up")}
+            {submitting
+              ? mode === "login"
+                ? "Logging in..."
+                : "Creating account..."
+              : mode === "login"
+              ? "Login"
+              : "Sign Up"}
           </button>
         </form>
 
         <p className="modal__hint" style={{ marginTop: 10, fontSize: ".9rem" }}>
           {mode === "login" ? (
-            <>Don’t have an account?{" "}
-              <button type="button" onClick={switchMode} className="linklike">Sign up</button>
+            <>
+              Don’t have an account?{" "}
+              <button type="button" onClick={switchMode} className="linklike">
+                Sign up
+              </button>
             </>
           ) : (
-            <>Already have an account?{" "}
-              <button type="button" onClick={switchMode} className="linklike">Log in</button>
+            <>
+              Already have an account?{" "}
+              <button type="button" onClick={switchMode} className="linklike">
+                Log in
+              </button>
             </>
           )}
         </p>

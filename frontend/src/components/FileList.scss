@@ -1,43 +1,45 @@
 .file-list-container {
   width: 100%;
-  flex: 1;      /* adjust width */
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 12px;        /* space between title and list */
-
+  gap: 10px; // slightly tighter spacing
 }
 
 .file-list-title {
-  font-size: 16px;
-  font-weight: 400;
-  margin-bottom: 8px;
-    
- 
-  color: #ebebeb;
-}
-
-.file-list-scroll {
-   flex: 1;
-  
-    /* controls scroll height */
-  overflow-y: auto;  
-  max-height: 400px;   /* enables scrolling */
-   /* prevent scrollbar overlap */
+  font-size: 15px; // a little smaller
+  font-weight: 500; // medium weight for subtle emphasis
+  margin-bottom: 6px;
+  color: #d3d3d3; // softer than pure white
 }
 
 .file-item {
   display: flex;
-  justify-content: flex-start; 
-  padding: 6px;
+  justify-content: flex-start;
+  padding: 6px 8px;
+  font-size: 13px;
+  color: #bfbfbf;
+  border-radius: 6px;
+ 
+  transition: all 0.2s ease;
 
+  &:hover {
+ 
+    background-color: rgba(255, 255, 255, 0.03);
+  }
 }
+
 
 .file-item a {
-  color: #ff6600; /* your orange border theme */
+  margin-left: 6px;
+  color: #ff6600;   // your orange accent
+  font-weight: 500;
+  font-size: 13px;
   text-decoration: none;
-  font-weight: bold;
+
+  &:hover {
+    text-decoration: underline; // keep link interaction clear
+  }
 }
 
-.file-item a:hover {
-  text-decoration: underline;
-}
+

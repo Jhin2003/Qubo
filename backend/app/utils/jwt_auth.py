@@ -8,7 +8,7 @@ from typing import Optional
 # Load from env or fallback defaults
 SECRET_KEY = os.getenv("JWT_SECRET", "dev-secret-change-me")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "180"))
 
 def create_access_token(sub: str, expires_delta: Optional[timedelta] = None) -> str:
     now = datetime.now(timezone.utc)

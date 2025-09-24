@@ -12,7 +12,8 @@ async def generate_response(context: str, query: str):
 
     
     prompt = f"""
-    You are a helpful assistant. Only answer on relevant context, if context is not relevant say "I cannot find relevant information".
+    
+    if context is empty or irelevant say "I cannot answer that because I do not have information about it".
 
     Context:
     {context}

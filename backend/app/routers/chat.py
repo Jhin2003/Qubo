@@ -24,7 +24,7 @@ async def chat(messages: List[Message]):
     )
 
     # Pass only the context to the LLM
-    llm_response = await generate_question(context, user_message)
+    llm_response = await generate_response(context, user_message)
  
 
     # Build bot response (LLM answer + optional sources text if you want)

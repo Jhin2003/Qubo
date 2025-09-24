@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./filelist.scss";
 import { useFetch } from "../hooks/fetchWithAuth";
 
 function FileList({ refreshToken = 0 }) {
   const [files, setFiles] = useState([]);
   const { fetchWithAuth } = useFetch();
+  const navigate = useNavigate();
 
   const fetchFiles = async () => {
     try {
@@ -26,6 +28,9 @@ function FileList({ refreshToken = 0 }) {
     fetchFiles();
   }, [refreshToken]);
 
+  const handleSourceClick = (fileName, page) => {
+    navigate(`/view-pdf?file=${encodeURIComponent(fileName)}&page=${page}`);
+  };
 
   return (
     <div className="file-list-container">
@@ -35,38 +40,12 @@ function FileList({ refreshToken = 0 }) {
           <ul>
             {files.map((file, index) => (
               <li key={index} className="file-item">
-                <span>{file.filename}</span>
-                <a
-                  href={`http://localhost:8000/files/${file.filename}`}  // Download link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => {
-                    // Include the token in the download request by modifying the link
-                    e.preventDefault();
-                    fetch(`http://localhost:8000/files/${file.filename}`, {
-                      method: "GET",
-                      headers: {
-                        "Authorization": `Bearer ${token}`,
-                      },
-                    })
-                      .then((res) => res.blob())
-                      .then((blob) => {
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement("a");
-                        a.href = url;
-                        a.download = file.filename;  // Set the filename for download
-                        document.body.appendChild(a);
-                        a.click();
-                        a.remove();
-                      })
-                      .catch((err) => {
-                        console.error("Error downloading file:", err);
-                        alert("Error downloading file.");
-                      });
-                  }}
+                <span
+                  className="file-link"
+                  onClick={() => handleSourceClick(file.filename, 1)} // pass a function
                 >
-                  Download
-                </a>
+                  {file.filename}
+                </span>
               </li>
             ))}
           </ul>

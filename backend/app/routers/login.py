@@ -33,7 +33,7 @@ security = HTTPBearer(auto_error=False)
 def register(body: UserCreate, db: Session = Depends(get_db)):
     if get_user_by_email(db, body.email):
         raise HTTPException(status_code=400, detail="Email already registered")
-    user = create_user(db, body.email, body.password)
+    user = create_user(db, body.username, body.email,  body.password)
     return user
 
 @router.post("/token", response_model=TokenOut)

@@ -6,9 +6,12 @@ import Container from './components/Container';
 import Chatbot from './components/Chatbot';
 import SideMenu from './components/SideMenu';
 import PdfViewer from './components/PdfViewer'
+import { UserProvider } from "./context/UserContext";
+
 
 function App() {
   return (
+    <UserProvider>
     <Router>
       <Routes>
         {/* Define route for viewing PDF */}
@@ -23,6 +26,7 @@ function App() {
         } />
       </Routes>
     </Router>
+    </UserProvider>
   );
 }
 

@@ -1,9 +1,20 @@
+$gradient-start: #1f1f1f; // 0%
+$gradient-middle: #1f1f1f; // 50%
+$gradient-end: #21222e; // 100%
+
 .chat-container {
   flex: 1;
   display: flex;
   flex-direction: column;
   padding: 2%;
   background-color: #212121;
+
+  background: linear-gradient(
+    to bottom,
+    $gradient-start 0%,
+    $gradient-middle 50%,
+    $gradient-end 100%
+  );
 
   .brand-name {
     font-size: 1.2rem;
@@ -13,13 +24,19 @@
 
   /* ===================== Chat Box ===================== */
   .chat-box {
-    flex: 1; // takes all remaining space
-    overflow-y: auto; // only scroll messages
+    overflow-y: auto;
     align-self: center;
-    width: 680px; // consistent width with input
+    width: 680px;
     display: flex;
     flex-direction: column;
-    min-height: 0; // prevent children from stretching the container
+
+    &.has-messages {
+      flex: 1;// fixed height when there are messages
+    }
+
+    &.empty {
+      min-height: 20%;
+    }
 
     /* Messages */
     .message {
@@ -50,24 +67,27 @@
       }
 
       .sources {
-        
         strong {
+          color: #ffffff;
           font-size: 14px;
           margin-top: 12px;
         }
-        
+
         margin-top: 8px;
         .source-link {
-          font-size: 12px;
+          font-size: 8px;
           background: none; /* Remove background */
           border: none; /* Remove border */
           padding: 0; /* Remove padding */
-          color: inherit; /* Inherit text color from parent */
+          color: #e0e0e0; /* Inherit text color from parent */
           font: inherit; /* Inherit font styling */
           cursor: pointer;
           background: none;
           margin-top: 6px;
-           font-size: 12px; 
+          font-size: 12px;
+          &:hover {
+            color: #ff6600; // your accent orange
+          }
         }
       }
     }
@@ -132,6 +152,14 @@
         }
       }
     }
+  }
+
+  .no-messages {
+    text-align: center;
+    color: #888;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 20px;
   }
 
   /* ===================== Chat Input ===================== */

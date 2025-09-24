@@ -2,6 +2,7 @@
 from pathlib import Path
 from typing import List, Tuple
 import re
+import math
 
 from langchain.vectorstores import FAISS
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -10,6 +11,16 @@ from rank_bm25 import BM25Okapi
 import numpy as np
 
 from .loaders import get_vectorstore, get_cross_encoder
+
+
+# --- Context shaping helpers ---
+
+def _bookend(docs):
+    """Interleave to put strong evidence at both start and end."""
+    left, right = [], []
+    for i, d in enumerate(docs):
+        (left if i % 2 == 0 else right).append(d)
+    return left + right[::-1]
 
 
 # --- simple whitespace/regex tokenizer
@@ -66,25 +77,28 @@ def expand_query(query: str, corpus: List[str], top_n: int = 5, expand_acronyms:
 
 
 # ---------- Dense + BM25 candidate fetchers & fusion ----------
-
-def fetch_candidates(vectorstore: FAISS, query: str, fetch_k: int = 40) -> Tuple[List, List[float]]:
+def fetch_candidates(
+    vectorstore: FAISS,
+    query: str,
+    fetch_k: int = 40,
+    min_similarity: float = 0.0,  # >=0 keeps only positive cosine similarity
+) -> Tuple[List, List[float]]:
     """
     Dense candidates from FAISS, returning (docs, scores).
+    Filters out results with similarity < min_similarity.
     """
     pairs = vectorstore.similarity_search_with_relevance_scores(query, k=fetch_k)
     print(f"[DEBUG] Retrieved {len(pairs)} dense candidates for query='{query}'")
 
-    # dedup by (source, page)
-    seen = set()
     docs, scores = [], []
     for d, s in pairs:
-        key = (d.metadata.get("source"), d.metadata.get("page"))
-        if key in seen:
-            continue
-        seen.add(key)
-        docs.append(d)
-        scores.append(float(s))
-    print(f"[DEBUG] After dense dedup: {len(docs)}")
+        s = float(s)
+        if s >= min_similarity:
+            docs.append(d)
+            scores.append(s)
+            print(scores)
+
+    print(f"[DEBUG] After threshold filter (min_similarity={min_similarity}): kept={len(docs)}")
     return docs, scores
 
 
@@ -161,24 +175,68 @@ def fuse_candidates(
     return docs
 
 
-# ---------- Cross-encoder rerank ----------
 
-def rerank_with_ce(query: str, docs: List, top_n_debug: int = 5) -> Tuple[List, List[float]]:
-    """Sort docs by cross-encoder score (desc) and return scores."""
+def _sigmoid(x: float) -> float:
+    try:
+        # numerically stable sigmoid
+        if x >= 0:
+            z = math.exp(-x)
+            return 1.0 / (1.0 + z)
+        else:
+            z = math.exp(x)
+            return z / (1.0 + z)
+    except OverflowError:
+        return 0.0 if x < 0 else 1.0
+
+def rerank_with_ce(
+    query: str,
+    docs: List,
+    *,
+    min_score: float = 0.35,       # threshold AFTER normalization (if enabled)
+    normalize: bool = True,        # sigmoid → 0–1
+    top_k: int | None = None,      # keep only the best K after threshold
+    top_n_debug: int = 5
+) -> Tuple[List, List[float]]:
+    """
+    Rerank with BGE cross-encoder from loader.py and apply a score threshold.
+    - If normalize=True, raw logits -> sigmoid in [0,1] (recommended for thresholding).
+    - Filters out docs with score < min_score.
+    - Optionally trims to top_k.
+    """
     if not docs:
         return [], []
 
-    ce = get_cross_encoder()
-    scores = ce.predict([(query, d.page_content) for d in docs]).tolist()
+    ce = get_cross_encoder()  # should return a sentence_transformers.CrossEncoder
+    pairs = [(query, d.page_content) for d in docs]
+    raw_scores = ce.predict(pairs)  # numpy array (logits)
 
+    # normalize if desired
+    if normalize:
+        scores = [_sigmoid(float(s)) for s in raw_scores]
+    else:
+        scores = [float(s) for s in raw_scores]
+
+    # sort desc by score
     ranked = sorted(zip(docs, scores), key=lambda x: x[1], reverse=True)
-    ranked_docs, ranked_scores = zip(*ranked) if ranked else ([], [])
 
+    # threshold filter
+    if min_score is not None:
+        ranked = [(d, s) for (d, s) in ranked if s >= min_score]
+
+    # optional top-k
+    if top_k is not None:
+        ranked = ranked[:top_k]
+
+    ranked_docs, ranked_scores = (list(x) for x in zip(*ranked)) if ranked else ([], [])
+
+    # debug
+    print(f"[DEBUG] CE total_in={len(docs)} kept={len(ranked_docs)} "
+          f"min_score={min_score} normalize={normalize} top_k={top_k}")
     for i, (doc, score) in enumerate(zip(ranked_docs[:top_n_debug], ranked_scores[:top_n_debug])):
         snippet = doc.page_content[:80].replace("\n", " ")
         print(f"[DEBUG] CE score={score:.4f} | Doc {i}: {snippet}...")
 
-    return list(ranked_docs), list(ranked_scores)
+    return ranked_docs, ranked_scores
 
 
 # ---------- Main search ----------
@@ -194,7 +252,7 @@ def search_vectorstore(
     expansion_top_n: int = 3,
     use_hybrid: bool = True,          # <-- NEW: turn hybrid on/off
     alpha_dense: float = 0.6,         # <-- NEW: fusion weight for dense
-    bm25_k: int = 60                  # <-- NEW: how many BM25 candidates
+    bm25_k: int = 40                  # <-- NEW: how many BM25 candidates
 ) -> Tuple[str, List[Tuple[str, str]]]:
     """
     Hybrid retrieval:
@@ -238,11 +296,21 @@ def search_vectorstore(
 
     # 4) Top-k
     docs = ranked_docs[:k] if ranked_docs else []
+    # Apply bookend reordering
+    docs = _bookend(docs)
     print(f"[DEBUG] Returning {len(docs)} final docs (top-k={k})")
 
     # 5) Outputs
     context = "\n\n".join(d.page_content.strip() for d in docs)
     sources = [(d.metadata.get("source", "unknown"), d.metadata.get("page", "?")) for d in docs]
+
+    seen = set()
+    sources = []
+    for d in docs:
+        key = (d.metadata.get("source", "unknown"), d.metadata.get("page", "?"))
+        if key not in seen:
+            seen.add(key)
+            sources.append(key)
 
     print("\n[DEBUG] Final Context Preview:\n", context, "\n\n")
 
