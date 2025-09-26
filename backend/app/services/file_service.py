@@ -5,10 +5,12 @@ from datetime import datetime
 from pathlib import Path
 
 import pdfplumber
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
 
+
+from langchain_experimental.text_splitter import SemanticChunker
 
 from .loaders import (
     get_embedder,
@@ -17,6 +19,10 @@ from .loaders import (
     # invalidate_bm25_cache, 
    
 )
+
+
+ # --- Embedding model ---
+embedding_model = get_embedder()
 
 
 # --- Helpers ---------------------------------------------------------------
@@ -56,21 +62,22 @@ def process_pdf_chunks(pdf_path: str, filename: str):
     with pdfplumber.open(pdf_path) as pdf:
         page_texts = []
         for i, page in enumerate(pdf.pages, start=1):
-            txt = page.extract_text() or ""
+            txt = page.extract_text(x_tolerance=1, y_tolerance=2) or ""
             if txt.strip():
                 page_texts.append((i, txt))
 
     # --- Split text into chunks ---
-    splitter = RecursiveCharacterTextSplitter(
-    chunk_size=600,          # larger = fewer mid-sentence cuts
-    chunk_overlap=100,       # ~80–120 is plenty
-    separators=["\n\n","\n",". ","? ","! ","; ",": "," "],
-    length_function=len,
+    chunker = SemanticChunker(
+        embeddings=embedding_model,
+        breakpoint_threshold_type="percentile",
+        breakpoint_threshold_amount=95,
+        buffer_size=1,
+        min_chunk_size=200,
     )
 
     chunks_with_pages = []
     for page_num, page_text in page_texts:
-        page_chunks = splitter.split_text(page_text)
+        page_chunks = chunker.split_text(page_text)
         for idx_in_page, ch in enumerate(page_chunks, start=1):
             chunks_with_pages.append((page_num, idx_in_page, ch))
     print(f"{filename}: {len(chunks_with_pages)} chunks")
@@ -93,8 +100,7 @@ def process_pdf_chunks(pdf_path: str, filename: str):
         for global_idx, (page_num, idx_in_page, _) in enumerate(chunks_with_pages)
     ]
 
-    # --- Embedding model ---
-    embedding_model = get_embedder()
+   
 
     # --- Check if FAISS index exists (both files must exist) ---
     index_file = index_dir / "index.faiss"
@@ -102,7 +108,7 @@ def process_pdf_chunks(pdf_path: str, filename: str):
 
     if index_file.exists() and store_file.exists():
         print(f"Loading existing FAISS index from '{index_dir}'")
-        vectorstore = FAISS.load_local(str(index_dir), embedding_model, allow_dangerous_deserialization=True)
+        vectorstore = get_vectorstore(allow_unsafe=True)
         vectorstore.add_texts(texts=texts, metadatas=metadatas)
     else:
         print(f"Creating a new FAISS index at '{index_dir}'")

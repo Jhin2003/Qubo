@@ -1,26 +1,32 @@
 from functools import lru_cache
 
-from langchain.vectorstores import FAISS
-from langchain.embeddings import HuggingFaceEmbeddings
+import torch
+
+from langchain_community.vectorstores import FAISS
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from sentence_transformers import CrossEncoder
 
 EMBED_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
-CE_MODEL_NAME = "cross-encoder/ms-marco-MiniLM-L-6-v2"
-index_dir = "data_store/vector_database"
+CE_MODEL_NAME = "BAAI/bge-reranker-base"
+INDEX_DIR = "data_store/vector_database"
+
 
 @lru_cache(maxsize=1)
 def get_embedder():
     return HuggingFaceEmbeddings(model_name=EMBED_MODEL_NAME)
 
+
 @lru_cache(maxsize=1)
 def get_cross_encoder():
-    return CrossEncoder(CE_MODEL_NAME)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    # Let CrossEncoder load the model itself
+    return CrossEncoder(CE_MODEL_NAME, max_length=512, device=device)
 
-@lru_cache(maxsize=4)
+@lru_cache(maxsize=1)
 def get_vectorstore(allow_unsafe: bool = False):
     emb = get_embedder()
     return FAISS.load_local(
-        index_dir,
+        INDEX_DIR,
         emb,
         allow_dangerous_deserialization=bool(allow_unsafe)
     )
@@ -31,6 +37,7 @@ def warmup():
     emb = get_embedder()
     try:
         emb.embed_documents(["__warmup__"])
+    
     except Exception:
         # fallback for older LangChain versions
         emb.client.encode(["__warmup__"], convert_to_numpy=True, normalize_embeddings=False)

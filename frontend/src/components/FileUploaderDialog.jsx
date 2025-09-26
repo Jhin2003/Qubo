@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { createPortal } from "react-dom";
 
 import "./FileUploaderDialog.scss";
+
 export default function FileUploaderDialog({
   open,
   onClose,
@@ -61,8 +62,23 @@ export default function FileUploaderDialog({
     setIsUploading(true);
     const formData = new FormData();
     files.forEach((f) => formData.append("files", f));
+    const token = localStorage.getItem("auth_token");
+
+
+    if (!token) {
+      alert("You need to be logged in to upload files.");
+      setIsUploading(false);
+      return;
+    }
+
     try {
-      const res = await fetch(uploadUrl, { method: "POST", body: formData });
+        const res = await fetch(uploadUrl, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,  // Attach the token to the Authorization header
+        },
+        body: formData,
+      });
       if (!res.ok) throw new Error(`Upload failed with status ${res.status}`);
       const data = await safeJson(res);
       alert("✅ Files uploaded successfully!");

@@ -1,35 +1,51 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./filelist.scss";
+import { useFetch } from "../hooks/fetchWithAuth";
 
 function FileList({ refreshToken = 0 }) {
   const [files, setFiles] = useState([]);
+  const { fetchWithAuth } = useFetch();
+  const navigate = useNavigate();
 
-  const fetchFiles = () => {
-    fetch("http://localhost:8000/files") // adjust port if needed
-      .then((res) => res.json())
-      .then((data) => setFiles(data.files))
-      .catch((err) => console.error(err));
+  const fetchFiles = async () => {
+    try {
+      const response = await fetchWithAuth("http://localhost:8000/files", {
+        method: "GET",
+      });
+
+      if (!response) return;
+
+      const data = await response.json();
+      setFiles(data.files);
+    } catch (error) {
+      console.error("Error fetching files:", error);
+      alert("Failed to fetch files.");
+    }
   };
 
   useEffect(() => {
     fetchFiles();
-  }, [refreshToken]); // ⬅ refetch whenever parent changes refreshToken
+  }, [refreshToken]);
+
+  const handleSourceClick = (fileName, page) => {
+    navigate(`/view-pdf?file=${encodeURIComponent(fileName)}&page=${page}`);
+  };
 
   return (
     <div className="file-list-container">
       <h2 className="file-list-title">Uploaded Files</h2>
       <div className="file-list-scroll">
-        {files.length > 0 ? (
+        {files && files.length > 0 ? (
           <ul>
             {files.map((file, index) => (
               <li key={index} className="file-item">
-                <span>{file.filename}</span>
-                <a
-                  href={`http://localhost:8000/download/${file.filename}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <span
+                  className="file-link"
+                  onClick={() => handleSourceClick(file.filename, 1)} // pass a function
                 >
-                </a>
+                  {file.filename}
+                </span>
               </li>
             ))}
           </ul>

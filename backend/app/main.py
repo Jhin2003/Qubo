@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import chat, file_upload
+from app.routers import chat, file_upload, login
 from app.services.loaders import warmup
 
 @asynccontextmanager
@@ -27,6 +27,8 @@ app.add_middleware(
 # Include the routers
 app.include_router(chat.router)
 app.include_router(file_upload.router)
+
+app.include_router(login.router)
 
 # Run:
 # uvicorn app.main:app --reload
