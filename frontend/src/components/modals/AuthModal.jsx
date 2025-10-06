@@ -3,9 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import "./AuthModal.scss"; // reuse your styles
 
-
 import { useUser } from "../../context/UserContext";
-
 
 export default function AuthModal({ isOpen, onClose, onSuccess }) {
   const [mode, setMode] = useState("login"); // "login" | "signup"
@@ -17,10 +15,9 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
   const [error, setError] = useState("");
   const dialogRef = useRef(null);
 
-
   // Inside AuthModal component
-// Inside AuthModal component
-const { login } = useUser();
+  // Inside AuthModal component
+  const { login } = useUser();
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
@@ -64,20 +61,6 @@ const { login } = useUser();
           body: JSON.stringify({ username, email, password }),
         });
         if (!res.ok) throw new Error((await res.text()) || "Sign up failed.");
-        // Optional: auto-login after signup
-        const loginRes = await fetch(`${API_URL}/token`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username,email, password }),
-        });
-        if (!loginRes.ok)
-          throw new Error("Account created, but auto-login failed.");
-        const data = await loginRes.json();
-        localStorage.setItem("auth_token", data.access_token);
-        if (data.refresh_token)
-          localStorage.setItem("refresh_token", data.refresh_token);
-        
-      login({ mode, ...data });
         onClose();
         return;
       }
@@ -94,8 +77,14 @@ const { login } = useUser();
       localStorage.setItem("auth_token", data.access_token);
       if (data.refresh_token)
         localStorage.setItem("refresh_token", data.refresh_token);
-      
-      login({ mode, ...data });
+
+      const meRes = await fetch(`${API_URL}/auth/me`, {
+        headers: { Authorization: `Bearer ${data.access_token}` },
+      });
+      if (!meRes.ok) throw new Error("Failed to fetch user info.");
+      const me = await meRes.json();
+
+      login({ ...me, token: data.access_token });
       onClose();
     } catch (err) {
       setError(err.message || "Something went wrong.");
@@ -138,7 +127,6 @@ const { login } = useUser();
         </h2>
 
         <form className="modal__form" onSubmit={handleSubmit}>
-
           <label className="modal__label">
             Username
             <input

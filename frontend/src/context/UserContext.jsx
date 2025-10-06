@@ -6,22 +6,22 @@ const UserContext = createContext(null);
 export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
 
-  // Optional: load user from localStorage on mount
+  // Load user from localStorage on mount
   useEffect(() => {
-    const token = localStorage.getItem("auth_token");
-    if (token) {
-      // If you want, you can decode JWT to get user info
-      setUser({ token }); // simple version
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser)); // restore full user object
     }
   }, []);
 
   const login = (userData) => {
+    // Example userData: { id, name, email, token }
+    localStorage.setItem("user", JSON.stringify(userData));
     setUser(userData);
   };
 
   const logout = () => {
-    localStorage.removeItem("auth_token");
-
+    localStorage.removeItem("user");
     setUser(null);
   };
 
@@ -32,5 +32,4 @@ export function UserProvider({ children }) {
   );
 }
 
-// Custom hook for easy access
 export const useUser = () => useContext(UserContext);

@@ -6,6 +6,14 @@
   gap: 10px; // slightly tighter spacing
 }
 
+.file-list{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  
+  
+}
+
 .file-list-title {
   font-size: 15px; // a little smaller
   font-weight: 500; // medium weight for subtle emphasis
@@ -16,23 +24,40 @@
 .file-item {
   display: flex;
   justify-content: flex-start;
+
+
   padding: 6px 8px;
   font-size: 13px;
-  color: #bfbfbf;
-  border-radius: 6px;
- 
+
+  border: none;
+   background: none;
   transition: all 0.2s ease;
 
   &:hover {
- 
     background-color: rgba(255, 255, 255, 0.03);
+  }
+
+  .file-link {
+    flex: 1;
+    min-width: 0; /* critical for ellipsis in flex */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: left;
+    background: none;
+    border: none;
+    
+  }
+
+  .delete-button{
+      background: none;
+    border: none;
   }
 }
 
-
 .file-item a {
   margin-left: 6px;
-  color: #ff6600;   // your orange accent
+  color: #ff6600; // your orange accent
   font-weight: 500;
   font-size: 13px;
   text-decoration: none;
@@ -40,6 +65,49 @@
   &:hover {
     text-decoration: underline; // keep link interaction clear
   }
+
+  /* --- header / logo --- */
+  .file-list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .file-logo {
+    width: 22px;
+    height: 22px;
+    color: #ff6600; /* match your orange accent */
+  }
+
+  /* --- list reset (safe) --- */
+  .file-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* --- filename "link" (button styled like a link) --- */
+  .file-link {
+    background: transparent;
+    border: 0;
+    margin-left: 6px;
+    color: #ff6600; /* your orange accent */
+    font-weight: 500;
+    font-size: 13px;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 0; /* keep layout tight */
+  }
+  .file-link:hover {
+    text-decoration: underline;
+  }
+
+  /* --- delete button --- */
+  
 }
-
-
