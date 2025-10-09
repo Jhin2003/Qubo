@@ -2,9 +2,6 @@
 from sqlalchemy.orm import Session
 from app.models import User
 from .utils.password_hash import hash_password
-
-
-
 from sqlalchemy.orm import Session
 from app.models import User
 from .utils.password_hash import hash_password

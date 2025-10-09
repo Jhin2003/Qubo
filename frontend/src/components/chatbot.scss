@@ -157,9 +157,13 @@ $gradient-end: #21222e; // 100%
   .no-messages {
     text-align: center;
     color: #888;
-    font-size: 24px;
+    font-size: 28px;
     font-weight: bold;
     padding: 20px;
+
+    .greeting-message{
+       color: #d7de09;     
+    }
   }
 
   /* ===================== Chat Input ===================== */
@@ -172,16 +176,29 @@ $gradient-end: #21222e; // 100%
       position: relative;
       width: 680px;
 
-      input {
-        background-color: #303030;
-        width: 100%;
-        padding: 16px 60px 16px 16px;
-        border-radius: 26px;
-        border: none;
-        outline: none;
-        box-shadow: none;
-        color: #fff;
-      }
+      textarea {
+      display: block;
+      width: 100%;
+      min-height: 48px;       // must match MIN_HEIGHT
+      max-height: 140px;      // must match MAX_HEIGHT
+      padding: 14px 56px 14px 16px; // leave room for send button
+      border-radius: 26px;
+      border: none;
+      outline: none;
+      background-color: #303030;
+      color: #fff;
+      font: inherit;
+      font-size: 12px;
+      line-height: 1.4;
+      resize: none;           // we control height via JS
+      overflow-y: hidden;     // toggled to auto by JS when needed
+      transition: background-color .2s ease;
+    }
+    
+    textarea::placeholder {
+      color: #bdbdbd;
+    }
+
 
       button {
         position: absolute;
@@ -205,6 +222,12 @@ $gradient-end: #21222e; // 100%
           background-color: #0066cc;
         }
       }
+    }
+     /* Optional: subtle scrollbar when textarea is at max height */
+    textarea::-webkit-scrollbar { width: 8px; }
+    textarea::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,.15);
+      border-radius: 8px;
     }
   }
 }

@@ -4,25 +4,29 @@ import hashlib
 from datetime import datetime
 from pathlib import Path
 
-import pdfplumber
+import pytesseract
+
+import fitz  # This is the Python binding for PyMuPDF
+from PIL import Image
 
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
 
+import pdfplumber
+# Specify the path to Tesseract (if necessary)
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 from langchain_experimental.text_splitter import SemanticChunker
 
 from .loaders import (
     get_embedder,
     get_vectorstore,
-    # if you have a BM25-only invalidator, prefer that; else use invalidate_all
-    # invalidate_bm25_cache, 
-   
 )
 
 
  # --- Embedding model ---
 embedding_model = get_embedder()
+
 
 
 # --- Helpers ---------------------------------------------------------------
@@ -39,6 +43,51 @@ def make_chunk_id(source_sha1: str, page: int, global_idx: int, page_idx: int) -
     """Generate a unique ID for each chunk."""
     core = f"{source_sha1[:12]}:p{page}:g{global_idx}:k{page_idx}"
     return hashlib.sha1(core.encode("utf-8")).hexdigest()
+
+
+def extract_images(pdf_path, page_num,  output_dir: str = "extracted_images"):
+   
+    out = Path(output_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    saved = []
+
+    page_index = page_num - 1  # fitz is 0-based
+
+    with fitz.open(pdf_path) as doc:
+        images = doc.get_page_images(page_index, full=True)
+        for i, img in enumerate(images, start=1):
+            xref = img[0]
+            base = doc.extract_image(xref)
+            img_bytes = base["image"]
+            ext = base.get("ext", "png")  # e.g., 'png', 'jpeg', 'jbig2', etc.
+
+            path = out / f"page_{page_num}-image_{i}.{ext}"
+            with open(path, "wb") as f:
+                f.write(img_bytes)
+            saved.append(str(path))
+
+    print(f"[DEBUG] Page {page_num}: saved {len(saved)} image(s) to {out}")
+    return saved  
+ 
+
+import io
+
+def ocr_page_embedded_images(doc: fitz.Document, page_index_zero_based: int) -> list[str]:
+    """
+    OCR all embedded raster images on a page (0-based) and return a list of non-empty texts.
+    """
+    texts = []
+    images = doc.get_page_images(page_index_zero_based, full=True)
+    for _, (xref, *_) in enumerate(images, start=1):
+        base = doc.extract_image(xref)
+        img_bytes = base["image"]
+
+        img = Image.open(io.BytesIO(img_bytes)).convert("L")
+        img = img.point(lambda px: 255 if px > 200 else 0)  # simple binarize
+        t = pytesseract.image_to_string(img, config="--psm 6").strip()
+        if t:
+            texts.append(t)
+    return texts
 
 
 # --- Main processor --------------------------------------------------------
@@ -59,12 +108,20 @@ def process_pdf_chunks(pdf_path: str, filename: str):
     output_path = output_dir / f"{filename}_chunks.jsonl"
 
     # --- Extract text per page ---
-    with pdfplumber.open(pdf_path) as pdf:
+    # --- Extract text per page ---
+    with pdfplumber.open(pdf_path) as pdf, fitz.open(pdf_path) as fdoc:
         page_texts = []
-        for i, page in enumerate(pdf.pages, start=1):
-            txt = page.extract_text(x_tolerance=1, y_tolerance=2) or ""
-            if txt.strip():
-                page_texts.append((i, txt))
+        for page_num, page in enumerate(pdf.pages, start=1):
+            # 1) selectable text
+            text = page.extract_text(x_tolerance=1, y_tolerance=2) or ""
+            if text.strip():
+                page_texts.append((page_num, text))
+
+            # 2) embedded images → OCR in-memory (no saving)
+            if page.images or len(fdoc.get_page_images(page_num - 1, full=True)) > 0:
+                ocr_texts = ocr_page_embedded_images(fdoc, page_num - 1)
+                for t in ocr_texts:
+                    page_texts.append((page_num, t))
 
     # --- Split text into chunks ---
     chunker = SemanticChunker(
@@ -73,6 +130,7 @@ def process_pdf_chunks(pdf_path: str, filename: str):
         breakpoint_threshold_amount=95,
         buffer_size=1,
         min_chunk_size=200,
+       
     )
 
     chunks_with_pages = []
@@ -132,3 +190,4 @@ def process_pdf_chunks(pdf_path: str, filename: str):
 
     print(f"FAISS index saved/updated at '{index_dir}' with {len(texts)} documents.")
     return len(chunks_with_pages), output_path
+
