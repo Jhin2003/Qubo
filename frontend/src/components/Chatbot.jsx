@@ -184,7 +184,7 @@ export default function Chatbot() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ask me"
+            placeholder="Ask Qubo"
             rows={1}
           />
 

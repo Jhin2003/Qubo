@@ -8,10 +8,10 @@ import os
 # Set CUDA_VISIBLE_DEVICES to use only GPUs 0 and 1
 os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
 
-
+llm = Ollama(model="mistral:instruct")
 
 async def generate_response(context: str, query: str):
-    llm = Ollama(model="mistral:instruct")
+    
 
     prompt = f"""
 SYSTEM: You are an academic assistant. Use ONLY the information found in the provided context chunks. 

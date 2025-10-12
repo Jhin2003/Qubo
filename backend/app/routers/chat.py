@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import List, Optional
 from app.services.retrieval_service import search_vectorstore
-from app.services.llm_service import generate_response, generate_question
+from app.services.llm_service import generate_response
 
 router = APIRouter()
 
