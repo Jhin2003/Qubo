@@ -15,7 +15,15 @@ export default function FileUploaderDialog({
   const inputRef = useRef(null);
   const dialogRef = useRef(null);
 
-  const accept = "application/pdf";
+  // This is already correctly configured for all file types
+  const accept = [
+    "application/pdf",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "text/plain",
+    ".pdf",
+    ".docx",
+    ".txt",
+  ].join(",");
 
   useEffect(() => {
     if (!open) return;
@@ -28,14 +36,22 @@ export default function FileUploaderDialog({
     if (open) dialogRef.current?.focus();
   }, [open]);
 
+  // --- CHANGE: Update validation logic to accept all specified types ---
   const addFiles = useCallback((fileList) => {
     if (!fileList || fileList.length === 0) return;
     const incoming = Array.from(fileList);
+    const allowedExtensions = [".pdf", ".docx", ".txt"];
+
     const filtered = incoming.filter((f) => {
-      const isPdf = f.type === accept || f.name.toLowerCase().endsWith(".pdf");
-      if (!isPdf) alert(`❌ Skipped non-PDF: ${f.name}`);
-      return isPdf;
+      const fileNameLower = f.name.toLowerCase();
+      // Check if the file name ends with any of the allowed extensions
+      const isValid = allowedExtensions.some((ext) => fileNameLower.endsWith(ext));
+      if (!isValid) {
+        alert(`❌ Skipped unsupported file type: ${f.name}`);
+      }
+      return isValid;
     });
+    
     setFiles((prev) => {
       const map = new Map(prev.map((p) => [`${p.name}-${p.size}-${p.lastModified}`, p]));
       for (const f of filtered) {
@@ -44,7 +60,7 @@ export default function FileUploaderDialog({
       }
       return Array.from(map.values());
     });
-  }, []);
+  }, []); // The 'accept' dependency is removed as it's constant
 
   const handleFileChange = (e) => {
     addFiles(e.target.files);
@@ -64,7 +80,6 @@ export default function FileUploaderDialog({
     files.forEach((f) => formData.append("files", f));
     const token = localStorage.getItem("auth_token");
 
-
     if (!token) {
       alert("You need to be logged in to upload files.");
       setIsUploading(false);
@@ -72,10 +87,10 @@ export default function FileUploaderDialog({
     }
 
     try {
-        const res = await fetch(uploadUrl, {
+      const res = await fetch(uploadUrl, {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${token}`,  // Attach the token to the Authorization header
+          "Authorization": `Bearer ${token}`,
         },
         body: formData,
       });
@@ -84,7 +99,7 @@ export default function FileUploaderDialog({
       alert("✅ Files uploaded successfully!");
       onUpload && onUpload(data);
       clearAll();
-      onClose && onClose(); // closes the dialog after success
+      onClose && onClose();
     } catch (err) {
       console.error("Error uploading files:", err);
       alert(`⚠️ An error occurred during upload: ${err.message}`);
@@ -105,6 +120,7 @@ export default function FileUploaderDialog({
 
   if (!open) return null;
 
+  // --- CHANGE: Update UI text to be more generic ---
   const dialog = (
     <div
       className="uploader-overlay"
@@ -119,7 +135,7 @@ export default function FileUploaderDialog({
         tabIndex={-1}
       >
         <div className="uploader-header">
-          <h3 id="uploader-title">Upload PDFs</h3>
+          <h3 id="uploader-title">Upload Files</h3>
           <button type="button" className="uploader-close" aria-label="Close" onClick={onClose}>
             ×
           </button>
@@ -135,7 +151,7 @@ export default function FileUploaderDialog({
             onDrop={handleDrop}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
-            aria-label="Drag and drop PDF files here or click to select"
+            aria-label="Drag and drop files here or click to select"
           >
             {files.length > 0 ? (
               <div className="file-list">
@@ -163,7 +179,7 @@ export default function FileUploaderDialog({
                 </div>
               </div>
             ) : (
-              <p>Drag and drop PDF files here, or click to select</p>
+              <p>Drag and drop files here, or click to select</p>
             )}
           </div>
 
@@ -179,7 +195,7 @@ export default function FileUploaderDialog({
 
         <div className="uploader-footer">
           <button type="button" onClick={() => inputRef.current?.click()} disabled={isUploading}>
-            Select PDFs
+            Select Files
           </button>
           <button type="button" onClick={clearAll} disabled={isUploading || files.length === 0}>
             Clear
@@ -192,7 +208,6 @@ export default function FileUploaderDialog({
     </div>
   );
 
-  // Render above the whole app
   return createPortal(dialog, document.body);
 }
 

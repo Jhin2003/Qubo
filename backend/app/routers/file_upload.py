@@ -8,7 +8,7 @@ from fastapi.responses import FileResponse
 from fastapi.security import OAuth2PasswordBearer
 from app.utils.jwt_auth import verify_access_token
 
-from app.services.file_service import process_pdf_chunks
+from app.services.file_service import process_file
 
 router = APIRouter()
 
@@ -51,22 +51,26 @@ async def get_file(filename: str):
 @router.post("/upload")
 async def upload_files(files: List[UploadFile] = File(...), current_user: dict = Depends(get_current_user)):
     results = []
-
+    
+    allowed_extensions = {".pdf", ".docx", ".txt"}
     for file in files:
         try:
             filename = file.filename  # Securely handle the filename if necessary
-
-            # Ensure file is a PDF
-            if not filename.endswith('.pdf'):
-                raise HTTPException(status_code=400, detail="Only PDF files are allowed")
-
+              
+            file_extension = Path(filename).suffix.lower()
+            
+            if file_extension not in allowed_extensions:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"File type '{file_extension}' is not allowed. Please upload PDF, DOCX, or TXT."
+                )
             # Save the uploaded file to the server
             file_path = UPLOAD_DIR / filename
             with open(file_path, "wb") as f:
                 shutil.copyfileobj(file.file, f)
 
             # Process the PDF file with your service (chunks processing, etc.)
-            num_chunks, output_path = process_pdf_chunks(str(file_path), filename)
+            num_chunks, output_path = process_file(str(file_path), filename)
 
             results.append({
                 "filename": filename,

@@ -38,7 +38,7 @@ Question:
 Context:
 {context}
 
-Return the answer in a concise, readable format with inline citations like [source, page]. Do NOT return JSON or extra commentary.
+Return the answer in a readable format with inline citations like [source, page]. Do NOT return JSON or extra commentary.
 """
     
     return llm(prompt)

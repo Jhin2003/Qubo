@@ -2,18 +2,18 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./filelist.scss";
 import { useFetch } from "../hooks/fetchWithAuth";
-import {  StethoscopeIcon, Trash2 } from "lucide-react"; // <-- library icons
+import { StethoscopeIcon, Trash2 } from "lucide-react"; // <-- library icons
 
 import { useSource } from "../context/SourceContext";
 import ItemActions from "./ItemActions";
-
 
 function FileList({ refreshToken = 0 }) {
   const [files, setFiles] = useState([]);
   const [actionLoading, setActionLoading] = useState({});
   const { fetchWithAuth } = useFetch();
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
-    const { setSource } = useSource();
+  const { source, setSource } = useSource();
 
   const fetchFiles = async () => {
     try {
@@ -26,6 +26,8 @@ function FileList({ refreshToken = 0 }) {
     } catch (error) {
       console.error("Error fetching files:", error);
       alert("Failed to fetch files.");
+    } finally {
+      setIsLoading(false); // <-- Set loading to false when done
     }
   };
 
@@ -63,18 +65,23 @@ function FileList({ refreshToken = 0 }) {
     <div className="file-list-container">
       <div className="file-list-header">
         <div className="brand">
-          
           <h2 className="file-list-title">Uploaded Files</h2>
         </div>
       </div>
 
-      <div className="file-list-scroll">
-        {files && files.length > 0 ? (
+        <div className="file-list-scroll">
+        {isLoading ? (
+          <p>Loading files...</p>
+        ) : files && files.length > 0 ? (
           <ul className="file-list">
             {files.map((file, index) => {
               const loading = !!actionLoading[file.filename];
+              const isActive = source === file.filename;
               return (
-                <li key={index} className="file-item">
+                <li
+                  key={index}
+                  className={`file-item ${isActive ? "file-item--active" : ""}`}
+                >
                   <button
                     className="file-link"
                     onClick={() => handleSourceClick(file.filename, 1)}
@@ -84,10 +91,10 @@ function FileList({ refreshToken = 0 }) {
                   </button>
 
                   <ItemActions
-    disabled={!!actionLoading[file.filename]}
-    onUse={() => setSource(file.filename)}
-    onDelete={() => handleDelete(file)}
-  />
+                    disabled={!!actionLoading[file.filename]}
+                    onUse={() => setSource(isActive ? null : file.filename)}
+                    onDelete={() => handleDelete(file)}
+                  />
                 </li>
               );
             })}

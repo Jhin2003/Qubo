@@ -330,9 +330,9 @@ async def search_vectorstore(
         # Strategy: Max Efficiency (Less is more)
         fetch_k = 10
         bm25_k = 10    # Fewer candidates needed
-        k = 3                # Answer likely in 2-3 chunks
+        k = 5                # Answer likely in 2-3 chunks
         use_hybrid = True   # Skip BM25 fusion for speed
-        min_ce_score = 0.7   # Stricter relevance filter
+        min_ce_score = 0.3   # Stricter relevance filter
         # Pure Dense (semantic) search
 
         print("[ADAPTIVE] Using Easy Mode: Dense Search Only (k=3), High Efficiency")
@@ -341,9 +341,9 @@ async def search_vectorstore(
         # Strategy: Balanced (Hybrid RAG) - Use existing default parameters
         fetch_k = 40
         bm25_k = 40    # Standard candidates
-        k = 5                # Standard chunks
+        k = 10                # Standard chunks
         use_hybrid = True    # Use Hybrid (Default alpha=0.7)
-        min_ce_score = 0.7 # Rely on top-k, no threshold
+        min_ce_score = 0.2 # Rely on top-k, no threshold
    
 
         print("[ADAPTIVE] Using Medium Mode: Hybrid RAG (k=5), Balanced Accuracy")
@@ -355,7 +355,7 @@ async def search_vectorstore(
         k = 10               # Max number of chunks to ensure synthesis
         use_hybrid = True    # Use Hybrid Search
         alpha_dense = 0.5    # Evenly balance semantic (Dense) and keyword (BM25) recall
-        min_ce_score = 0.7   # Do not discard *any* relevant candidate before final top-k
+        min_ce_score = 0.0   # Do not discard *any* relevant candidate before final top-k
 
         print("[ADAPTIVE] Using Hard Mode: Deep Hybrid Search (k=10), Max Recall")
 
