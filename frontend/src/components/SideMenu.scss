@@ -42,6 +42,18 @@ $expanded-w: 280px;
      
     }
   }
+  
+  .upload-pdf-button {
+    width: 40%;
+    height: 26px;
+    background: #5BB5AE;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    &:hover { background: #489992; }
+  }
 
   // Reveal labels when expanded by click or hover intent
   &.open .mi-label,

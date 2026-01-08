@@ -37,6 +37,15 @@
     background-color: rgba(255, 255, 255, 0.03);
   }
 
+  &--active {
+    background-color: #e0e7ff; // Example: a light blue highlight
+
+    .file-link {
+      font-weight: 600; // Make the text bold
+      color: #4338ca; // Example: a darker blue for the text
+    }
+  }
+
   .file-link {
     flex: 1;
     min-width: 0; /* critical for ellipsis in flex */

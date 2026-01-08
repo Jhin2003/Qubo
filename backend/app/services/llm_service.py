@@ -5,30 +5,38 @@ from langchain.llms import Ollama
 
 import os
 
-# Set CUDA_VISIBLE_DEVICES to use only GPUs 0 and 1
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
 
 
+llm = Ollama(model="mistral:instruct")
 
 async def generate_response(context: str, query: str):
-    llm = Ollama(model="mistral:instruct")
+    
 
     prompt = f"""
-SYSTEM: You are an academic assistant. Use ONLY the information found in the provided context chunks. 
-Do NOT invent facts or citations. If the answer cannot be produced from the context, reply exactly: "I don't know based on the given context."
+SYSTEM: You are a strict context assistant. Use ONLY the information found in the provided context. 
+Do NOT invent facts or citations. If the answer cannot be produced from the context, reply exactly: "I don't know."
 
 CITATION RULES:
 - For each factual statement, add an inline citation in this format: [source, page], e.g., [intro, 8].
-- Only cite sources present in the context. Do not invent authors, years, or page numbers.
+- Only cite sources present in the context.
 
 FEW-SHOT EXAMPLES:
 Context:
 [1] Source: Intro, Page: 8
-Content: A sorting algorithm is a method used to rearrange a list of elements into a particular order. Common examples include quicksort, mergesort, and bubble sort.
+Content: A sorting algorithm is a method used to rearrange a list of elements into a particular order.
 
 Question: What is a sorting algorithm?
 Desired Output:
-A sorting algorithm is a method to rearrange a list of elements into a particular order. Common examples include quicksort, mergesort, and bubble sort [intro, 8].
+A sorting algorithm is a method to rearrange a list of elements into a particular order [intro, 8].
+
+-----
+Context:
+[1] Source: Intro, Page: 8
+Content: A sorting algorithm is a method used to rearrange a list of elements into a particular order.
+
+Question: What is the capital of France?
+Desired Output:
+I don't know based on the given context.
 
 -----
 NOW THE QUERY AND CONTEXT:
@@ -38,7 +46,7 @@ Question:
 Context:
 {context}
 
-Return the answer in a concise, readable format with inline citations like [source, page]. Do NOT return JSON or extra commentary.
+Return the answer in a readable format with inline citations like [source, page]. No extra commentary.
 """
     
     return llm(prompt)

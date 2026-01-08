@@ -74,7 +74,7 @@ export default function SideMenu() {
       {(open || hoverOpen) && showContent && (
         <>
           <FileList refreshToken={refreshToken} />
-          <button onClick={() => setOpenDialog(true)}>Upload PDFs</button>
+          <button className="upload-pdf-button"onClick={() => setOpenDialog(true)}>Upload Files</button>
         </>
       )}
 

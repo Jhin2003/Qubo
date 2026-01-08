@@ -21,8 +21,8 @@
   place-items: center;
 
   background:
-    radial-gradient(1200px 600px at 10% -10%, rgba(215, 222, 9, 0.12), transparent 60%),
-    radial-gradient(1200px 600px at 110% 110%, rgba(215, 222, 9, 0.10), transparent 60%),
+    radial-gradient(1200px 600px at 10% -10%, rgba(91, 181,  174, 0.12), transparent 60%),
+    radial-gradient(1200px 600px at 110% 110%, rgba(97, 213, 203, 0.12), transparent 60%),
     rgba(0,0,0,0.58);
   backdrop-filter: blur(5px);
   animation: uploader-fade 200ms ease-out both;
@@ -82,7 +82,7 @@
   font-size: clamp(18px, 2.4vw, 22px);
   font-weight: 800;
   letter-spacing: .3px;
-  background: linear-gradient(90deg, var(--accent), #fff);
+  background: #5BB5AE;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -247,16 +247,16 @@
   border: none;
   color: #0a0b0c;
   background:
-    radial-gradient(200% 100% at 50% 0%, rgba(255,255,255,0.32), transparent 60%),
-    linear-gradient(90deg, var(--accent), #e9f207 60%, var(--accent-2));
+       #5BB5AE;
   box-shadow:
-    0 12px 30px rgba(215,222,9,0.25),
+    0 12px 30px #23403e,
     inset 0 -2px 0 rgba(0,0,0,0.18);
 
   &:hover {
     transform: translateY(-1px);
     box-shadow:
-      0 16px 34px rgba(215,222,9,0.32),
+      0 16px 34px #306a65,
+      489992,
       inset 0 -2px 0 rgba(0,0,0,0.2);
     filter: saturate(1.04);
   }

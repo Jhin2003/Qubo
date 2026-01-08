@@ -1,8 +1,8 @@
 /* AuthModal.scss */
 
 :root {
-  --modal-accent: #d7de09;        /* your brand accent */
-  --modal-accent-2: #9aa30c;      /* darker accent */
+  --modal-accent: #5BB5AE;       /* your brand accent */
+  --modal-accent-2: #489992;      /* darker accent */
   --modal-bg: #0e0f12;            /* app backdrop base */
   --panel-bg: rgba(32, 34, 39, 0.72);
   --panel-border: rgba(255, 255, 255, 0.08);
@@ -22,8 +22,8 @@
   place-items: center;
 
   background:
-    radial-gradient(1200px 600px at 10% -10%, rgba(215, 222, 9, 0.12), transparent 60%),
-    radial-gradient(1200px 600px at 110% 110%, rgba(215, 222, 9, 0.10), transparent 60%),
+    radial-gradient(1200px 600px at 10% -10%, rgba(91, 181,  174, 0.12), transparent 60%),
+    radial-gradient(1200px 600px at 110% 110%, rgba(97, 213, 203, 0.12), transparent 60%),
     rgba(0, 0, 0, 0.58);
   backdrop-filter: blur(4px);
   animation: modal-fade-in 220ms ease-out both;
@@ -161,16 +161,16 @@
   color: #0a0b0c;
   background:
     radial-gradient(200% 100% at 50% 0%, rgba(255,255,255,0.32), transparent 60%),
-    linear-gradient(90deg, var(--modal-accent), #e9f207 60%, var(--modal-accent-2));
+    linear-gradient(90deg, var(--modal-accent), #5BB5AE 60%, var(--modal-accent-2));
   box-shadow:
-    0 12px 30px rgba(215,222,9,0.25),
+    0 12px 30px #294e4a,
     inset 0 -2px 0 rgba(0,0,0,0.18);
   transition: transform 120ms ease, box-shadow 160ms ease, filter 120ms ease;
 
   &:hover {
     transform: translateY(-1px);
     box-shadow:
-      0 16px 34px rgba(215,222,9,0.32),
+      0 16px 34px #306a65,
       inset 0 -2px 0 rgba(0,0,0,0.2);
     filter: saturate(1.05);
   }
@@ -200,7 +200,7 @@
   transition: color 120ms ease, text-shadow 120ms ease;
 
   &:hover {
-    color: #f0f46c;
+    color: #5BB5AE;
     text-shadow: 0 0 10px rgba(215,222,9,0.3);
   }
 }

@@ -12,8 +12,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from rank_bm25 import BM25Okapi
 import numpy as np
 
-from .loaders import get_vectorstore, get_cross_encoder, get_embedder
-from app.services.llm_service import check_query;
+from .loaders import get_vectorstore, get_cross_encoder, get_embedder, get_complexity_classifier
+
 
 
 # --- Context shaping helpers ---
@@ -301,7 +301,7 @@ async def search_vectorstore(
     vectorstore = get_vectorstore(allow_unsafe=True)
 
     all_docs = list(vectorstore.docstore._dict.values())
-    embedder = get_embedder()
+   
 
     # If user asks to filter BM25 by source, build BM25 over that subset only;
     # but avoid rebuilding the dense FAISS index per call (expensive).
@@ -312,6 +312,53 @@ async def search_vectorstore(
         bm25_source_iter = bm25_docs
     else:
         bm25_source_iter = all_docs
+
+
+    #check query complexity
+    classifier = get_complexity_classifier()
+    query_complexity = classifier(query)
+    print(query_complexity)
+    best_result = max(query_complexity, key=lambda x: x['score'])
+
+# 2. Extract the label and score
+    predicted_label = best_result['label']
+    confidence_score = best_result['score']
+
+    print(f"Predicted Label: {predicted_label}, Confidence Score: {confidence_score}")
+
+    if predicted_label == 'LABEL_0':
+        # Strategy: Max Efficiency (Less is more)
+        fetch_k = 10
+        bm25_k = 10    # Fewer candidates needed
+        k = 5                # Answer likely in 2-3 chunks
+        use_hybrid = True   # Skip BM25 fusion for speed
+        min_ce_score = 0.3   # Stricter relevance filter
+        # Pure Dense (semantic) search
+
+        print("[ADAPTIVE] Using Easy Mode: Dense Search Only (k=3), High Efficiency")
+
+    elif predicted_label == 'LABEL_1':
+        # Strategy: Balanced (Hybrid RAG) - Use existing default parameters
+        fetch_k = 40
+        bm25_k = 40    # Standard candidates
+        k = 10                # Standard chunks
+        use_hybrid = True    # Use Hybrid (Default alpha=0.7)
+        min_ce_score = 0.2 # Rely on top-k, no threshold
+   
+
+        print("[ADAPTIVE] Using Medium Mode: Hybrid RAG (k=5), Balanced Accuracy")
+
+    elif predicted_label == 'LABEL_2':
+        # Strategy: Max Accuracy (High Recall, Deep Search)
+        fetch_k = 80
+        bm25_k = 80,      # Retrieve more candidates for CE
+        k = 10               # Max number of chunks to ensure synthesis
+        use_hybrid = True    # Use Hybrid Search
+        alpha_dense = 0.5    # Evenly balance semantic (Dense) and keyword (BM25) recall
+        min_ce_score = 0.0   # Do not discard *any* relevant candidate before final top-k
+
+        print("[ADAPTIVE] Using Hard Mode: Deep Hybrid Search (k=10), Max Recall")
+
 
     # optional stopword stripping (disabled by default)
     if should_strip_stopwords:
