@@ -13,7 +13,7 @@ export default function Chatbot() {
   const MIN_HEIGHT = 48; // px
   const { source, clearSource } = useSource();
 
-   const [input, setInput] = useState("");
+  const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   // ✅ Initialize from localStorage immediately (no mount flicker)
@@ -34,8 +34,6 @@ export default function Chatbot() {
     el.style.height = `${Math.max(next, MIN_HEIGHT)}px`;
     el.style.overflowY = el.scrollHeight > MAX_HEIGHT ? "auto" : "hidden";
   }, [input]);
-
- 
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -173,7 +171,9 @@ export default function Chatbot() {
       {/* Chat input */}
       {messages.length === 0 && (
         <div className="no-messages">
-          <p className="greeting-message"> Hello {user?.username}. I'm Qubo </p>
+          <p className="greeting-message">
+            Hello{user?.username && ` ${user.username}.`} I'm Qubo
+          </p>
         </div>
       )}
 

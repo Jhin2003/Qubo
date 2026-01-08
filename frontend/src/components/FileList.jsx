@@ -69,7 +69,7 @@ function FileList({ refreshToken = 0 }) {
         </div>
       </div>
 
-        <div className="file-list-scroll">
+      <div className="file-list-scroll">
         {isLoading ? (
           <p>Loading files...</p>
         ) : files && files.length > 0 ? (

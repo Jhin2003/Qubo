@@ -201,7 +201,7 @@ export default function FileUploaderDialog({
             Clear
           </button>
           <button type="button" onClick={handleSendAll} disabled={isUploading || files.length === 0}>
-            {isUploading ? "Uploading..." : "Send All"}
+            {isUploading ? "Uploading..." : files.length === 1 ? "Send" : "Send All"}
           </button>
         </div>
       </div>
