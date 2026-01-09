@@ -1,0 +1,57 @@
+[
+  {
+    "query": "What distance did the Lapita expansion cover from the Admiralties in the west to Samoa in the east?",
+    "reference_answer": "about 5000 kilometers",
+    "generated_answer": "The Lapita expansion covered approximately 3,000 kilometers (1,864 miles) from the Admiralty Islands in the west to Samoa in the east. This expansion took place around 1500 BCE and marked the spread of early Austronesian-speaking peoples across Island Southeast Asia and the Pacific.",
+    "judge_scores": {
+      "correctness": 5,
+      "faithfulness": 5,
+      "completeness": 5,
+      "verdict": "The generated answer accurately reflects the provided text."
+    }
+  },
+  {
+    "query": "What are the 'soul boats' found in different archaeological sites in the Philippines?",
+    "reference_answer": "wooden coffins shaped like boats",
+    "generated_answer": "The 'soul boats' found in different archaeological sites in the Philippines are decorative covers on burial jars that feature a ship design with figures of two humans riding in it. These are considered as the oldest evidence linking spirits or souls with watercraft. This artifact has been discovered in various archaeological sites, such as Tabon Cave in Palawan and Callao Cave in Cagayan Valley. The soul boats suggest that ancient Filipinos believed in sea voyages or journeys for the dead.",
+    "judge_scores": {
+      "correctness": 5,
+      "faithfulness": 5,
+      "completeness": 5,
+      "verdict": "The generated answer is fully accurate and faithful to the provided context."
+    }
+  },
+  {
+    "query": "What is the condition of the rocks on the beach",
+    "reference_answer": "indented like dry wood, and their points are very sharp like those of swords and spears",
+    "generated_answer": "The text does not provide information on the condition of the rocks on the beach.",
+    "judge_scores": {
+      "correctness": 5,
+      "faithfulness": 5,
+      "completeness": 5,
+      "verdict": "The response is accurate and complete. It provides a well-organized summary of the archaeological findings in Callao Cave, Cagayan, Philippines."
+    }
+  },
+  {
+    "query": "What territories were given to the sons based on their eye colors?",
+    "reference_answer": "The son with black eyes got Luuk, the son with green eyes got the Taglibi, the son with brown eyes got Talipaw, the son with blue eyes got the trading center, the son with greenish eyes got Lipid, the son with white eyes got Parang, and the son with yellow eyes got Sawaki.",
+    "generated_answer": "According to the provided context, the territories were divided as follows: Luuk was given to the son with black eyes; the Taglibi to the son with green eyes; Talipaw went to the son with brown eyes. The boy with blue eyes was given the trading center (Now Jolo town) while the son with the greenish eyes got Lipid and the son with the white eyes Parang. Finally, the son with the yellow eyes received Sawaki.",
+    "judge_scores": {
+      "correctness": 4,
+      "faithfulness": 5,
+      "completeness": 5,
+      "verdict": "The generated answer is mostly correct and highly faithful to the context provided. It has a few minor inconsistencies with the reference but overall, it provides a comprehensive response."
+    }
+  },
+  {
+    "query": "What type of pottery was used after the improvement of seafaring technology around 3000 BC?",
+    "reference_answer": "plain or red-slipped pottery",
+    "generated_answer": "After the improvement of seafaring technology around 3000 BC, pottery used in Island Southeast Asia began to show a hitherto-unprecedented level of similarity in design and manufacture across a huge region that includes coastal regions of the Sunda islands, Borneo, Sulawesi, and the Philippines. This suggests a great deal of inter-island travel and trade during this time period. However, specific types of pottery used during this period are not explicitly mentioned in the provided text. For more detailed information on ancient pottery in Island Southeast Asia, further research is recommended.",
+    "judge_scores": {
+      "correctness": 4,
+      "faithfulness": 5,
+      "completeness": 5,
+      "verdict": "The generated answer is mostly correct and faithful to the context. It provides a detailed description of various aspects related to the article."
+    }
+  }
+]
