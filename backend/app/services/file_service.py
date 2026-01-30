@@ -12,10 +12,12 @@ import fitz  # PyMuPDF
 from PIL import Image
 import pdfplumber
 import docx2pdf  # <-- Add this for DOCX conversion
-
+from langchain_text_splitters import TokenTextSplitter
 # --- LangChain ---
-from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS
 from langchain_experimental.text_splitter import SemanticChunker
+from app.services.loaders import clear_vectorstore_cache
+from langchain_community.vectorstores.utils import DistanceStrategy
 
 # --- Local Imports ---
 from .loaders import get_embedder, get_vectorstore
@@ -115,12 +117,31 @@ def process_file(file_path: str, filename: str):
             breakpoint_threshold_amount=95,
             min_chunk_size=200,
         )
+
+        token_splitter = TokenTextSplitter(
+            chunk_size=240,       # 250 tokens (leaving tiny buffer for 256 limit)
+            chunk_overlap=50,     # ~20% overlap for context
+            encoding_name="cl100k_base" # OpenAI's fast tokenizer (standard for generic token counting)
+        )
+
         chunks_with_pages = []
+        
         for page_num, page_text in page_texts:
-            page_chunks = chunker.split_text(page_text)
-            for idx, ch in enumerate(page_chunks, start=1):
-                chunks_with_pages.append((page_num, idx, ch))
-        print(f"Created {len(chunks_with_pages)} chunks for '{filename}'")
+            # Step A: Attempt Semantic Split first
+            try:
+                semantic_chunks = chunker.split_text(page_text)
+            except Exception as e:
+                print(f"Semantic chunking warning on page {page_num}: {e}")
+                semantic_chunks = [page_text]
+
+            # Step B: Refine with Token Splitter
+            for sem_chunk in semantic_chunks:
+                # We blindly pass every semantic chunk through the token splitter.
+                # If it's small, it stays 1 chunk. If it's big, it gets cut safely.
+                final_sub_chunks = token_splitter.split_text(sem_chunk)
+                
+                for sub in final_sub_chunks:
+                    chunks_with_pages.append((page_num, len(chunks_with_pages)+1, sub))
 
         # --- Prepare texts and metadata (using original file for hash) ---
         source_sha1 = sha1_of_file(file_path) # Hash the original file
@@ -140,7 +161,7 @@ def process_file(file_path: str, filename: str):
             vectorstore.add_texts(texts=texts, metadatas=metadatas)
         else:
             print(f"Creating a new FAISS index at '{index_dir}'")
-            vectorstore = FAISS.from_texts(texts=texts, embedding=embedding_model, metadatas=metadatas, normalize_L2=True)
+            vectorstore = FAISS.from_texts(texts=texts, embedding=embedding_model, metadatas=metadatas, distance_strategy=DistanceStrategy.COSINE)
         
         vectorstore.save_local(str(index_dir))
 
@@ -157,3 +178,68 @@ def process_file(file_path: str, filename: str):
         if temp_pdf_path and os.path.exists(temp_pdf_path):
             os.remove(temp_pdf_path)
             print(f"Cleaned up temporary file: {temp_pdf_path}")
+
+
+
+def delete_file_data(filename: str, upload_dir: Path) -> dict:
+    """
+    Completely removes a file's existence from the system:
+    1. Deletes the physical PDF/DOCX from 'data_store/pdfs/'
+    2. Deletes the JSONL chunks file from 'data_store/chunked_output/'
+    3. Scans FAISS, finds all vectors with metadata source==filename, and removes them.
+    4. Saves the cleaned FAISS index back to disk.
+    """
+    base_dir = Path("data_store")
+    index_dir = base_dir / "vector_database"
+    output_dir = base_dir / "chunked_output"
+    
+    # 1. Define paths
+    file_path = upload_dir / filename
+    jsonl_path = output_dir / f"{Path(filename).stem}_chunks.jsonl"
+    
+    report = {
+        "file_deleted": False,
+        "jsonl_deleted": False,
+        "vectors_deleted": 0
+    }
+
+    # 2. Delete Physical Files
+    if file_path.exists():
+        file_path.unlink()
+        report["file_deleted"] = True
+    
+    if jsonl_path.exists():
+        jsonl_path.unlink()
+        report["jsonl_deleted"] = True
+
+    # 3. Clean FAISS Vector Store
+    # We must load the store to find which IDs belong to this file
+    try:
+        if index_dir.exists():
+            vectorstore = get_vectorstore(allow_unsafe=True)
+            
+            # FAISS (LangChain wrapper) stores documents in a docstore dict.
+            # We iterate to find IDs where metadata['source'] matches our filename.
+            ids_to_delete = []
+            for doc_id, doc in vectorstore.docstore._dict.items():
+                if doc.metadata.get("source") == filename:
+                    ids_to_delete.append(doc_id)
+            
+            if ids_to_delete:
+                # Delete from memory
+                isDeleted = vectorstore.delete(ids_to_delete)
+                print(isDeleted)
+                # Save changes to disk
+                vectorstore.save_local(str(index_dir))
+                report["vectors_deleted"] = len(ids_to_delete)
+                print(f"Removed {len(ids_to_delete)} vectors for '{filename}' from FAISS.")
+                clear_vectorstore_cache()
+            else:
+                print(f"No vectors found in FAISS for '{filename}'.")
+         
+                
+    except Exception as e:
+        print(f"Error cleaning FAISS: {e}")
+        # We don't raise here because we still want to report that files were deleted
+    
+    return report

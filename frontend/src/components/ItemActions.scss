@@ -64,6 +64,15 @@
   cursor: pointer;
   transition: background-color .12s ease, color .12s ease;
 
+  &.is-active {
+    color: #5BB5AE; // Your brand teal
+    background: rgba(91, 181, 174, 0.05);
+    
+    &:hover {
+      background: rgba(91, 181, 174, 0.1);
+    }
+  }
+
   &:hover { background: var(--hover); }
   &:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(255,102,0,.25); }
   &:disabled { opacity: .6; cursor: not-allowed; }

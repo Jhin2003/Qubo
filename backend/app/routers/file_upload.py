@@ -90,20 +90,37 @@ async def upload_files(files: List[UploadFile] = File(...), current_user: dict =
 
 
 
+
+
+# ... imports ...
+from app.services.file_service import process_file, delete_file_data # Import the new function
+
+# ... (Previous code) ...
+
 @router.delete("/files/{filename}")
 async def delete_file(filename: str, current_user: dict = Depends(get_current_user)):
-     # Prevent path traversal and ensure it's under UPLOAD_DIR
+    # 1. Security: Prevent path traversal
     upload_dir_resolved = UPLOAD_DIR.resolve()
     file_path = (UPLOAD_DIR / filename).resolve()
+    
     if file_path.parent != upload_dir_resolved:
         raise HTTPException(status_code=400, detail="Invalid filename")
 
-    if not file_path.exists() or not file_path.is_file():
-        raise HTTPException(status_code=404, detail="File not found")
+    # 2. Check existence (Optional: logic is handled in service, but good for 404s)
+    # Note: We loosen this check slightly in case the file is gone but vectors remain.
+    # But strictly speaking, if the user asks to delete "X", and "X" isn't there, 404 is correct.
+    if not file_path.exists():
+         raise HTTPException(status_code=404, detail="File not found")
 
     try:
-        file_path.unlink()
+        # 3. Call the service to handle the complex cleanup
+        report = delete_file_data(filename, UPLOAD_DIR)
+        
+        return {
+            "filename": filename, 
+            "status": "deleted",
+            "details": report
+        }
+        
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to delete file: {e}")
-
-    return {"filename": filename, "deleted": True}
+        raise HTTPException(status_code=500, detail=f"Failed to delete file: {str(e)}")

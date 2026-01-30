@@ -5,11 +5,12 @@ import torch
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from sentence_transformers import CrossEncoder
+from langchain_community.vectorstores.utils import DistanceStrategy
+
 
 from transformers import pipeline
 
 # 1. Define the model name
-
 
 EMBED_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 CE_MODEL_NAME = "BAAI/bge-reranker-base"
@@ -35,7 +36,8 @@ def get_vectorstore(allow_unsafe: bool = False):
     return FAISS.load_local(
         INDEX_DIR,
         emb,
-        allow_dangerous_deserialization=bool(allow_unsafe)
+        allow_dangerous_deserialization=bool(allow_unsafe),
+        distance_strategy=DistanceStrategy.COSINE
     )
 
 @lru_cache(maxsize=1)
@@ -83,6 +85,12 @@ def warmup():
     except Exception as e:
         print(f"Skipping FAISS warmup: {e}")
 
+
+def clear_vectorstore_cache():
+    """Forces the system to reload FAISS from disk next time it's asked."""
+    print("[SYSTEM] Clearing VectorStore Memory Cache...")
+    # This clears the specific cache for the get_vectorstore function
+    get_vectorstore.cache_clear()
 
 def invalidate_all():
     get_vectorstore.cache_clear()

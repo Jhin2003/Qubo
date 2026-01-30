@@ -1,14 +1,18 @@
 import { useEffect, useRef, useState } from "react";
-import FileUploaderDialog from "./FileUploaderDialog"; // <- ensure correct path/file name
+
 import "./SideMenu.scss";
 import FileList from "./FileList";
 
+
+
 export default function SideMenu() {
   const [open, setOpen] = useState(false);
-  const [openDialog, setOpenDialog] = useState(false);
+
   const [refreshToken, setRefreshToken] = useState(0);
   const [hoverOpen, setHoverOpen] = useState(false); // Used to trigger hover expansion
   const [showContent, setShowContent] = useState(false); // Control when content is displayed
+
+  const [isListLoading, setIsListLoading] = useState(false);
 
   const asideRef = useRef(null);
   const hoverTimerRef = useRef(null);
@@ -17,8 +21,8 @@ export default function SideMenu() {
 
   // Handle mouse enter event to trigger hover expansion
   const onMouseEnter = (e) => {
-    if (open) return;  // Don't trigger hover if already open
-    if (e.target.closest(".menu-toggle")) return;  // Skip the button hover
+    if (open) return; // Don't trigger hover if already open
+    if (e.target.closest(".menu-toggle")) return; // Skip the button hover
     clearHoverTimer();
     hoverTimerRef.current = setTimeout(() => setHoverOpen(true), 200); // Expand after 200ms delay
   };
@@ -26,7 +30,7 @@ export default function SideMenu() {
   // Handle mouse leave event to collapse sidebar
   const onMouseLeave = () => {
     clearHoverTimer();
-    setHoverOpen(false);  // Collapse sidebar immediately when mouse leaves
+    setHoverOpen(false); // Collapse sidebar immediately when mouse leaves
   };
 
   // Clear the hover timer on cleanup
@@ -66,28 +70,25 @@ export default function SideMenu() {
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      <button className="menu-toggle" onClick={() => setOpen((v) => !v)} aria-label="Toggle menu">
+      <button
+        className="menu-toggle"
+        onClick={() => setOpen((v) => !v)}
+        aria-label="Toggle menu"
+      >
         <img src="/logos/menu-burger.svg" alt="menu" />
       </button>
 
       {/* Only render content once the hover expansion is completed */}
       {(open || hoverOpen) && showContent && (
         <>
-          <FileList refreshToken={refreshToken} />
-          <button className="upload-pdf-button"onClick={() => setOpenDialog(true)}>Upload Files</button>
+          <FileList
+            refreshToken={refreshToken}
+            onLoadingChange={setIsListLoading}
+          />
         </>
       )}
 
-      {/* The dialog will render in a portal above everything */}
-      <FileUploaderDialog
-        open={openDialog}
-        onClose={() => setOpenDialog(false)}  
-        uploadUrl="http://localhost:8000/upload"
-        onUpload={(data) => {
-          console.log("Uploaded:", data);
-          handleUploaded();
-        }}
-      />
+    
     </aside>
   );
 }

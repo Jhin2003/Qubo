@@ -32,6 +32,7 @@ security = HTTPBearer(auto_error=False)
 @router.post("/register", response_model=UserOut, status_code=201)
 def register(body: UserCreate, db: Session = Depends(get_db)):
     if get_user_by_email(db, body.email):
+        print("done")
         raise HTTPException(status_code=400, detail="Email already registered")
     user = create_user(db, body.username, body.email,  body.password)
     return user

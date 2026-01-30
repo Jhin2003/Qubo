@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
+
+import toast from 'react-hot-toast';
 import "./FileUploaderDialog.scss";
 
 export default function FileUploaderDialog({
@@ -74,6 +76,7 @@ export default function FileUploaderDialog({
   const clearAll = () => setFiles([]);
 
   const handleSendAll = async () => {
+    const toastId = toast.loading('Uploading files...');
     if (files.length === 0 || isUploading) return;
     setIsUploading(true);
     const formData = new FormData();
@@ -96,15 +99,17 @@ export default function FileUploaderDialog({
       });
       if (!res.ok) throw new Error(`Upload failed with status ${res.status}`);
       const data = await safeJson(res);
-      alert("✅ Files uploaded successfully!");
+     
       onUpload && onUpload(data);
       clearAll();
       onClose && onClose();
     } catch (err) {
       console.error("Error uploading files:", err);
-      alert(`⚠️ An error occurred during upload: ${err.message}`);
+      
+      toast.error('Upload failed. Please try again.', { id: toastId });
     } finally {
       setIsUploading(false);
+      toast.success(`Uploaded ${files.length} ${files.length > 1 ? 'files' : 'file'} successfully`, { id: toastId });
     }
   };
 

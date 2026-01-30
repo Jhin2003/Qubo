@@ -6,6 +6,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routers import chat, file_upload, login
 from app.services.loaders import warmup
 
+from dotenv import load_dotenv
+load_dotenv()  # <-- Add this at the very top!
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Runs once per worker when the process starts

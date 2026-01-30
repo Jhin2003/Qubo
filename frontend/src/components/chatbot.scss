@@ -3,20 +3,24 @@ $gradient-middle: #1f1f1f; // 50%
 $gradient-end: #21222e; // 100%
 
 .chat-container {
+ -webkit-font-smoothing: antialiased;
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 14px;
-  background-color: #212121;
+  padding: 16px;
 
-  background: linear-gradient(
-    to bottom,
-    $gradient-start 0%,
-    $gradient-middle 50%,
-    $gradient-end 100%
+  // A very deep slate, slightly darker than your sidebar (#1c1f24)
+  background-color: #0e1013;
+
+  // Optional: subtle texture pattern if you want it less flat
+  background-image: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.015),
+    transparent
   );
 
-  .brand-name {
+  color: #e0e0e0;
+  Your existing text color .brand-name {
     font-size: 1.2rem;
     margin-bottom: 10px;
     color: white;
@@ -31,7 +35,7 @@ $gradient-end: #21222e; // 100%
     flex-direction: column;
 
     &.has-messages {
-      flex: 1;// fixed height when there are messages
+      flex: 1; // fixed height when there are messages
     }
 
     &.empty {
@@ -47,46 +51,98 @@ $gradient-end: #21222e; // 100%
       overflow-wrap: anywhere; // modern replacement
       white-space: pre-wrap;
 
+      /* --- NEW: Content Wrapper for Text & Citations --- */
+      .message-content {
+        line-height: 1.8; /* Good spacing for reading */
+
+        /* The Citation "Pill" Style */
+        .citation-pill {
+          display: inline-block;
+          font-size: 0.7rem; /* Smaller text */
+          font-weight: 500;
+          color: #5bb5ae; /* Muted grey */
+          background-color: rgba(255, 255, 255, 0.08); /* Subtle background */
+          padding: 2px 4px;
+          border-radius: 6px; /* Rounded edges */
+          margin: 0 3px;
+          text-decoration: none;
+          transform: translateY(-2px); /* Slight lift (Superscript effect) */
+
+          transition: all 0.2s ease;
+          border: 1px solid rgba(91, 181, 174, 0.2);
+          border-radius: 6px;
+          vertical-align: middle;
+          cursor: pointer;
+          transition: all 0.2s ease;
+
+          &:hover {
+            background: rgba(91, 181, 174, 0.2);
+            transform: translateY(-1px);
+          }
+        }
+      }
+
       &.user {
-        background-color: #303030;
+        /* NEW: Glassy Teal Style */
+        background: rgba(91, 181, 174, 0.10); /* 15% opacity Teal */
+        border: 1px solid rgba(91, 181, 174, 0.25); /* Subtle border */
+        color: #e9ecf1; /* Light text */
+
+        /* Polish */
+        backdrop-filter: blur(5px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-radius: 18px 18px 4px 18px;
         align-self: flex-end;
         margin-left: auto;
         font-size: 1rem;
-        line-height: 1.5;
         max-width: 70%;
       }
 
       &.bot {
         align-self: flex-start;
         font-size: 1rem;
-        line-height: 1.5;
         max-width: 100%;
       }
+
       ul {
         list-style: none;
       }
 
       .sources {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 10px;
+        margin-top: 15px;
+
         strong {
           color: #ffffff;
-          font-size: 14px;
-          margin-top: 12px;
+          font-size: 13px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          opacity: 0.8;
         }
 
-        margin-top: 8px;
+        ul {
+          margin-top: 8px;
+        }
+
         .source-link {
-          font-size: 8px;
-          background: none; /* Remove background */
-          border: none; /* Remove border */
-          padding: 0; /* Remove padding */
-          color: #e0e0e0; /* Inherit text color from parent */
-          font: inherit; /* Inherit font styling */
-          cursor: pointer;
           background: none;
-          margin-top: 6px;
+          border: none;
+          padding: 4px 8px;
+          color: #e0e0e0;
+          font: inherit;
+          cursor: pointer;
           font-size: 12px;
+          background-color: rgba(255, 255, 255, 0.05);
+          border-radius: 4px;
+          margin-bottom: 6px;
+          display: inline-block;
+          transition: all 0.2s ease;
+          text-align: left;
+
           &:hover {
-            color: #ff6600; // your accent orange
+            color: #ff6600;
+            background-color: rgba(255, 102, 0, 0.1);
           }
         }
       }
@@ -114,7 +170,8 @@ $gradient-end: #21222e; // 100%
         display: inline-block;
         background: linear-gradient(90deg, #7f5af0, #2cb67d, #ef4565);
         background-size: 200% 200%;
-        animation: dotBounce 1.2s infinite ease-in-out,
+        animation:
+          dotBounce 1.2s infinite ease-in-out,
           hueShift 3s linear infinite;
         opacity: 0.9;
 
@@ -161,8 +218,8 @@ $gradient-end: #21222e; // 100%
     font-weight: bold;
     padding: 20px;
 
-    .greeting-message{
-       color: #5BB5AE;     
+    .greeting-message {
+      color: #5bb5ae;
     }
   }
 
@@ -171,34 +228,57 @@ $gradient-end: #21222e; // 100%
     display: flex;
     justify-content: center;
     padding: 5px;
+    gap : 8px;
 
     .input-wrapper {
       position: relative;
       width: 680px;
 
       textarea {
-      display: block;
-      width: 100%;
-      min-height: 48px;       // must match MIN_HEIGHT
-      max-height: 140px;      // must match MAX_HEIGHT
-      padding: 14px 56px 14px 16px; // leave room for send button
-      border-radius: 26px;
-      border: none;
-      outline: none;
-      background-color: #303030;
-      color: #fff;
-      font: inherit;
-      font-size: 12px;
-      line-height: 1.4;
-      resize: none;           // we control height via JS
-      overflow-y: hidden;     // toggled to auto by JS when needed
-      transition: background-color .2s ease;
-    }
-    
-    textarea::placeholder {
-      color: #bdbdbd;
-    }
+        display: block;
+        width: 100%;
 
+        min-height: 48px; // must match MIN_HEIGHT
+        max-height: 140px; // must match MAX_HEIGHT
+        padding: 14px 56px 14px 16px; // leave room for send button
+        border-radius: 26px;
+
+        /* Typography */
+        color: #e9ecf1; /* Changed from #fff to match your theme var */
+        font: inherit;
+        font-size: 14px;
+        line-height: 1.6;
+
+        /* The "Glass" Look */
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+
+        outline: none;
+        resize: none; // Controlled via JS
+        overflow-y: hidden; // Toggled via JS
+        transition:
+          border-color 0.2s ease,
+          background 0.2s ease,
+          box-shadow 0.2s ease;
+
+        &:hover {
+          border-color: rgba(255, 255, 255, 0.2);
+          background: rgba(255, 255, 255, 0.05);
+        }
+
+        &:focus {
+          border-color: rgba(91, 181, 174, 0.2);; /* Your teal accent color */
+          background: rgba(255, 255, 255, 0.07);
+          box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
+        }
+      }
+
+      textarea::placeholder {
+        color: #bdbdbd;
+      }
 
       button {
         position: absolute;
@@ -221,12 +301,21 @@ $gradient-end: #21222e; // 100%
         &:hover {
           background-color: #0066cc;
         }
+
+        /* Disabled state */
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          background-color: transparent;
+        }
       }
     }
-     /* Optional: subtle scrollbar when textarea is at max height */
-    textarea::-webkit-scrollbar { width: 8px; }
+    /* Optional: subtle scrollbar when textarea is at max height */
+    textarea::-webkit-scrollbar {
+      width: 8px;
+    }
     textarea::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,.15);
+      background: rgba(255, 255, 255, 0.15);
       border-radius: 8px;
     }
   }

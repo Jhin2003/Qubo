@@ -1,22 +1,37 @@
-$collapsed-w: 64px;
+$collapsed-w: 68px;
 $expanded-w: 280px;
 
 .side-menu {
+  -webkit-font-smoothing: antialiased;
+ 
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2);
   width: $collapsed-w;
   display: flex;
   align-items: flex-start;
   flex-direction: column;
-  gap: 10px;
-  background: #303030;
-   
-  transition: width 0.28s ease;
-  padding: 12px;
+
   
+  // FIX: Use a solid color (Alpha = 1) instead of 0.72
+  // This matches the base color of your modal without relying on transparency
+  background: 
+    linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01)),
+    #1c1f24; /* This is the hex code for your RGB(28, 31, 36) */
+    
+  // You can likely remove backdrop-filter if the sidebar isn't floating over content
+  // backdrop-filter: blur(14px); 
+
+  transition: width 0.28s ease;
+
+  padding: 12px;
   will-change: width;
 
+  // ... rest of code
+
+
+  // ... the rest of your code (keep &.open, etc.)
   &.open {
     width: $expanded-w;
-    transition-delay: 0s; // immediate when manually opened
+    transition-delay: 0s;
   }
 
   // when hover intent says open (but not manually open)
@@ -26,6 +41,7 @@ $expanded-w: 280px;
   }
 
   .menu-toggle {
+    margin-top: 8px;
     width: 36px;
     height: 36px;
     background: transparent;
@@ -43,16 +59,63 @@ $expanded-w: 280px;
     }
   }
   
-  .upload-pdf-button {
-    width: 40%;
-    height: 26px;
-    background: #5BB5AE;
-    color: black;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+.upload-pdf-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 80%;             /* Fits nicely within the sidebar padding */
+    margin: 6px auto;      /* Centers it horizontally */
+    
+    /* Modern styling */
+    background: rgba(97, 218, 251, 0.1); /* Very subtle accent background */
+    border: 1px dashed rgba(97, 218, 251, 0.4); /* Dashed border suggests "drop zone" */
+    color: #61dafb;         /* Your accent color text */
+    padding: 10px 16px;
+    border-radius: 8px;
+    
+    /* Typography */
+    font-family: inherit;
     font-size: 12px;
-    &:hover { background: #489992; }
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;    /* Prevents text wrapping */
+    height: auto;           /* Allow height to grow with padding */
+
+    /* The Icon Wrapper */
+    .btn-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(97, 218, 251, 0.2);
+      border-radius: 4px;
+      width: 16px;
+      height: 16px;
+      transition: transform 0.2s ease;
+      flex-shrink: 0; /* Prevents icon from squishing */
+    }
+
+    /* Hover Effects */
+    &:hover {
+      background: rgba(97, 218, 251, 0.2);
+      border-color: #61dafb;
+      box-shadow: 0 4px 12px rgba(97, 218, 251, 0.15);
+      transform: translateY(-1px);
+      color: #ffffff; /* Text turns white on hover */
+
+      .btn-icon {
+        transform: scale(1.1); /* Subtle pop effect */
+        background: rgba(97, 218, 251, 0.4);
+        color: #fff;
+      }
+    }
+
+    /* Click Effect */
+    &:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
   }
 
   // Reveal labels when expanded by click or hover intent
