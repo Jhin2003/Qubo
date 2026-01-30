@@ -1,122 +1,428 @@
+/* --- Variables for consistency --- */
+$accent-color: #61dafb;
+$danger-color: #ff4d4f;
+$text-main: #e1e1e1;
+$text-muted: #ffffff;
+$hover-bg: rgba(255, 255, 255, 0.04);
+$active-bg: rgba(97, 218, 251, 0.1);
+$border-subtle: rgba(255, 255, 255, 0.08);
+
+/* --- Animations --- */
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* --- 1. Main Container --- */
 .file-list-container {
+
   width: 100%;
-  flex: 1;
+  max-height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px; // slightly tighter spacing
+  overflow: hidden;
+
+  // Clean, modern font stack
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+    Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
-.file-list{
+/* --- 2. The Header --- */
+.file-list-header {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  
-  
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 14px; // Balanced breathing room
+  border-bottom: 1px solid $border-subtle;
+  flex-shrink: 0;
+  min-height: 50px;
 }
 
-.file-list-title {
-  font-size: 15px; // a little smaller
-  font-weight: 500; // medium weight for subtle emphasis
-  margin-bottom: 6px;
-  color: #d3d3d3; // softer than pure white
-}
-
-.file-item {
+.brand {
   display: flex;
-  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.8;
 
-
-  padding: 6px 8px;
-  font-size: 13px;
-
-  border: none;
-   background: none;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.03);
+  .file-icon-logo {
+    font-size: 18px;
+    color: #5bb5ae;
   }
 
-  &--active {
-    background-color: #e0e7ff; // Example: a light blue highlight
+  .file-list-title {
+    font-size: 12px;
+    font-weight: 700;
+    margin: 0;
+    color: $text-main;
+    text-transform: uppercase; // Minimalist touch
+    letter-spacing: 0.8px;
+  }
+}
 
-    .file-link {
-      font-weight: 600; // Make the text bold
-      color: #4338ca; // Example: a darker blue for the text
+/* --- Header Controls --- */
+.file-list-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 28px;
+
+  /* The "Select" Button */
+  .mode-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    color: $text-muted;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: $text-main;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .icon {
+      margin-right: 4px;
+      vertical-align: middle;
+      font-size: 14px;
     }
   }
 
-  .file-link {
-    flex: 1;
-    min-width: 0; /* critical for ellipsis in flex */
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    text-align: left;
-    background: none;
+  /* The "Cancel" (X) Button */
+  .cancel-mode-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
     border: none;
-    
+    color: $text-muted;
+    font-size: 16px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%; // Circular hover
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: $text-main;
+    }
   }
 
-  .delete-button{
-      background: none;
-    border: none;
+  /* The "Delete" Button */
+  .delete-button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 77, 79, 0.05); // Very faint red bg
+    border: 1px solid transparent;
+    color: $danger-color;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    animation: fadeInSlide 0.2s ease; // Animate in when mode triggers
+
+    &:hover:not(:disabled) {
+      background-color: $danger-color;
+      color: white;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: transparent;
+    }
+  }
+
+  /* "Select All" Checkbox Wrapper */
+  /* "Select All" Checkbox Wrapper */
+  .select-all-container {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    color: $text-muted;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: color 0.2s;
+    animation: fadeInSlide 0.2s ease;
+    user-select: none;
+
+    &:hover {
+      background: $hover-bg;
+      color: $text-main;
+
+      // Optional: Highlight the checkbox border on container hover
+      .checkbox-input {
+        border-color: $accent-color;
+      }
+    }
+
+    .checkbox-input {
+      appearance: none; /* Removes default OS styling */
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+      width: 13px;
+      height: 13px;
+      position: relative; /* Essential for positioning the checkmark */
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      flex-shrink: 0;
+      background-color: transparent;
+
+      &:hover {
+        border-color: $accent-color;
+        background-color: rgba(97, 218, 251, 0.1);
+      }
+
+      &:checked {
+        background-color: $accent-color;
+        border-color: $accent-color;
+
+        /* The Custom Checkmark */
+        &::after {
+          content: "";
+          position: absolute;
+          left: 4px;
+          top: 1px; /* Tweaked slightly for alignment */
+          width: 2px;
+          height: 6px;
+          border: solid #000000;
+          border-width: 0 2px 2px 0;
+          transform: rotate(45deg);
+          animation: checkPop 0.2s ease-out forwards;
+        }
+      }
+    }
   }
 }
 
-.file-item a {
-  margin-left: 6px;
-  color: #ff6600; // your orange accent
-  font-weight: 500;
-  font-size: 13px;
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline; // keep link interaction clear
-  }
-
-  /* --- header / logo --- */
-  .file-list-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .file-logo {
-    width: 22px;
-    height: 22px;
-    color: #ff6600; /* match your orange accent */
-  }
-
-  /* --- list reset (safe) --- */
-  .file-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  /* --- filename "link" (button styled like a link) --- */
-  .file-link {
-    background: transparent;
-    border: 0;
-    margin-left: 6px;
-    color: #ff6600; /* your orange accent */
-    font-weight: 500;
-    font-size: 13px;
-    text-decoration: none;
-    cursor: pointer;
-    padding: 0; /* keep layout tight */
-  }
-  .file-link:hover {
-    text-decoration: underline;
-  }
-
-  /* --- delete button --- */
+/* --- 3. The Scroll Area --- */
+.file-list-scroll {
+  flex: 1;
+   
+  overflow-y: auto;
+  padding: 16px;
   
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+      
+    }
+  }
+}
+
+/* --- 4. The List & Items --- */
+.file-list {
+
+  display: flex;
+  flex-direction: column;
+  gap: 2px; // Tight spacing for minimalist list
+  list-style: none;
+  margin: 0;
+  padding: 0;
+ 
+
+   &:hover {
+      min-height: 90px;
+    }
+
+  .file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    font-size: 13px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+    color: $text-muted;
+    border: 1px solid transparent; // Prevent layout shift if we add borders later
+    background: none;
+    border-left: 3px solid transparent; // Hidden accent bar
+    margin: 2px 4px;
+     
+
+    /* --- Interaction States --- */
+    &:hover {
+      background-color: $hover-bg;
+      color: $text-main;
+    
+     
+
+ 
+      .file-type-icon {
+        opacity: 1;
+      }
+
+      .actions-wrapper {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(0);
+      }
+    }
+
+    &.file-item--active {
+      background-color: $active-bg;
+      color: $accent-color;
+      border-left: 3px solid $accent-color;
+
+      .file-link {
+        color: $accent-color;
+        font-weight: 500;
+        padding-right: 8px;
+        letter-spacing: 0.2px;
+        mask-image: linear-gradient(to right, black 85%, transparent 100%);
+      }
+    }
+
+    /* --- Actions Wrapper --- */
+    .actions-wrapper {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(5px); // Slide in effect
+      transition: all 0.2s ease;
+      margin-left: 10px;
+    }
+
+    /* --- Left Side (Checkbox + Name) --- */
+    .file-item-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .item-checkbox {
+      appearance: none;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+      accent-color: $accent-color;
+      width: 13px;
+      height: 13px;
+      animation: fadeInSlide 0.2s ease; // Smooth entry
+      flex-shrink: 0;
+      position: relative;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: fadeInSlide 0.2s ease;
+
+      &:hover {
+        border-color: $accent-color;
+        background-color: rgba(97, 218, 251, 0.1);
+      }
+
+      &:checked {
+        background-color: $accent-color;
+        border-color: $accent-color;
+
+        &::after {
+          content: "";
+          position: absolute;
+          left: 4px;
+          top: 2px;
+          width: 2px;
+          height: 6px;
+          border: solid #000000; // Dark color for the checkmark itself
+          border-width: 0 2px 2px 0;
+          transform: rotate(45deg) scale(1);
+          opacity: 1;
+          animation: checkPop 0.2s ease-out forwards;
+        }
+      }
+    }
+
+    @keyframes checkPop {
+      0% {
+        transform: rotate(45deg) scale(0);
+        opacity: 0;
+      }
+      100% {
+        transform: rotate(45deg) scale(1);
+        opacity: 1;
+      }
+    }
+
+    .file-link {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-align: left;
+      background: transparent;
+      border: 0;
+      color: inherit;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 0;
+      outline: none;
+    }
+  }
+
+  /* --- Add File Row (Minimalist Style) --- */
+  .add-file-row {
+    margin-top: 8px;
+    cursor: pointer;
+    border: 1px dashed $border-subtle;
+    color: $text-muted;
+    justify-content: flex-start;
+    transition: all 0.2s ease;
+
+    // Hide actions logic for this specific row is handled in React,
+    // but css safety:
+    .actions-wrapper {
+      display: none;
+    }
+
+    .file-item-left {
+      gap: 10px;
+    }
+
+    .add-icon {
+      font-size: 16px;
+      transition: transform 0.2s ease;
+    }
+
+    .add-text {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    &:hover {
+      background-color: rgba(97, 218, 251, 0.05);
+      border-color: rgba(97, 218, 251, 0.3);
+      color: $accent-color;
+
+      .add-icon {
+        transform: scale(1.1);
+      }
+    }
+  }
 }

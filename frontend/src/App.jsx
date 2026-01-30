@@ -9,10 +9,13 @@ import PdfViewer from "./components/PdfViewer";
 import { UserProvider } from "./context/UserContext";
 import { SourceProvider } from "./context/SourceContext";
 
+import ToastConfig from "./components/modals/toast";
+
 function App() {
   return (
     <UserProvider>
       <SourceProvider>
+      <ToastConfig />
         <Router>
           <Routes>
             {/* Define route for viewing PDF */}

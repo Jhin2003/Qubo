@@ -1,38 +1,133 @@
-.header{
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center; // Ensures vertical centering
+  // Added padding so it's not stuck to the edge
+
+  // Keep your existing Login Button style
+.login-button {
+  background: rgba(91, 181, 174, 0.2); // Low opacity version of your color
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(91, 181, 174, 0.4);
+  color: #5BB5AE;
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-weight: bold;
+  transition: 0.3s;
+
+  &:hover {
+    background: rgba(91, 181, 174, 0.8);
+    color: white;
+  }
+}
+
+  // --- NEW: Profile Dropdown Styles ---
+
+  .user-menu-container {
+    position: relative;
+    margin-right: 10px;
+    display: flex;       // Helps align the trigger
+    align-items: center;
+  }
+
+  .profile-logo {
+    width: 100%;
+    height: 100%;
+    color: #5BB5AE; // Your Green
+  }
+
+  // The Circle Trigger (Replaces the old logout button)
+  .profile-trigger {
+    width: 30px;
+    height: 30px;
+   // Using your Green
+    border-radius: 50%; // Makes it a perfect circle
     display: flex;
-    flex-direction: row;
-     justify-content: space-between;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, box-shadow 0.2s;
 
-     .user-info {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-     }
-     .login-button{
-        background-color: #5BB5AE; /* Green */
-        border: none;
-        color: rgb(0, 0, 0);
-        padding: 8px 16px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 12px;
-        margin: 4px 2px;
-        cursor: pointer;
-        border-radius: 20px;
-     }
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 8px rgba(91, 181, 174, 0.6); // Greenish glow
+    }
 
-     .logout-button{
-      background-color: #5BB5AE; /* Green */
-        border: none;
-        color: rgb(0, 0, 0);
-        padding: 8px 16px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 12px;
-        margin: 4px 2px;
-        cursor: pointer;
-        border-radius: 20px;
-     }
+    .initials {
+      color: black; // Matches your text color preference
+      font-weight: bold;
+      font-size: 1.1rem;
+      user-select: none;
+    }
+  }
+
+  // The Popup Menu
+  .dropdown-menu {
+    position: absolute;
+    top: 55px; // Pushes it slightly below the header
+    right: 0;
+    width: 200px;
+    background-color: #2a2a2a; // Dark background for contrast
+    border: 1px solid #444;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    overflow: hidden;
+    animation: fadeIn 0.2s ease-out;
+
+    .dropdown-header {
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+
+      .user-name {
+        font-weight: bold;
+        color: #fff;
+        font-size: 0.95rem;
+      }
+      
+      .user-email {
+        font-size: 0.8rem;
+        color: #aaa;
+        margin-top: 2px;
+      }
+    }
+
+    .dropdown-divider {
+      height: 1px;
+      background-color: #444;
+      margin: 0;
+    }
+
+    .dropdown-item {
+      width: 100%;
+      text-align: left;
+      padding: 12px 16px;
+      background: none;
+      border: none;
+      color: #ddd;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s;
+
+      &:hover {
+        background-color: #383838;
+        color: white;
+      }
+
+      // Logout specific style
+      &.logout {
+        color: #ff6b6b; // Red for danger/logout
+        
+        &:hover {
+          background-color: rgba(255, 107, 107, 0.1);
+        }
+      }
+    }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 }

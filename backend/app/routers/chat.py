@@ -1,59 +1,89 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 from pydantic import BaseModel
 from typing import List, Optional
+# You'll likely need a new service function for the rephrasing step
+from app.services.llm_service import generate_response, contextualize_query 
 from app.services.retrieval_service import search_vectorstore
-from app.services.llm_service import generate_response
 
 router = APIRouter()
 
-# A list to store the messages
-messages_store = []
+messages_store = [] # Warning: Global variables are not thread-safe in production!
 
 class Message(BaseModel):
     sender: str
     text: str
-    source: Optional[str] = None  # <-- optional
+    source: Optional[str] = None
+    mode: str = "fast"
 
 @router.post("/chat")
-async def chat(messages: List[Message]):
+async def chat(request: Request, messages: List[Message]):
 
-    last_user = next((m for m in reversed(messages) if m.sender == "user"), messages[-1])
+    if await request.is_disconnected():
+        print("Client disconnected. Aborting request.")
+        return {"response": "Request canceled", "sources": []}
+    # 1. EXTRACT CURRENT MESSAGE
+    # We assume the last message is the new user input
+    current_msg = messages[-1]
+    user_message = current_msg.text
+    
+    # 2. SLIDING WINDOW (Prevent Context Flooding)
+    # Grab only the last 6 messages (excluding the current one) for history
+    # This keeps context relevant but manageable.
+    history_window = messages[:-1][-6:] 
+    
+    # Format history as string or list of dicts for the LLM
+    # Example format: "User: hello\nBot: hi there..."
+    formatted_history = [
+        {"role": m.sender, "content": m.text} for m in history_window
+    ]
 
-    # did this request include a source?
-    has_source = bool(last_user.source)
-    user_message = last_user.text
-    print(has_source)
-    # Retrieve relevant chunks and sources
+    # 3. CONTEXTUALIZE (The "Condense" Step)
+    # If there is history, we must rewrite the query to handle pronouns.
+    # e.g. History: "Who is Rizal?" -> User: "Where did he die?"
+    # standalone_query becomes: "Where did Jose Rizal die?"
+    if history_window:
+        standalone_query = await contextualize_query(formatted_history, user_message)
+        print(f"Original: {user_message} -> Rewritten: {standalone_query}")
+    else:
+        standalone_query = user_message
+    
+    if await request.is_disconnected():
+        print("Client disconnected before retrieval. Stopping.")
+        return {"response": "Request canceled", "sources": []}
+      
 
+  
+    # 4. RETRIEVE using the STANDALONE query (not the raw user message)
+    has_source = bool(current_msg.source)
     if has_source:
         context, sources = await search_vectorstore(
-            user_message,
+            standalone_query,  # <--- CHANGED
             index_dir="data_store/vector_database",
-            source = last_user.source
+            source=current_msg.source,
+            mode=current_msg.mode
         )
     else:
         context, sources = await search_vectorstore(
-            user_message,
+            standalone_query,  # <--- CHANGED
             index_dir="data_store/vector_database",
+            mode= current_msg.mode
         )
 
-    # Pass only the context to the LLM
-    llm_response = await generate_response(context, user_message)
+    if await request.is_disconnected():
+        print("Client disconnected before generation. Stopping.")
+        return {"response": "Request canceled", "sources": []}
+    # 5. GENERATE
+    # Pass the history window + context + current message
+    llm_response = await generate_response(
+        context=context, 
+        query=user_message, 
+        history=formatted_history, # <--- Pass the windowed history here
+        mode=current_msg.mode
+    )
 
-    print(llm_response)
- 
-
-    # Build bot response (LLM answer + optional sources text if you want)
+    # ... (Rest of your storage logic) ...
     bot_response = f"{llm_response}"
-
-    # Store the messages in memory
     messages_store.append({"sender": "user", "text": user_message})
     messages_store.append({"sender": "bot", "text": bot_response})
 
-    # Return both bot response and sources (for frontend display)
     return {"response": bot_response, "sources": sources}
-
-
-@router.get("/chat")
-async def get_chat():
-    return {"messages": messages_store}

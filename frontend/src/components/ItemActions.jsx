@@ -1,12 +1,13 @@
 // Tiny per-item action menu
 import React, { useEffect, useRef, useState } from "react";
-import { MoreVertical, Trash2, StethoscopeIcon } from "lucide-react";
-import "./ItemActions.scss"
-function ItemActions({ onUse, onDelete, disabled }) {
+import { MoreVertical, Trash2 } from "lucide-react";
+import { RiFocus3Line, RiFocus3Fill } from "react-icons/ri"; // Import a 'Fill' version for active state
+import "./ItemActions.scss";
+
+function ItemActions({ onUse, onDelete, disabled, isActive }) { // <--- Added isActive prop
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
-  // close when clicking outside
   useEffect(() => {
     const onDocClick = (e) => {
       if (open && ref.current && !ref.current.contains(e.target)) setOpen(false);
@@ -23,7 +24,7 @@ function ItemActions({ onUse, onDelete, disabled }) {
   return (
     <div className="item-actions" ref={ref}>
       <button
-        className="kebab-btn"
+        className={`kebab-btn ${open ? "active" : ""}`}
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="menu"
         aria-expanded={open}
@@ -36,13 +37,24 @@ function ItemActions({ onUse, onDelete, disabled }) {
         <div className="menu" role="menu">
           <button
             role="menuitem"
-            className="menu__item"
+            className={`menu__item ${isActive ? "is-active" : ""}`} // Add a class for styling if active
             onClick={() => { setOpen(false); onUse?.(); }}
             disabled={disabled}
           >
-            <StethoscopeIcon size={16} aria-hidden="true" />
-            <span>Use</span>
+            {/* Toggle Icon and Text based on isActive */}
+            {isActive ? (
+              <>
+                <RiFocus3Fill size={16} aria-hidden="true" style={{ color: "#5BB5AE" }} />
+                <span>Unuse</span>
+              </>
+            ) : (
+              <>
+                <RiFocus3Line size={16} aria-hidden="true" />
+                <span>Use</span>
+              </>
+            )}
           </button>
+          
           <button
             role="menuitem"
             className="menu__item menu__item--danger"

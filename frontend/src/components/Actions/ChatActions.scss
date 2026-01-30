@@ -1,0 +1,111 @@
+// chatbot.scss
+
+.chat-actions {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+ 
+
+  // --- THE POPUP MENU ---
+  .actions-menu {
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    margin-bottom: 12px;
+    
+    // Dark Teal Background
+     background: 
+    linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01)),
+    #1c1f24; 
+    border: 1px solid rgba(255, 255, 255, 0.1); // Light border for definition
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25); // Deep shadow
+    
+    padding: 6px;
+    min-width: 160px;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    
+    animation: scaleIn 0.2s ease-out forwards;
+    transform-origin: bottom right;
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      border-radius: 8px;
+      
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #ffffff; // FIX: White text for contrast
+      transition: all 0.2s ease;
+
+      span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        width: 20px;
+        color: #5BB5AE; // Teal icons pop against dark background
+        
+        svg { stroke-width: 2.5px; }
+      }
+
+      &:hover {
+        // Lighter teal overlay for hover
+        background-color: rgba(91, 181, 174, 0.15); 
+        color: #fff;
+      }
+
+      &.active {
+        background: #0e4965;
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+        span { color: #fff; }
+      }
+    }
+
+    .menu-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1); // Light divider
+      margin: 4px 6px;
+    }
+  }
+
+  // --- TRIGGER BUTTON ---
+  .action-trigger-btn {
+    background: transparent;
+    border: none;
+    color: #999;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(0,0,0,0.05);
+      color: #333;
+    }
+
+    &.open {
+      background: #0e4965; // Matches the menu background
+      color: #5BB5AE;
+      transform: rotate(45deg);
+      box-shadow: 0 4px 10px rgba(14, 73, 101, 0.3);
+    }
+  }
+}

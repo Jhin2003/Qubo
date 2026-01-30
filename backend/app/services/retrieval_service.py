@@ -6,22 +6,17 @@ import math
 import hashlib
 from unicodedata import normalize as _unicode_normalize
 
-from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 from rank_bm25 import BM25Okapi
 import numpy as np
 
-from .loaders import get_vectorstore, get_cross_encoder, get_embedder, get_complexity_classifier
-
-
+from .loaders import get_vectorstore, get_cross_encoder, get_complexity_classifier
 
 # --- Context shaping helpers ---
 
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
-
-# NOTE: stopword removal is provided as a helper but is NOT applied by default
-# because it can harm dense embeddings (e.g., removing "not", dates, etc.).
 
 def remove_stopwords(query: str) -> str:
     """
@@ -32,7 +27,6 @@ def remove_stopwords(query: str) -> str:
     query_without_stopwords = [word for word in query_tokens if word.lower() not in ENGLISH_STOP_WORDS]
     return " ".join(query_without_stopwords)
 
-
 def _bookend(docs):
     """Interleave to put strong evidence at both start and end."""
     left, right = [], []
@@ -40,15 +34,12 @@ def _bookend(docs):
         (left if i % 2 == 0 else right).append(d)
     return left + right[::-1]
 
-
 # --- simple whitespace/regex tokenizer (Unicode normalized) ---
 _TOKEN_SPLIT = re.compile(r"[^\w]+", flags=re.UNICODE)
 
 def _tok(text: str) -> list[str]:
-    # Normalize unicode (NFKC) to handle diacritics / composed characters
     txt = _unicode_normalize("NFKC", text or "")
     return [t for t in _TOKEN_SPLIT.split(txt.lower()) if t]
-
 
 # Optional tiny cache so we don't rebuild BM25 every call
 _BM25_CACHE = {
@@ -58,19 +49,22 @@ _BM25_CACHE = {
     "tokens": None,
 }
 
-
 def _docs_hash(docs_list: List) -> str:
     h = hashlib.sha1()
     for d in docs_list:
-        # include source/page metadata if available so caching is safer
         meta = d.metadata.get("source", "") + "|" + str(d.metadata.get("page", ""))
         h.update(meta.encode("utf-8"))
         h.update(d.page_content.encode('utf-8'))
     return h.hexdigest()
 
-
-def _get_bm25(all_docs) -> tuple[BM25Okapi, list, list[list[str]]]:
+def _get_bm25(all_docs) -> tuple[Optional[BM25Okapi], list, list[list[str]]]:
     docs_list = list(all_docs)
+
+    # === FIX 1: Prevent Division by Zero on Empty Docs ===
+    if not docs_list:
+        return None, [], []
+    # =====================================================
+
     cur_hash = _docs_hash(docs_list) if docs_list else None
     if _BM25_CACHE["hash"] == cur_hash and _BM25_CACHE["bm25"] is not None:
         return _BM25_CACHE["bm25"], _BM25_CACHE["docs"], _BM25_CACHE["tokens"]
@@ -86,41 +80,42 @@ def _get_bm25(all_docs) -> tuple[BM25Okapi, list, list[list[str]]]:
 def fetch_candidates(
     vectorstore: FAISS,
     query: str,
-    fetch_k: int = 40,
-    min_similarity: Optional[float] = None,  # None => no thresholding
+    fetch_k: int = 10,
+    min_similarity: Optional[float] = None,
 ) -> Tuple[List, List[float]]:
-    """
-    Dense candidates from FAISS, returning (docs, scores).
-    Heuristically detects whether FAISS returned distances (lower=better) or
-    similarities (higher=better) and converts to similarity in [ -inf, +inf ]
-    for consistent downstream use.
-    """
-    pairs = vectorstore.similarity_search_with_relevance_scores(query, k=fetch_k)
-    print(f"[DEBUG] Retrieved {len(pairs)} dense candidates for query='{query}'")
+    """Dense candidates from FAISS with Debug Logging."""
+    
+    # Check if store is empty
+    if len(vectorstore.docstore._dict) == 0:
+        print("[DEBUG] Vectorstore empty, returning no candidates.")
+        return [], []
 
-    # Quick heuristic: look at sample scores to decide whether they are distances.
-    sample_scores = [float(s) for _, s in pairs[:5]] if pairs else []
-    convert_distance_to_sim = False
-    if sample_scores:
-        # If scores are typically > 1.5 it's likely L2 distances on normalized vectors.
-        if max(sample_scores) > 1.5:
-            convert_distance_to_sim = True
+    # Get (Document, Score) pairs
+    # Since we used DistanceStrategy.COSINE, 's' is already Cosine Similarity.
+    pairs = vectorstore.similarity_search_with_relevance_scores(query, k=fetch_k)
+    print(f"[DEBUG] Raw Dense Retrieval count: {len(pairs)}")
 
     docs, scores = [], []
-    for d, s_raw in pairs:
-        s = float(s_raw)
-        if convert_distance_to_sim:
-            # Assuming normalized vectors, cosine_sim ~= 1 - 0.5 * (L2)^2 sometimes,
-            # but a safe simple conversion is sim = 1 - s (works if index stored (1 - cos)).
-            # If you know the exact metric you should replace this conversion.
-            s = 1.0 - s
+    
+    print(f"\n--- [DENSE CANDIDATES LOG] Query: '{query}' ---")
+    for i, (d, s) in enumerate(pairs, 1):
+        # Snippet for logging (first 50 chars)
+        snippet = d.page_content.replace('\n', ' ')[:50] + "..."
+        src = d.metadata.get("source", "unknown")
+        pg = d.metadata.get("page", "?")
+        
+        # Log every candidate to inspect the score range
+        print(f"   {i}. Score: {s:.4f} | {src} (p{pg}) | \"{snippet}\"")
 
-        # Threshold only if explicitly requested
+        # Threshold check
         if (min_similarity is None) or (s >= min_similarity):
             docs.append(d)
             scores.append(s)
+        else:
+            print(f"      [DROPPED] Below threshold {min_similarity}")
 
-    print(f"[DEBUG] After threshold filter (min_similarity={min_similarity}): kept={len(docs)}")
+    print(f"--- End Log (Kept {len(docs)}) ---\n")
+    
     return docs, scores
 
 
@@ -128,21 +123,19 @@ def fetch_bm25_candidates_query(
     query: str,
     bm25: BM25Okapi,
     docs_list: List,
-    k: int = 40,
+    k: int = 10,
     eps: float = 1e-9,
 ) -> Tuple[List, List[float]]:
-    """
-    Return top-k BM25 hits (by raw score) for the query. Avoid absolute thresholds
-    on raw BM25 scores because they are corpus-dependent. Keep only documents
-    with a non-zero BM25 score (eps) and then slice top-k.
-    """
+    """Return top-k BM25 hits."""
+    # Safety check if BM25 didn't initialize
+    if bm25 is None:
+        return [], []
+
     q_tokens = _tok(query)
-    scores = bm25.get_scores(q_tokens)  # shape: [num_docs]
-    order = np.argsort(scores)[::-1]    # best → worst
+    scores = bm25.get_scores(q_tokens)
+    order = np.argsort(scores)[::-1]
 
-    # keep only passages with a real lexical match (score > eps)
     nonzero_idx = [i for i in order if scores[i] > eps]
-
     k_eff = min(k, len(nonzero_idx))
     idx = nonzero_idx[:k_eff]
 
@@ -159,7 +152,6 @@ def _minmax(xs: List[float]) -> List[float]:
         return xs
     lo, hi = min(xs), max(xs)
     rng = hi - lo
-    # fallback: if range tiny, normalize by max absolute to preserve signal
     if rng <= 1e-6:
         m = max(abs(x) for x in xs) or 1.0
         return [x / m for x in xs]
@@ -169,17 +161,12 @@ def _minmax(xs: List[float]) -> List[float]:
 def fuse_candidates(
     dense_docs: List, dense_scores: List[float],
     bm25_docs: List, bm25_scores: List[float],
-    alpha: float = 0.7  # weight for dense; (1-alpha) for BM25
+    alpha: float = 0.5
 ) -> List:
-    """
-    Min-max normalize scores per signal, then weighted-sum fuse and sort.
-    Returns a deduplicated doc list ordered by fused score.
-    """
     dense_norm = _minmax(dense_scores)
     bm25_norm = _minmax(bm25_scores)
 
     def key(d):
-        # stable dedupe key: use source,page, and a content sha1 (deterministic)
         content_hash = hashlib.sha1(d.page_content.encode('utf-8')).hexdigest()
         return (d.metadata.get("source"), d.metadata.get("page"), content_hash)
 
@@ -216,7 +203,6 @@ def _sigmoid(x: float) -> float:
         return 0.0 if x < 0 else 1.0
 
 
-# Small CE cache + batched prediction helper
 _CE_MODEL = {"model": None}
 
 def _ce_predict_batched(ce, pairs, batch_size=64):
@@ -236,20 +222,15 @@ def rerank_with_ce(
     top_k: int | None = None,
     top_n_debug: int = 5
 ) -> Tuple[List, List[float]]:
-    """
-    Rerank with cross-encoder. Predictions are batched and the CE model is cached.
-    Calibrate `min_score` externally if you plan to filter by absolute thresholds.
-    """
     if not docs:
         return [], []
 
-    # get cached CE
     if _CE_MODEL["model"] is None:
         _CE_MODEL["model"] = get_cross_encoder()
     ce = _CE_MODEL["model"]
 
     pairs = [(query, d.page_content) for d in docs]
-    raw_scores = _ce_predict_batched(ce, pairs, batch_size=64)  # numpy array (logits)
+    raw_scores = _ce_predict_batched(ce, pairs, batch_size=64)
 
     if normalize:
         scores = [_sigmoid(float(s)) for s in raw_scores]
@@ -258,7 +239,6 @@ def rerank_with_ce(
 
     ranked = sorted(zip(docs, scores), key=lambda x: x[1], reverse=True)
 
-    # threshold filter (only if min_score is not None)
     if min_score is not None:
         ranked = [(d, s) for (d, s) in ranked if s >= min_score]
 
@@ -268,10 +248,6 @@ def rerank_with_ce(
     ranked_docs, ranked_scores = (list(x) for x in zip(*ranked)) if ranked else ([], [])
 
     print(f"[DEBUG] CE total_in={len(docs)} kept={len(ranked_docs)} min_score={min_score} normalize={normalize} top_k={top_k}")
-    for i, (doc, score) in enumerate(zip(ranked_docs[:top_n_debug], ranked_scores[:top_n_debug])):
-        snippet = doc.page_content[:80].replace("\n", " ")
-        print(f"[DEBUG] CE score={score:.4f} | Doc {i}: {snippet}...")
-
     return ranked_docs, ranked_scores
 
 
@@ -281,143 +257,168 @@ async def search_vectorstore(
     query: str,
     index_dir: str,
     k: int = 10,
-    fetch_k: int = 40,
+    fetch_k: int = 20,
     min_ce_score: float = 0.0,
     allow_unsafe: bool = False,
     expansion_top_n: int = 3,
     use_hybrid: bool = True,
-    alpha_dense: float = 0.7,
-    bm25_k: int = 40,
+    alpha_dense: float = 0.5,
+    mode: str = "fast", 
+    bm25_k: int = 20,
     source: Optional[str] = None,
     should_strip_stopwords: bool = False,
 ) -> Tuple[str, List[Tuple[str, str]]]:
 
-    """
-    Hybrid retrieval pipeline.
-    - stopword stripping is OFF by default (can be enabled with should_strip_stopwords=True)
-    - if `source` is provided we filter candidates by metadata instead of rebuilding FAISS index.
-    """
-
     vectorstore = get_vectorstore(allow_unsafe=True)
 
+    # 1. Safety Check: Empty Index
+    total_docs = len(vectorstore.docstore._dict)
+    if total_docs == 0:
+         print("[DEBUG] Index is empty. Returning no context.")
+         return "System: No documents available in the database.", []
+
     all_docs = list(vectorstore.docstore._dict.values())
-   
+    
+    # --- LOGIC BRANCHING ---
+    # We set default behaviors here, then override based on mode
+    should_rerank = True 
 
-    # If user asks to filter BM25 by source, build BM25 over that subset only;
-    # but avoid rebuilding the dense FAISS index per call (expensive).
-    if source:
-        bm25_docs = [d for d in all_docs if d.metadata.get("source") == source]
-        if not bm25_docs:
-            return "", []
-        bm25_source_iter = bm25_docs
+    if mode == "fast":
+        # === FAST MODE: Hybrid YES, Rerank NO ===
+        print(f"[MODE] FAST: Hybrid Search enabled. Skipping Classifier & Reranker for speed.")
+        
+        # Fixed settings (No classifier latency)
+        fetch_k = 10       
+        bm25_k = 10
+        k = 5              
+        
+        use_hybrid = True     # <--- Kept Hybrid as requested
+        should_rerank = False # <--- Turned off Reranker
+        
+    elif mode == "precise":
+        # === PRECISE ADAPTIVE: Quality Floor Enforced ===
+        print(f"[MODE] PRECISE: Analyzing complexity to scale 'k' (Hybrid+Rerank Enforced)...")
+        
+        classifier = get_complexity_classifier()
+        query_complexity = classifier(query)
+        best_result = max(query_complexity, key=lambda x: x['score'])
+        predicted_label = best_result['label']
+
+        # ALWAYS True for Precise Mode
+        use_hybrid = True  
+        should_rerank = True 
+
+        if predicted_label == 'LABEL_0': # Simple
+            print("[ADAPTIVE-PRECISE] Easy Query: Lower 'k', but maintaining Hybrid+Rerank.")
+            fetch_k, bm25_k, k = 15, 15, 5
+            min_ce_score = 0.4             
+
+        elif predicted_label == 'LABEL_1': # Medium
+            print("[ADAPTIVE-PRECISE] Medium Query: Standard Hybrid RAG.")
+            fetch_k, bm25_k, k = 20, 20, 5
+            min_ce_score = 0.4
+
+        elif predicted_label == 'LABEL_2': # Complex
+            print("[ADAPTIVE-PRECISE] Hard Query: Deep Search.")
+            fetch_k, bm25_k, k = 30, 30, 10
+            alpha_dense, min_ce_score = 0.5, 0.4
+
     else:
-        bm25_source_iter = all_docs
+        # === LEGACY ADAPTIVE (Standard/Auto) ===
+        print(f"[MODE] AUTO: Fully Adaptive.")
+        classifier = get_complexity_classifier()
+        query_complexity = classifier(query)
+        best_result = max(query_complexity, key=lambda x: x['score'])
+        predicted_label = best_result['label']
 
+        if predicted_label == 'LABEL_0':
+            fetch_k, bm25_k, k = 10, 10, 3
+            use_hybrid, should_rerank = True, False # Auto can drop reranker for easy queries
+            min_ce_score = 0.1
+        elif predicted_label == 'LABEL_1':
+            fetch_k, bm25_k, k = 20, 20, 5
+            use_hybrid, should_rerank = True, True
+            min_ce_score = 0.1
+        elif predicted_label == 'LABEL_2':
+            fetch_k, bm25_k, k = 30, 30, 10
+            use_hybrid, should_rerank = True, True
+            min_ce_score = 0.0
 
-    #check query complexity
-    classifier = get_complexity_classifier()
-    query_complexity = classifier(query)
-    print(query_complexity)
-    best_result = max(query_complexity, key=lambda x: x['score'])
+    # -----------------------
 
-# 2. Extract the label and score
-    predicted_label = best_result['label']
-    confidence_score = best_result['score']
-
-    print(f"Predicted Label: {predicted_label}, Confidence Score: {confidence_score}")
-
-    if predicted_label == 'LABEL_0':
-        # Strategy: Max Efficiency (Less is more)
-        fetch_k = 10
-        bm25_k = 10    # Fewer candidates needed
-        k = 5                # Answer likely in 2-3 chunks
-        use_hybrid = True   # Skip BM25 fusion for speed
-        min_ce_score = 0.3   # Stricter relevance filter
-        # Pure Dense (semantic) search
-
-        print("[ADAPTIVE] Using Easy Mode: Dense Search Only (k=3), High Efficiency")
-
-    elif predicted_label == 'LABEL_1':
-        # Strategy: Balanced (Hybrid RAG) - Use existing default parameters
-        fetch_k = 40
-        bm25_k = 40    # Standard candidates
-        k = 10                # Standard chunks
-        use_hybrid = True    # Use Hybrid (Default alpha=0.7)
-        min_ce_score = 0.2 # Rely on top-k, no threshold
-   
-
-        print("[ADAPTIVE] Using Medium Mode: Hybrid RAG (k=5), Balanced Accuracy")
-
-    elif predicted_label == 'LABEL_2':
-        # Strategy: Max Accuracy (High Recall, Deep Search)
-        fetch_k = 80
-        bm25_k = 80,      # Retrieve more candidates for CE
-        k = 10               # Max number of chunks to ensure synthesis
-        use_hybrid = True    # Use Hybrid Search
-        alpha_dense = 0.5    # Evenly balance semantic (Dense) and keyword (BM25) recall
-        min_ce_score = 0.0   # Do not discard *any* relevant candidate before final top-k
-
-        print("[ADAPTIVE] Using Hard Mode: Deep Hybrid Search (k=10), Max Recall")
-
-
-    # optional stopword stripping (disabled by default)
     if should_strip_stopwords:
         query_to_use = remove_stopwords(query)
     else:
         query_to_use = query
 
-    print(query_to_use)
-
-    # --- Build BM25 (cached) if hybrid ---
+    # 2. Build BM25 (Only if use_hybrid is True)
+    bm25_docs, bm25_scores = [], []
+    
     if use_hybrid:
+        if source:
+            bm25_source_iter = [d for d in all_docs if d.metadata.get("source") == source]
+        else:
+            bm25_source_iter = all_docs
+
         bm25, docs_list, _ = _get_bm25(bm25_source_iter)
 
-    # 1) Recall stage (dense retrieval)
+        if bm25 is None:
+            print("[WARN] BM25 failed (no documents found). Skipping BM25.")
+        else:
+            bm25_docs, bm25_scores = fetch_bm25_candidates_query(query_to_use, bm25, docs_list, k=bm25_k)
+
+
+    # 3. Dense Retrieval
     dense_docs, dense_scores = fetch_candidates(vectorstore, query_to_use, fetch_k=fetch_k)
 
-    # If source filtering requested, filter dense candidates by metadata rather than rebuilding index
     if source:
         filtered = [(d, s) for d, s in zip(dense_docs, dense_scores) if d.metadata.get("source") == source]
         dense_docs = [d for d, _ in filtered]
         dense_scores = [s for _, s in filtered]
 
-    if use_hybrid:
-        bm25_docs, bm25_scores = fetch_bm25_candidates_query(query_to_use, bm25, docs_list, k=bm25_k)
+    # 4. Fusion
+    if use_hybrid and bm25_docs:
         candidates = fuse_candidates(dense_docs, dense_scores, bm25_docs, bm25_scores, alpha=alpha_dense)
     else:
         candidates = dense_docs
 
-    # 2) Precision stage (CE rerank)
-    ranked_docs, ranked_scores = rerank_with_ce(query_to_use, candidates)
+    # 5. Reranking
+    if should_rerank:
+        ranked_docs, ranked_scores = rerank_with_ce(query_to_use, candidates)
+        
+        # Apply CE Threshold
+        if min_ce_score and ranked_docs:
+            keep_docs, keep_scores = [], []
+            for d, s in zip(ranked_docs, ranked_scores):
+                if s >= min_ce_score:
+                    keep_docs.append(d)
+                    keep_scores.append(s)
+            ranked_docs = keep_docs
+    else:
+        # Fast Mode hits this block
+        print("[DEBUG] Skipping Reranker (Score=1.0 placeholders)")
+        # We must simply return candidates. 
+        # Since 'candidates' is just a list of docs from fuse_candidates, 
+        # we treat them as if they are 'ranked' by the fusion score.
+        ranked_docs = candidates 
 
-    # 3) Optional CE threshold
-    if min_ce_score and ranked_docs:
-        keep_docs, keep_scores = [], []
-        for d, s in zip(ranked_docs, ranked_scores):
-            if s >= min_ce_score:
-                keep_docs.append(d)
-                keep_scores.append(s)
-        print(f"[DEBUG] Filtered out {len(ranked_docs) - len(keep_docs)} docs below CE threshold={min_ce_score}")
-        ranked_docs, ranked_scores = keep_docs, keep_scores
-
-    # 4) Top-k
+    # 6. Final Selection
     docs = ranked_docs[:k] if ranked_docs else []
-    docs = _bookend(docs)
+    
+    # Only bookend if we reranked (because bookending assumes high precision)
+    # or if we have enough docs.
+    if len(docs) >= 3:
+        docs = _bookend(docs)
+    
     print(f"[DEBUG] Returning {len(docs)} final docs (top-k={k})")
 
-    # 5) Outputs
     context_parts = []
     for idx, d in enumerate(docs, 1):
-        source = d.metadata.get("source", "unknown")
-        page = d.metadata.get("page", "?")
+        src = d.metadata.get("source", "unknown")
+        pg = d.metadata.get("page", "?")
         chunk = d.page_content.strip()
-
-        structured = f"[{idx}] Source: {source}, Page: {page}\nContent: {chunk}"
+        structured = f"[{idx}] Source: {src}, Page: {pg}\nContent: {chunk}"
         context_parts.append(structured)
 
-        context = "\n\n".join(context_parts)
-       
     context = "\n\n".join(context_parts)
-    print(context)
-
     return context, []
