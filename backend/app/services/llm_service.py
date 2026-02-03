@@ -1,5 +1,6 @@
 import os
 import time
+import datetime  # <--- NEW IMPORT
 import together
 from together import Together
 from typing import List, Dict
@@ -8,33 +9,57 @@ from typing import List, Dict
 client = Together(api_key="f093074f102974466d625db36d8bd171b92df916fa78eb7b91faa9108e6ed5c2")
 
 # --- CONFIGURATION: FALLBACK MODEL LISTS ---
-
-# For Answering: Try the smartest model first, fall back to the fast one.
-# 1. PRECISE: Starts with the heavy hitter (70B), falls back to lighter models.
+# ... (Keep your existing model lists here) ...
 MODELS_PRECISE = [
-    "meta-llama/Llama-3.3-70B-Instruct-Turbo",      # Primary
-    "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",  # Fallback 1
-    "mistralai/Mixtral-8x7B-Instruct-v0.1"          # Fallback 2
+    "Qwen/Qwen2.5-72B-Instruct-Turbo",
+    "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+    "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
+    "mistralai/Mixtral-8x7B-Instruct-v0.1"
 ]
 
-# 2. FAST: Starts with the lightweight model (8B), falls back to others.
 MODELS_FAST = [
-    "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",  # Primary (Fastest)
-    "mistralai/Mixtral-8x7B-Instruct-v0.1",         # Fallback 1
-    "meta-llama/Llama-3.3-70B-Instruct-Turbo"       # Last Resort
+    "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
+    "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "meta-llama/Llama-3.3-70B-Instruct-Turbo"
 ]
 
-# For Rewriting: Keep as is
 REWRITE_MODELS = [
     "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
     "mistralai/Mixtral-8x7B-Instruct-v0.1"
 ]
 
-# --- HELPER: GENERIC API CALL WITH FALLBACK ---
+
+
+
+
+# --- HELPER: GENERIC API CALL WITH FALLBACK & LOGGING ---
 def query_llm_with_fallback(messages: List[Dict], model_list: List[str], max_tokens: int = 1024, temp: float = 0.0) -> str:
     """
-    Tries models in order. If one fails (503/RateLimit), it moves to the next.
+    Tries models in order. Logs the exact prompt to a text file before sending.
     """
+    
+    # --- NEW: LOGGING BLOCK ---
+    try:
+        # Opens (or creates) a file named 'llm_prompt_logs.txt' in append mode
+        with open("llm_prompt_logs.txt", "a", encoding="utf-8") as f:
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            f.write(f"\n{'='*60}\n")
+            f.write(f"TIMESTAMP: {timestamp}\n")
+            f.write(f"MODELS QUEUED: {model_list}\n")
+            f.write("-" * 20 + " PROMPT START " + "-" * 20 + "\n")
+            
+            # Loop through messages to write them cleanly
+            for msg in messages:
+                role = msg.get('role', 'unknown').upper()
+                content = msg.get('content', '')
+                f.write(f"[{role}]:\n{content}\n")
+            
+            f.write("-" * 20 + " PROMPT END " + "-" * 21 + "\n")
+            f.write(f"{'='*60}\n\n")
+    except Exception as e:
+        print(f"Warning: Failed to log prompt to file: {e}")
+    # --------------------------
+
     for model_name in model_list:
         try:
             # print(f"DEBUG: Attempting with model: {model_name}")
@@ -63,6 +88,8 @@ def query_llm_with_fallback(messages: List[Dict], model_list: List[str], max_tok
     # If all models fail
     raise Exception("All AI models are currently unavailable. Please try again later.")
 
+# ... (The rest of your functions: contextualize_query and generate_response remain exactly the same) ...
+
 
 # --- 1. QUERY REWRITER (The "Condense" Step) ---
 async def contextualize_query(history: List[Dict[str, str]], latest_query: str):
@@ -86,6 +113,8 @@ async def contextualize_query(history: List[Dict[str, str]], latest_query: str):
     1. Do NOT answer the question. 
     2. Just reformulate it if it contains pronouns (he, she, it, that) referring to previous context.
     3. If the question is already standalone, return it exactly as is.
+    4. PRESERVE CONSTRAINTS: If the user asks for a specific format (table, bullet points), tone (funny, professional), or length, YOU MUST KEEP THIS IN THE REWRITTEN QUERY.
+    5. GREETINGS: If the user says "Hello" or "Thanks", keep it as is.
 
     Chat History:
     {history_text}
@@ -117,6 +146,7 @@ async def generate_response(context: str, query: str, history: List[Dict[str, st
         selected_models = MODELS_PRECISE
         # Optional: Slightly higher temp if you want creative synthesis in precise mode
         temperature = 0.0
+        
     # Format the history
     if history:
         history_text = "\n".join([f"{msg['role'].capitalize()}: {msg['content']}" for msg in history])
@@ -124,25 +154,56 @@ async def generate_response(context: str, query: str, history: List[Dict[str, st
     else:
         history_block = ""
 
+    # --- KEY UPDATE: ENHANCED SYSTEM PROMPT WITH FEW-SHOT EXAMPLES ---
     prompt_content = f"""
 ROLE: You are a meticulous academic historian. Your task is to analyze the provided sources (Context) and synthesize a response to the user's inquiry.
 
 GUIDELINES:
-1. STRICT SOURCE ADHERENCE: You must construct your narrative using ONLY the provided Context. Do not introduce outside historical facts, dates, or figures not present in the text.
-2. CITATION REQUIREMENT: Every historical assertion must be backed by an inline citation: [source, page].
-3. TONE: Maintain a formal, objective, and analytical tone suitable for historical discourse. Avoid conversational filler.
+1. STRICT SOURCE ADHERENCE (FACTS): You must derive all historical facts, dates, names, and events ONLY from the provided Context.
+2. FORMATTING PERMISSION (STYLE): You are explicitly allowed to structure the response as requested by the user (e.g., bullet points, tables, numbered lists, summaries). You may change the *format* of the information, provided the *factual content* remains strictly grounded in the Context.
+3. CITATION REQUIREMENT: Every historical assertion must be backed by an inline citation: [source, page].
 4. UNKNOWN INFO: If the provided archives (Context) do not contain the answer, reply strictly: "The provided documents do not contain sufficient evidence to answer this inquiry."
-5. CONTEXT USAGE: Use the "Recent Conversation History" ONLY to understand the user's intent or continuity. Do NOT use the history as a source of facts. Facts must come from the "Context" section.
+5. CONTEXT USAGE: Use the "Recent Conversation History" ONLY to understand the user's intent or continuity. Do NOT use the history as a source of facts.
+6. DIRECTNESS (CRITICAL): State facts directly and confidently. DO NOT start sentences with "Based on the provided sources," "The documents state," or "According to the context." Just answer the question.
 
+=== FEW-SHOT EXAMPLES (LEARN FROM THESE PATTERNS) ===
+
+[EXAMPLE 1: Greeting]
 Context:
-[1] Source: Rizal_Biography.pdf, Page: 12
+[1] Source: Rizal_Bio.pdf, Page: 12
 Content: Jose Rizal left for Spain in May 1882 without the knowledge of his parents, focused on finishing his medical studies.
+Query: Hello
+Response:
+Hello, how can i help you?
 
-Question: Why did Rizal left?
-Desired Output:
-According to the records, Rizal departed for Spain in May 1882 primarily to complete his medical education, a departure undertaken without his parents' knowledge [Rizal_Biography.pdf, 12].
+[EXAMPLE 2: Standard Narrative Query]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Jose Rizal left for Spain in May 1882 without the knowledge of his parents, focused on finishing his medical studies.
+Query: Why did Rizal leave?
+Response:
+According to the records, Rizal departed for Spain in May 1882 primarily to complete his medical education, a departure undertaken without his parents' knowledge [Rizal_Bio.pdf, 12].
 
------
+[EXAMPLE 3: Formatting/List Request]
+Context:
+[1] Source: Propaganda_Movement.pdf, Page: 45
+Content: The movement had three main goals: assimilation of the Philippines as a province of Spain, representation in the Spanish Cortes, and equality before the law.
+Query: List the goals of the movement in bullet points.
+Response:
+The Propaganda Movement aimed to achieve the following:
+* **Assimilation:** Making the Philippines a formal province of Spain [Propaganda_Movement.pdf, 45].
+* **Representation:** Securing seats in the Spanish Cortes [Propaganda_Movement.pdf, 45].
+* **Equality:** Ensuring Filipinos were equal to Spaniards before the law [Propaganda_Movement.pdf, 45].
+
+[EXAMPLE 4: Negative/Unknown Constraint]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Rizal arrived in Spain in June.
+Query: What did Rizal eat for dinner on his first night?
+Response:
+The provided documents do not contain sufficient evidence to answer this inquiry.
+
+=======================================================
 
 NOW THE INQUIRY AND ARCHIVES:
 {history_block}
@@ -155,6 +216,16 @@ Context:
 
 Response (Narrative with Citations):
 """
+
+    messages = [{"role": "user", "content": prompt_content}]
+
+    # Use the helper function with the GENERATION list
+    return query_llm_with_fallback(
+        messages, 
+        selected_models, 
+        max_tokens=4000,  # UPDATED: Increased to allow for longer lists/summaries
+        temp=temperature
+    )
 
     messages = [{"role": "user", "content": prompt_content}]
 
