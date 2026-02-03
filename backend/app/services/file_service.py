@@ -23,7 +23,7 @@ from langchain_community.vectorstores.utils import DistanceStrategy
 from .loaders import get_embedder, get_vectorstore
 
 # --- Configuration ---
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+
 embedding_model = get_embedder()
 
 # --- Helpers (Unchanged) ---
@@ -40,19 +40,7 @@ def make_chunk_id(source_sha1: str, page: int, global_idx: int, page_idx: int) -
     core = f"{source_sha1[:12]}:p{page}:g{global_idx}:k{page_idx}"
     return hashlib.sha1(core.encode("utf-8")).hexdigest()
 
-def ocr_page_embedded_images(doc: fitz.Document, page_index_zero_based: int) -> list[str]:
-    """OCR all embedded raster images on a page and return a list of non-empty texts."""
-    texts = []
-    images = doc.get_page_images(page_index_zero_based, full=True)
-    for _, (xref, *_) in enumerate(images, start=1):
-        base = doc.extract_image(xref)
-        img_bytes = base["image"]
-        img = Image.open(io.BytesIO(img_bytes)).convert("L")
-        img = img.point(lambda px: 255 if px > 200 else 0)
-        t = pytesseract.image_to_string(img, config="--psm 6").strip()
-        if t:
-            texts.append(t)
-    return texts
+
 
 # --- UPDATED: Main Processor ---
 def process_file(file_path: str, filename: str):
@@ -86,17 +74,13 @@ def process_file(file_path: str, filename: str):
 
         # --- 2. Extract text from the PDF (original or temporary) ---
         page_texts = []
-        with pdfplumber.open(processing_path) as pdf, fitz.open(processing_path) as fdoc:
+        
+        with pdfplumber.open(processing_path) as pdf:
             for page_num, page in enumerate(pdf.pages, start=1):
-                # Selectable text
+                # Selectable text only
                 text = page.extract_text(x_tolerance=1, y_tolerance=2) or ""
                 if text.strip():
                     page_texts.append((page_num, text))
-                # OCR text from images
-                if page.images or len(fdoc.get_page_images(page_num - 1, full=True)) > 0:
-                    ocr_texts = ocr_page_embedded_images(fdoc, page_num - 1)
-                    for t in ocr_texts:
-                        page_texts.append((page_num, t))
         
         if not page_texts:
             print(f"No text extracted from '{filename}'. Aborting.")
