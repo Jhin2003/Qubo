@@ -58,7 +58,13 @@ export default function Chatbot() {
 
   const renderMessageText = (text) => {
     if (!text) return null;
-    const parts = text.split(/(\[.*?\])/g);
+    let cleanedText = text.replace(/\*\*/g, ""); 
+
+    // 2. Replace asterisks used as bullets with a real bullet point
+    // This regex looks for a "*" or "-" at the start of a line followed by a space
+    cleanedText = cleanedText.replace(/(^|\n)[\*|-] /g, "$1• ");
+
+    const parts = cleanedText.split(/(\[.*?\])/g);
     return parts.map((part, index) => {
       if (part.startsWith("[") && part.endsWith("]")) {
         const content = part.slice(1, -1);

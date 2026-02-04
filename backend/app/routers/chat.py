@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request
 from pydantic import BaseModel
 from typing import List, Optional
 # You'll likely need a new service function for the rephrasing step
-from app.services.llm_service import generate_response, contextualize_query 
+from app.services.llm_service import generate_response, contextualize_query
 from app.services.retrieval_service import search_vectorstore
 
 router = APIRouter()
@@ -41,11 +41,13 @@ async def chat(request: Request, messages: List[Message]):
     # If there is history, we must rewrite the query to handle pronouns.
     # e.g. History: "Who is Rizal?" -> User: "Where did he die?"
     # standalone_query becomes: "Where did Jose Rizal die?"
+
     if history_window:
         standalone_query = await contextualize_query(formatted_history, user_message)
         print(f"Original: {user_message} -> Rewritten: {standalone_query}")
     else:
         standalone_query = user_message
+    
     
     if await request.is_disconnected():
         print("Client disconnected before retrieval. Stopping.")
@@ -60,7 +62,8 @@ async def chat(request: Request, messages: List[Message]):
             standalone_query,  # <--- CHANGED
             index_dir="data_store/vector_database",
             source=current_msg.source,
-            mode=current_msg.mode
+            mode=current_msg.mode,
+
         )
     else:
         context, sources = await search_vectorstore(

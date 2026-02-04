@@ -6,7 +6,7 @@ import hashlib
 import time
 import datetime
 from pathlib import Path
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Dict, Any # Added Dict, Any
 from unicodedata import normalize as _unicode_normalize
 
 # --- External Libs ---
@@ -15,63 +15,82 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from rank_bm25 import BM25Okapi
 import numpy as np
 from together import Together  # <--- NEW: For internal routing
+from app.services.llm_service import _classify_query_intent  # <--- NEW: Import the intent classifier
 
 # --- Local Imports ---
 from .loaders import get_vectorstore, get_cross_encoder
 
 # --- CONFIGURATION ---
 # Initialize internal client for routing (Uses the same key)
-client = Together(api_key="f093074f102974466d625db36d8bd171b92df916fa78eb7b91faa9108e6ed5c2")
 
-ROUTER_PROMPT = """
-Analyze the user's query and classify it into one of three distinct Retrieval Categories:
 
-1. "GLOBAL_SUMMARY": The user wants a summary, outline, or overview of the *entire* document. (e.g., "Summarize the paper", "Give me the main points", "What is the thesis?")
-2. "BROAD_SEARCH": The user asks for a list, comparison, or explanation that requires gathering many scattered details. (e.g., "List all the themes", "What are the 5 goals?", "Compare X and Y")
-3. "SPECIFIC_SEARCH": The user asks for a precise fact, date, name, or definition. (e.g., "Who is Rizal?", "When did he leave?", "What is the capital?")
-
-User Query: "{query}"
-
-OUTPUT: Output ONLY the category name. No other text.
-"""
-
-# --- HELPER 1: Internal Classifier ---
-def _classify_query_intent(query: str) -> str:
+def _extract_page_constraints(query: str) -> Optional[tuple | int]:
     """
-    Robustly classifies intent using Regex. 
-    It finds the keyword even if the LLM adds extra text or punctuation.
+    Returns an int (single page) or tuple (start, end) if pages are mentioned.
     """
-    try:
-        # 1. Get the Raw Output
-        response = client.chat.completions.create(
-            model="meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
-            messages=[{"role": "user", "content": ROUTER_PROMPT.format(query=query)}],
-            temperature=0.0,
-            max_tokens=10
-        )
-        raw_text = response.choices[0].message.content.strip().upper()
-        print(f"[RETRIEVER] LLM Classifier Output: '{raw_text}'")
-        # 2. HUNT for Keywords (Priority Order Matters!)
+    # Pattern 1: Range "pages 10-15"
+    range_match = re.search(r"\bpages?\s+(\d+)\s*(?:-|to)\s*(\d+)\b", query, re.IGNORECASE)
+    if range_match:
+        return (int(range_match.group(1)), int(range_match.group(2)))
+
+    # Pattern 2: Single "page 10"
+    single_match = re.search(r"\bpages?\s+(\d+)\b", query, re.IGNORECASE)
+    if single_match:
+        return int(single_match.group(1))
         
-        # Check for Summary/Global keywords
-        if re.search(r"\b(GLOBAL|SUMMARY|OUTLINE)\b", raw_text):
-            return "GLOBAL_SUMMARY"
-            
-        # Check for Broad/List keywords
-        if re.search(r"\b(BROAD|LIST|COMPARE)", raw_text):
-            return "BROAD_SEARCH"
-            
-        # Check for Specific/Fact keywords
-        if re.search(r"\b(SPECIFIC|PRECISE|FACT)\b", raw_text):
-            return "SPECIFIC_SEARCH"
+    return None
 
-        # 3. Fallback (If the LLM hallucinates gibberish)
-        print(f"[RETRIEVER_WARN] Unclear Intent: '{raw_text}'. Defaulting to SPECIFIC.")
-        return "SPECIFIC_SEARCH"
+# --- HELPER 4: JSONL Page Reader (Direct Access) ---
+# --- HELPER 4: JSONL Page Reader (Direct Access) ---
+def get_specific_pages_from_jsonl(filename: str, pages: tuple | int) -> Optional[str]:
+    """
+    Reads the JSONL file and extracts ALL chunks that match the specific page(s).
+    """
+    base_dir = Path("data_store")
+    jsonl_path = base_dir / "chunked_output" / f"{Path(filename).stem}_chunks.jsonl"
+    
+    if not jsonl_path.exists():
+        return None
 
+    matching_chunks = []
+    
+    try:
+        with open(jsonl_path, "r", encoding="utf-8") as f:
+            for line in f:
+                data = json.loads(line)
+                chunk_page = data['metadata'].get('page', 0)
+                
+                # Check match
+                is_match = False
+                if isinstance(pages, int):
+                    if chunk_page == pages: is_match = True
+                elif isinstance(pages, tuple):
+                    if pages[0] <= chunk_page <= pages[1]: is_match = True
+                
+                if is_match:
+                    matching_chunks.append(data)
     except Exception as e:
-        print(f"[RETRIEVER_WARN] Classifier Error ({e}). Defaulting to SPECIFIC.")
-        return "SPECIFIC_SEARCH"
+        print(f"[ERROR] JSONL Read Error: {e}")
+        return None
+
+    if not matching_chunks:
+        return None
+
+    # Sort chunks to ensure natural reading order
+    matching_chunks.sort(key=lambda x: x['metadata'].get('chunk_index', 0))
+
+    # --- FORMATTING FIX ---
+    # We build a list of parts, similar to the main search_vectorstore loop
+    context_parts = []
+    for idx, c in enumerate(matching_chunks, 1):
+        pg = c['metadata'].get('page', '?')
+        chunk_content = c['content'].strip()
+        
+        # EXACT MATCH of the vector search format:
+        structured = f"[{idx}] Source: {filename}, Page: {pg}\nContent: {chunk_content}"
+        context_parts.append(structured)
+        
+    return "\n\n".join(context_parts)
 
 # --- HELPER 2: JSONL Reader (Global Context) ---
 def get_global_context_from_jsonl(filename: str) -> Optional[str]:
@@ -163,11 +182,16 @@ def _get_bm25(all_docs) -> tuple[Optional[BM25Okapi], list, list[list[str]]]:
     return bm25, docs_list, tokens
 
 # ---------- Dense + BM25 candidate fetchers & fusion ----------
-def fetch_candidates(vectorstore: FAISS, query: str, fetch_k: int = 10, min_similarity: Optional[float] = None) -> Tuple[List, List[float]]:
+def fetch_candidates(vectorstore: FAISS, query: str, fetch_k: int = 10, min_similarity: Optional[float] = None, filter: Optional[Dict[str, Any]] = None) -> Tuple[List, List[float]]:
     if len(vectorstore.docstore._dict) == 0:
         return [], []
 
-    pairs = vectorstore.similarity_search_with_relevance_scores(query, k=fetch_k)
+    pairs = vectorstore.similarity_search_with_relevance_scores(
+        query, 
+        k=fetch_k,
+        filter=filter  # <--- PASSED TO NATIVE SEARCH
+    )
+    print(f"[DEBUG] Raw Dense Retrieval count: {len(pairs)}")
     print(f"[DEBUG] Raw Dense Retrieval count: {len(pairs)}")
 
     docs, scores = [], []
@@ -281,6 +305,7 @@ async def search_vectorstore(
     mode: str = "fast", 
     bm25_k: int = 20,
     source: Optional[str] = None,
+    query_type: str = "SPECIFIC_SEARCH",
     should_strip_stopwords: bool = False,
 ) -> Tuple[str, List[Tuple[str, str]]]:
 
@@ -311,6 +336,28 @@ async def search_vectorstore(
             else:
                 print(f"[RETRIEVER] ⚠️ JSONL failed. Falling back to Broad Search.")
                 intent = "BROAD_SEARCH"
+        elif intent == "PAGE_SPECIFIC" and source:
+            target_pages = _extract_page_constraints(query)
+            
+            if target_pages:
+                print(f"[RETRIEVER] 📖 Reading Pages: {target_pages}")
+                page_context = get_specific_pages_from_jsonl(source, target_pages)
+                
+                if page_context:
+                    return page_context, [] # <--- EJECT BUTTON (Success)
+                else:
+                    print("[WARN] Pages not found in JSONL. Falling back to Vector Search.")
+            else:
+                print("[WARN] 'Page' intent detected but no numbers found. Fallback.")
+
+        if intent == "NONSENSE":
+            print("[RETRIEVER] 🌀 Nonsense detected. Skipping retrieval.")
+            return "", []
+
+        if intent == "GREETING":
+            print("[RETRIEVER] 💬 Greeting detected. Skipping retrieval.")
+            # Return EMPTY context. This tells the Generator to just chat normally.
+            return "", []
 
         # STRATEGY B: Broad Search (Wide Net)
         if intent == "BROAD_SEARCH":
@@ -359,18 +406,15 @@ async def search_vectorstore(
     # FIX 2: The "Source Filtering" Bug Fix
     # If we are looking for 1 specific file, we need to fetch MANY chunks (e.g. 100) 
     # because the top 20 might be dominated by other files.
-    if source:
-        actual_fetch_k = 100 
-    else:
-        actual_fetch_k = fetch_k
+    search_filter = {"source": source} if source else None
+    dense_docs, dense_scores = fetch_candidates(
+        vectorstore, 
+        query_to_use, 
+        fetch_k=fetch_k, 
+        filter=search_filter  # <--- Passing the filter here
+    )
 
-    dense_docs, dense_scores = fetch_candidates(vectorstore, query_to_use, fetch_k=actual_fetch_k)
-
-    if source:
-        filtered = [(d, s) for d, s in zip(dense_docs, dense_scores) if d.metadata.get("source") == source]
-        dense_docs = [d for d, _ in filtered]
-        dense_scores = [s for _, s in filtered]
-        # print(f"[DEBUG] Dense candidates after source filtering: {len(dense_docs)}")
+  
 
     # 4. Fusion
     if use_hybrid and bm25_docs:
@@ -409,4 +453,5 @@ async def search_vectorstore(
         context_parts.append(structured)
 
     context = "\n\n".join(context_parts)
+    print(intent)
     return context, []
