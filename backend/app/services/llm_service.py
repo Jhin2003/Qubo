@@ -3,7 +3,9 @@ import time
 import datetime  # <--- NEW IMPORT
 import together
 from together import Together
-from typing import List, Dict
+
+import re  # Missing in your snippet, added for regex
+from typing import List, Dict, Optional
 
 # Initialize the client
 client = Together(api_key="f093074f102974466d625db36d8bd171b92df916fa78eb7b91faa9108e6ed5c2")
@@ -11,7 +13,7 @@ client = Together(api_key="f093074f102974466d625db36d8bd171b92df916fa78eb7b91faa
 # --- CONFIGURATION: FALLBACK MODEL LISTS ---
 # ... (Keep your existing model lists here) ...
 MODELS_PRECISE = [
-    "Qwen/Qwen2.5-72B-Instruct-Turbo",
+   
     "meta-llama/Llama-3.3-70B-Instruct-Turbo",
     "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
     "mistralai/Mixtral-8x7B-Instruct-v0.1"
@@ -28,9 +30,77 @@ REWRITE_MODELS = [
     "mistralai/Mixtral-8x7B-Instruct-v0.1"
 ]
 
+MODELS_ROUTER = [
+    "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+    "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
+    "mistralai/Mixtral-8x7B-Instruct-v0.1"
+]
+
+
+# Initialize internal client for routing (Uses the same key)
+client = Together(api_key="f093074f102974466d625db36d8bd171b92df916fa78eb7b91faa9108e6ed5c2")
 
 
 
+# --- HELPER 1: Internal Classifier ---
+
+def _classify_query_intent(query: str) -> str:
+    """
+    Classifies intent using the Fallback Helper.
+    """
+    try:
+        ROUTER_PROMPT = """
+        Analyze the user's query and classify it into one of three distinct Retrieval Categories:
+
+        1. "GLOBAL_SUMMARY": The user wants a summary, outline, or overview of the *entire* document. (e.g., "Summarize the paper", "Give me the main points", "What is the doocument about?")
+        2. "BROAD_SEARCH": The user asks for a list, comparison, or explanation that requires gathering many scattered details. (e.g., "List all the themes", "What are the 5 goals?", "Compare X and Y")
+        3. "SPECIFIC_SEARCH": The user asks for a precise fact, date, name, or definition. (e.g., "Who is Rizal?", "When did he leave?", "What is the capital?")
+        4. "PAGE_SPECIFIC": The user explicitly asks for content from specific pages or page ranges. (e.g., "Summarize page 10", "What happens on pages 15-20?", "Read the last page")
+        5. "GREETING": Conversational filler, greetings, thanks, or questions NOT requiring external information. (e.g., "Hi", "Hello", "Thank you", "Who are you?")
+        6. "NONSENSE": The input is gibberish, random characters, too short to mean anything, or linguistically incoherent. (e.g., "asdf", "sdsdsd", "..." )
+        User Query: "{query}"
+        OUTPUT: Output ONLY the category name. No other text.
+        """
+
+        # Construct the message for the helper
+        messages = [{"role": "user", "content": ROUTER_PROMPT.format(query=query)}]
+        
+        # CALL THE HELPER (Instead of raw client.chat.completions.create)
+        raw_text = query_llm_with_fallback(
+            messages=messages, 
+            model_list=MODELS_ROUTER,  # Uses the fast router list
+            max_tokens=15, 
+            temp=0.0
+        ).upper()
+        
+        print(f"[RETRIEVER] LLM Classifier Output: '{raw_text}'")
+
+        if re.search(r"\b(NONSENSE|GIBBERISH|INVALID)", raw_text):
+            return "NONSENSE"
+
+        if re.search(r"\b(GREETING|CHAT|HI|HELLO)", raw_text):
+            return "GREETING"
+        
+        # HUNT for Keywords
+        if re.search(r"\b(PAGE|PAGES|RANGE)", raw_text):
+            return "PAGE_SPECIFIC"
+        
+        if re.search(r"\b(GLOBAL|SUMMARY|OUTLINE)", raw_text):
+            return "GLOBAL_SUMMARY"
+            
+        if re.search(r"\b(BROAD|LIST|COMPARE)", raw_text):
+            return "BROAD_SEARCH"
+            
+        if re.search(r"\b(SPECIFIC|PRECISE|FACT)", raw_text):
+            return "SPECIFIC_SEARCH"
+        
+
+        print(f"[RETRIEVER_WARN] Unclear Intent: '{raw_text}'. Defaulting to SPECIFIC.")
+        return "SPECIFIC_SEARCH"
+
+    except Exception as e:
+        print(f"[RETRIEVER_WARN] Classifier Error ({e}). Defaulting to SPECIFIC.")
+        return "SPECIFIC_SEARCH"
 
 # --- HELPER: GENERIC API CALL WITH FALLBACK & LOGGING ---
 def query_llm_with_fallback(messages: List[Dict], model_list: List[str], max_tokens: int = 1024, temp: float = 0.0) -> str:
@@ -113,7 +183,7 @@ async def contextualize_query(history: List[Dict[str, str]], latest_query: str):
     1. Do NOT answer the question. 
     2. Just reformulate it if it contains pronouns (he, she, it, that) referring to previous context.
     3. If the question is already standalone, return it exactly as is.
-    4. PRESERVE CONSTRAINTS: If the user asks for a specific format (table, bullet points), tone (funny, professional), or length, YOU MUST KEEP THIS IN THE REWRITTEN QUERY.
+    4. PRESERVE CONSTRAINTS: If the user asks for a specific format (table, bullet points), tone (funny, professional), page, Length, etc., YOU MUST KEEP THIS IN THE REWRITTEN QUERY.
     5. GREETINGS: If the user says "Hello" or "Thanks", keep it as is.
 
     Chat History:
@@ -162,8 +232,8 @@ GUIDELINES:
 1. STRICT SOURCE ADHERENCE (FACTS): You must derive all historical facts, dates, names, and events ONLY from the provided Context.
 2. FORMATTING PERMISSION (STYLE): You are explicitly allowed to structure the response as requested by the user (e.g., bullet points, tables, numbered lists, summaries). You may change the *format* of the information, provided the *factual content* remains strictly grounded in the Context.
 3. CITATION REQUIREMENT: Every historical assertion must be backed by an inline citation: [source, page].
-4. UNKNOWN INFO: If the provided archives (Context) do not contain the answer, reply strictly: "The provided documents do not contain sufficient evidence to answer this inquiry."
-5. CONTEXT USAGE: Use the "Recent Conversation History" ONLY to understand the user's intent or continuity. Do NOT use the history as a source of facts.
+4. UNKNOWN INFO: If the provided archives (Context) do not contain the answer, reply strictly: "Please elaborate your question further."
+
 6. DIRECTNESS (CRITICAL): State facts directly and confidently. DO NOT start sentences with "Based on the provided sources," "The documents state," or "According to the context." Just answer the question.
 
 === FEW-SHOT EXAMPLES (LEARN FROM THESE PATTERNS) ===
@@ -205,8 +275,7 @@ The provided documents do not contain sufficient evidence to answer this inquiry
 
 =======================================================
 
-NOW THE INQUIRY AND ARCHIVES:
-{history_block}
+NOW THE INQUIRY:
 
 Query:
 {query}
@@ -227,12 +296,4 @@ Response (Narrative with Citations):
         temp=temperature
     )
 
-    messages = [{"role": "user", "content": prompt_content}]
-
-    # Use the helper function with the GENERATION list
-    return query_llm_with_fallback(
-        messages, 
-        selected_models, 
-        max_tokens=1024, 
-        temp=temperature
-    )
+   
