@@ -93,10 +93,17 @@ def get_specific_pages_from_jsonl(filename: str, pages: tuple | int) -> Optional
     return "\n\n".join(context_parts)
 
 # --- HELPER 2: JSONL Reader (Global Context) ---
+import json
+from pathlib import Path
+from typing import Optional
+
+import json
+from pathlib import Path
+from typing import Optional
+
 def get_global_context_from_jsonl(filename: str) -> Optional[str]:
     """
-    Retrieves Introduction (First 3 pages) and Conclusion (Last 3 pages) 
-    by reading the _chunks.jsonl file directly.
+    Retrieves a snapshot of the document by sampling a chunk at every 5% interval.
     """
     base_dir = Path("data_store")
     jsonl_path = base_dir / "chunked_output" / f"{Path(filename).stem}_chunks.jsonl"
@@ -116,25 +123,39 @@ def get_global_context_from_jsonl(filename: str) -> Optional[str]:
     if not all_chunks:
         return None
 
-    # Sort chunks by page
+    # 1. Sort chunks by page to ensure linear order
     all_chunks.sort(key=lambda x: x['metadata'].get('page', 0))
-    max_page = all_chunks[-1]['metadata'].get('page', 0)
-    
-    # Grab Intro & Outro
-    intro_chunks = [c['content'] for c in all_chunks if c['metadata'].get('page', 0) <= 3]
-    outro_chunks = [c['content'] for c in all_chunks if c['metadata'].get('page', 0) >= (max_page - 2)]
-    
-    # Deduplicate if doc is short
-    if max_page <= 6:
-         outro_chunks = []
 
-    context = "--- DOCUMENT INTRODUCTION (Pages 1-3) ---\n"
-    context += "\n".join(intro_chunks)
-    context += "\n\n--- DOCUMENT CONCLUSION (Last 3 Pages) ---\n"
-    context += "\n".join(outro_chunks)
-    
-    return context
+    total_chunks = len(all_chunks)
+    context_parts = []
+    seen_indices = set()
 
+    # 2. Loop from 0% to 95% in steps of 5
+    for percent in range(0, 100, 5):
+        # Calculate the exact index for this percentage
+        index = int((percent / 100) * total_chunks)
+        
+        # Safety clamp
+        if index >= total_chunks:
+            index = total_chunks - 1
+
+        # 3. Deduplication (avoids repeating chunks for small docs)
+        if index not in seen_indices:
+            chunk = all_chunks[index]
+            page_num = chunk['metadata'].get('page', '?')
+            
+            context_parts.append(f"\n--- {percent}% MARK (Page {page_num}) ---")
+            context_parts.append(chunk['content'])
+            
+            seen_indices.add(index)
+
+    # 4. Always ensure the very last chunk (100%) is included
+    if (total_chunks - 1) not in seen_indices:
+        last_chunk = all_chunks[-1]
+        context_parts.append(f"\n--- 100% MARK (Page {last_chunk['metadata'].get('page', '?')}) ---")
+        context_parts.append(last_chunk['content'])
+
+    return "\n".join(context_parts)
 # --- Context shaping helpers (Unchanged) ---
 
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS

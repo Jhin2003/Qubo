@@ -162,7 +162,7 @@ def query_llm_with_fallback(messages: List[Dict], model_list: List[str], max_tok
 
 
 # --- 1. QUERY REWRITER (The "Condense" Step) ---
-async def contextualize_query(history: List[Dict[str, str]], latest_query: str):
+def contextualize_query(history: List[Dict[str, str]], latest_query: str):
     """
     Rewrites the latest query to be standalone based on the chat history.
     Uses 'REWRITE_MODELS' (prioritizing speed).
@@ -202,7 +202,7 @@ async def contextualize_query(history: List[Dict[str, str]], latest_query: str):
 
 
 # --- 2. MAIN GENERATOR (The "Historian" Step) ---
-async def generate_response(context: str, query: str, history: List[Dict[str, str]] = [], mode: str = "fast"):
+def generate_response(context: str, query: str, history: List[Dict[str, str]] = [], mode: str = "fast"):
     """
     Generates the final answer using Context and History.
     Uses 'GENERATION_MODELS' (prioritizing intelligence).

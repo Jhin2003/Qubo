@@ -7,7 +7,7 @@ from datetime import datetime
 from pathlib import Path
 
 # --- Dependencies ---
-import pytesseract
+
 import fitz  # PyMuPDF
 from PIL import Image
 import pdfplumber

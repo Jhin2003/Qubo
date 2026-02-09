@@ -46,52 +46,61 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
     setConfirm("");
   };
 
-  const handleSubmit = async (e) => {
+ 
+const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
     setError("");
 
     try {
+      // --- SIGNUP FLOW ---
       if (mode === "signup") {
         if (password !== confirm) throw new Error("Passwords do not match.");
-        // Register
+        
         const res = await fetch(`${API_URL}/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, email, password }),
         });
+        
         if (!res.ok) throw new Error((await res.text()) || "Sign up failed.");
-        onClose();
+        
+        // Optional: Automatically switch to login mode after success
+        // setMode('login'); 
+        // setError("Account created! Please log in.");
+        
+        onClose(); 
         return;
       }
 
-      // Login
-      const res = await fetch(`${API_URL}/token`, {
+      // --- LOGIN FLOW (Updated) ---
+      // 1. Change endpoint to "/login"
+      const res = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password }),
       });
-      if (!res.ok)
+
+      if (!res.ok) {
         throw new Error((await res.text()) || "Invalid credentials.");
-      const data = await res.json();
-      localStorage.setItem("auth_token", data.access_token);
-      if (data.refresh_token)
-        localStorage.setItem("refresh_token", data.refresh_token);
+      }
 
-      const meRes = await fetch(`${API_URL}/auth/me`, {
-        headers: { Authorization: `Bearer ${data.access_token}` },
-      });
-      if (!meRes.ok) throw new Error("Failed to fetch user info.");
-      const me = await meRes.json();
+      // 2. The data is now the User object, not a token
+      const user = await res.json();
 
-      login({ ...me, token: data.access_token });
+
+
+      // 5. Update Context
+      login(user); 
       onClose();
+
     } catch (err) {
       setError(err.message || "Something went wrong.");
     } finally {
       setSubmitting(false);
     }
   };
+  
 
   if (!isOpen) return null;
 

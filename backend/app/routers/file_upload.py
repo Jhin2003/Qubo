@@ -3,12 +3,15 @@ from pathlib import Path
 import shutil
 import os
 
-from fastapi import APIRouter, UploadFile, File, HTTPException,Depends
+# Removed "Depends" and "OAuth2PasswordBearer" from imports
+from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import FileResponse
-from fastapi.security import OAuth2PasswordBearer
-from app.utils.jwt_auth import verify_access_token
 
-from app.services.file_service import process_file
+# Removed jwt_auth import
+# from app.utils.jwt_auth import verify_access_token 
+
+# Consolidated imports
+from app.services.file_service import process_file, delete_file_data 
 
 router = APIRouter()
 
@@ -17,29 +20,18 @@ DATA_STORE = BASE_DIR / "data_store"
 UPLOAD_DIR = DATA_STORE / "pdfs"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+# Removed oauth2_scheme definition
 
-
-def get_current_user(token: str = Depends(oauth2_scheme)):
-    try:
-        payload = verify_access_token(token)
-        print(f"Received token: {token}")  # Debug print
-        return payload  # You can return the user data or any other info from the token
-    except HTTPException as e:
-        raise e
-
-# List all files with a secured token
 @router.get("/files")
-async def list_files(current_user: dict = Depends(get_current_user)):  # Depend on get_current_user
+async def list_files(): 
     files = []
     for file in UPLOAD_DIR.glob("*.pdf"):
         files.append({
             "filename": file.name,
-            "url": f"http://localhost:8000/files/{file.name}",  # Adjust URL based on your server URL
+            "url": f"http://localhost:8000/files/{file.name}", 
         })
     return {"files": files}
 
-# get a files with a secured tok
 @router.get("/files/{filename}")
 async def get_file(filename: str):
     file_path = UPLOAD_DIR / filename
@@ -48,15 +40,16 @@ async def get_file(filename: str):
     else:
         raise HTTPException(status_code=404, detail="File not found")
 
+# Removed "current_user" argument and "Depends"
 @router.post("/upload")
-async def upload_files(files: List[UploadFile] = File(...), current_user: dict = Depends(get_current_user)):
+async def upload_files(files: List[UploadFile] = File(...)):
     results = []
     
     allowed_extensions = {".pdf", ".docx", ".txt"}
     for file in files:
         try:
-            filename = file.filename  # Securely handle the filename if necessary
-              
+            filename = file.filename  
+            
             file_extension = Path(filename).suffix.lower()
             
             if file_extension not in allowed_extensions:
@@ -64,12 +57,11 @@ async def upload_files(files: List[UploadFile] = File(...), current_user: dict =
                     status_code=400,
                     detail=f"File type '{file_extension}' is not allowed. Please upload PDF, DOCX, or TXT."
                 )
-            # Save the uploaded file to the server
+            
             file_path = UPLOAD_DIR / filename
             with open(file_path, "wb") as f:
                 shutil.copyfileobj(file.file, f)
 
-            # Process the PDF file with your service (chunks processing, etc.)
             num_chunks, output_path = process_file(str(file_path), filename)
 
             results.append({
@@ -87,18 +79,9 @@ async def upload_files(files: List[UploadFile] = File(...), current_user: dict =
 
     return {"results": results}
 
-
-
-
-
-
-# ... imports ...
-from app.services.file_service import process_file, delete_file_data # Import the new function
-
-# ... (Previous code) ...
-
+# Removed "current_user" argument and "Depends"
 @router.delete("/files/{filename}")
-async def delete_file(filename: str, current_user: dict = Depends(get_current_user)):
+async def delete_file(filename: str):
     # 1. Security: Prevent path traversal
     upload_dir_resolved = UPLOAD_DIR.resolve()
     file_path = (UPLOAD_DIR / filename).resolve()
@@ -106,14 +89,12 @@ async def delete_file(filename: str, current_user: dict = Depends(get_current_us
     if file_path.parent != upload_dir_resolved:
         raise HTTPException(status_code=400, detail="Invalid filename")
 
-    # 2. Check existence (Optional: logic is handled in service, but good for 404s)
-    # Note: We loosen this check slightly in case the file is gone but vectors remain.
-    # But strictly speaking, if the user asks to delete "X", and "X" isn't there, 404 is correct.
+    # 2. Check existence
     if not file_path.exists():
          raise HTTPException(status_code=404, detail="File not found")
 
     try:
-        # 3. Call the service to handle the complex cleanup
+        # 3. Call the service to handle cleanup
         report = delete_file_data(filename, UPLOAD_DIR)
         
         return {
