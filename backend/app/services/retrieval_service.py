@@ -26,25 +26,55 @@ from .loaders import get_vectorstore, get_cross_encoder
 
 def _extract_page_constraints(query: str) -> Optional[tuple | int]:
     """
-    Returns an int (single page) or tuple (start, end) if pages are mentioned.
+    Parses natural language page requests.
+    Returns:
+      - int: Specific page (e.g., 5).
+      - -1: The LAST page.
+      - tuple (start, end): A range of pages.
+      - tuple (-N, -1): The last N pages.
     """
-    # Pattern 1: Range "pages 10-15"
-    range_match = re.search(r"\bpages?\s+(\d+)\s*(?:-|to)\s*(\d+)\b", query, re.IGNORECASE)
+    q = query.lower().strip()
+
+    # --- PATTERN 1: "First/Last N Pages" ---
+    # Matches: "first 5 pages", "last 3 pages"
+    match_qty = re.search(r"\b(first|last)\s+(\d+)\s+pages?\b", q)
+    if match_qty:
+        direction, count = match_qty.groups()
+        count = int(count)
+        if direction == "first":
+            return (1, count)  # e.g., (1, 5)
+        else:
+            return (-count, -1) # e.g., (-3, -1) means "3rd from last to last"
+
+    # --- PATTERN 2: "First/Last Page" (Singular) ---
+    # Matches: "first page", "start page", "last page", "end page"
+    if re.search(r"\b(first|start|1st)\s+pages?\b", q):
+        return 1
+    if re.search(r"\b(last|final|end)\s+pages?\b", q):
+        return -1
+
+    # --- PATTERN 3: Explicit Ranges ---
+    # Matches: "pages 10-15", "pgs 10 to 15", "p. 10 thru 15"
+    # We use a flexible regex for the prefix (pages, pgs, p) and separator (-, to, thru)
+    range_match = re.search(r"\b(?:pages?|pgs?\.?|p\.?)\s*(\d+)\s*(?:-|to|thru|through)\s*(\d+)\b", q)
     if range_match:
         return (int(range_match.group(1)), int(range_match.group(2)))
 
-    # Pattern 2: Single "page 10"
-    single_match = re.search(r"\bpages?\s+(\d+)\b", query, re.IGNORECASE)
+    # --- PATTERN 4: Single Page ---
+    # Matches: "page 10", "pg 10", "p.10"
+    single_match = re.search(r"\b(?:pages?|pgs?\.?|p\.?)\s*(\d+)\b", q)
     if single_match:
         return int(single_match.group(1))
-        
+
     return None
+
 
 # --- HELPER 4: JSONL Page Reader (Direct Access) ---
 # --- HELPER 4: JSONL Page Reader (Direct Access) ---
 def get_specific_pages_from_jsonl(filename: str, pages: tuple | int) -> Optional[str]:
     """
-    Reads the JSONL file and extracts ALL chunks that match the specific page(s).
+    Reads the JSONL file and extracts chunks. 
+    Supports negative indexing (e.g., -1 for last page).
     """
     base_dir = Path("data_store")
     jsonl_path = base_dir / "chunked_output" / f"{Path(filename).stem}_chunks.jsonl"
@@ -52,26 +82,57 @@ def get_specific_pages_from_jsonl(filename: str, pages: tuple | int) -> Optional
     if not jsonl_path.exists():
         return None
 
-    matching_chunks = []
+    all_chunks = []
     
+    # 1. READ ALL CHUNKS to memory (Necessary to calculate Max Page)
     try:
         with open(jsonl_path, "r", encoding="utf-8") as f:
             for line in f:
-                data = json.loads(line)
-                chunk_page = data['metadata'].get('page', 0)
-                
-                # Check match
-                is_match = False
-                if isinstance(pages, int):
-                    if chunk_page == pages: is_match = True
-                elif isinstance(pages, tuple):
-                    if pages[0] <= chunk_page <= pages[1]: is_match = True
-                
-                if is_match:
-                    matching_chunks.append(data)
+                all_chunks.append(json.loads(line))
     except Exception as e:
         print(f"[ERROR] JSONL Read Error: {e}")
         return None
+
+    if not all_chunks:
+        return None
+
+    # 2. DETERMINE MAX PAGE
+    # We look at every chunk to find the highest page number
+    max_page = max((c['metadata'].get('page', 0) for c in all_chunks), default=0)
+
+    # 3. RESOLVE TARGET PAGES (Handle negatives like -1)
+    target_pages = set()
+
+    if isinstance(pages, int):
+        # Case: Single Page
+        if pages > 0:
+            target_pages.add(pages)
+        elif pages < 0: 
+            # Convert "-1" to Max Page, "-2" to Max-1, etc.
+            real_page = max_page + pages + 1
+            target_pages.add(real_page)
+
+    elif isinstance(pages, tuple):
+        # Case: Range (Start, End)
+        start, end = pages
+        
+        # Resolve start/end negatives
+        if start < 0: start = max_page + start + 1
+        if end < 0: end = max_page + end + 1
+
+        # Safety Clamp (Don't go below 1 or above Max)
+        start = max(1, start)
+        end = min(max_page, end)
+
+        # Add range to targets
+        if start <= end:
+            target_pages.update(range(start, end + 1))
+
+    # 4. FILTER & SORT
+    matching_chunks = [
+        c for c in all_chunks 
+        if c['metadata'].get('page', 0) in target_pages
+    ]
 
     if not matching_chunks:
         return None
@@ -79,14 +140,12 @@ def get_specific_pages_from_jsonl(filename: str, pages: tuple | int) -> Optional
     # Sort chunks to ensure natural reading order
     matching_chunks.sort(key=lambda x: x['metadata'].get('chunk_index', 0))
 
-    # --- FORMATTING FIX ---
-    # We build a list of parts, similar to the main search_vectorstore loop
+    # 5. FORMAT OUTPUT
     context_parts = []
     for idx, c in enumerate(matching_chunks, 1):
         pg = c['metadata'].get('page', '?')
         chunk_content = c['content'].strip()
         
-        # EXACT MATCH of the vector search format:
         structured = f"[{idx}] Source: {filename}, Page: {pg}\nContent: {chunk_content}"
         context_parts.append(structured)
         
@@ -345,7 +404,7 @@ async def search_vectorstore(
     # FIX 1: Allow "precise" mode to trigger the Router
     if mode in ["adaptive", "precise"]:
         print(f"\n[RETRIEVER] 🧠 Analyzing intent for: '{query}' (Mode: {mode})")
-        intent = _classify_query_intent(query)
+        intent = await _classify_query_intent(query)
         print(f"[RETRIEVER] 🎯 Intent Detected: {intent}")
         
         # STRATEGY A: Global Summary (JSONL Bypass)

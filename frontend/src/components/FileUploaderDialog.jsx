@@ -83,18 +83,12 @@ export default function FileUploaderDialog({
     files.forEach((f) => formData.append("files", f));
     const token = localStorage.getItem("auth_token");
 
-    if (!token) {
-      alert("You need to be logged in to upload files.");
-      setIsUploading(false);
-      return;
-    }
+ 
 
     try {
       const res = await fetch(uploadUrl, {
         method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-        },
+    
         body: formData,
       });
       if (!res.ok) throw new Error(`Upload failed with status ${res.status}`);

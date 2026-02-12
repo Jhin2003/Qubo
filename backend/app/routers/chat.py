@@ -31,8 +31,8 @@ async def chat(request: Request, messages: List[Message]):
     # --- FIX 1: Non-Blocking Contextualize ---
     if history_window:
         # We run the synchronous 'contextualize_query' in a separate thread
-        standalone_query = await asyncio.to_thread(
-            contextualize_query, 
+        standalone_query = await contextualize_query(
+         
             formatted_history, 
             user_message
         )
@@ -48,16 +48,15 @@ async def chat(request: Request, messages: List[Message]):
     
     # Define a helper lambda or partial to pass arguments cleanly to to_thread
     if has_source:
-        context, sources = await asyncio.to_thread(
-            search_vectorstore,
+        context, sources = await search_vectorstore(
             standalone_query, 
             "data_store/vector_database", 
             mode=current_msg.mode,
             source=current_msg.source
         )
     else:
-        context, sources = await asyncio.to_thread(
-            search_vectorstore,
+        context, sources = await search_vectorstore(
+           
             standalone_query, 
             "data_store/vector_database", 
             mode=current_msg.mode
@@ -67,13 +66,12 @@ async def chat(request: Request, messages: List[Message]):
 
     # --- FIX 3: Non-Blocking Generation ---
     # This is the most critical one (LLM calls take the longest)
-    llm_response = await asyncio.to_thread(
-        generate_response,
+    llm_response = await generate_response(
         context=context, 
         query=user_message, 
         history=formatted_history, 
         mode=current_msg.mode
-    )
+    )        
 
     # ... (Rest of logic) ...
     bot_response = f"{llm_response}"
