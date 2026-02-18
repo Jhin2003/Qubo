@@ -46,10 +46,7 @@ langchain-community==0.4.1
 langchain-core==0.3.82
 langchain-experimental==0.4.1
 langchain-huggingface==1.2.0
-langchain-ollama==1.0.1
-langchain-openai==0.3.35
 langchain-text-splitters==1.1.0
-langchain-together==0.3.1
 langgraph==1.0.5
 langgraph-checkpoint==3.0.1
 langgraph-prebuilt==1.0.5
@@ -90,7 +87,6 @@ python-dotenv==1.2.1
 python-jose==3.5.0
 python-multipart==0.0.21
 pytokens==0.3.0
-pywin32==311
 PyYAML==6.0.3
 rank-bm25==0.2.2
 regex==2025.11.3
