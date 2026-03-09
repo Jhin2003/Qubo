@@ -49780,3 +49780,423 @@ Response (Narrative with Citations):
 -------------------- PROMPT END ---------------------
 ============================================================
 
+
+============================================================
+TIMESTAMP: 2026-03-10 07:23:38
+MODELS QUEUED: ['meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+    Given a chat history and the latest user question which might reference context in the chat history, 
+    formulate a standalone question which can be understood without the chat history. 
+    
+    RULES:
+    1. Do NOT answer the question. 
+    2. Just reformulate it if it contains pronouns.
+    3. If the question is already standalone, return it exactly as is.
+    4. PRESERVE CONSTRAINTS: If the user asks for a specific format, tone, page, etc., KEEP IT.
+    5. GREETINGS: If the user says "Hello" or "Thanks", keep it as is.
+
+    Chat History:
+    User: create me an introduction of using all of the documents
+Bot: The American period in the Philippines was a complex and transformative time in the country's history. The Treaty of Paris, signed on December 10, 1898, marked the beginning of American occupation, with the United States gaining possession of the Philippine Islands [TOPIC 6 _ American Period.pdf, 2]. This period was characterized by the implementation of various policies, including the "Benevolent Assimilation" policy, which was influenced by President McKinley's prayer, suggesting that the occupation was seen as a divine mandate [TOPIC 6 _ American Period.pdf, 2].
+
+The Philippine-American War, which began on February 4, 1899, was a significant event during this period, with the war being regarded as a continuation of the 1896 Philippine Revolution by the Filipinos, while the United States viewed it as an insurrection [Topic 5 Part 1.pdf, 1]. The war resulted in the deaths of many Filipino combatants and the fall of the first Philippine Republic, officially ending in July 1902 [Topic 5 Part 1.pdf, 1].
+
+The American government established various laws and regulations to govern the Philippines, including the Philippine Bill of 1902, which guided the administration of the islands [TOPIC 6 _ American Period.pdf, 2]. The Philippine Commission was also established to oversee the governance of the islands, with the power to make laws and regulations [TOPIC 6 _ American Period.pdf, 66].
+
+The administration of justice was also a key aspect of American rule, with the establishment of a judicial system that included the Supreme Court and Courts of First Instance [TOPIC 6 _ American Period.pdf, 48]. The Supreme Court of the United States was given jurisdiction to review and revise the decisions of the Supreme Court of the Philippine Islands [TOPIC 6 _ American Period.pdf, 48].
+
+The economic development of the Philippines was also a priority during this period, with the American government investing in infrastructure and other development projects [TOPIC 6 _ American Period.pdf, 30]. The Philippine government was also authorized to issue bonds to finance development projects, with the bonds being exempt from taxation [TOPIC 6 _ American Period.pdf, 61].
+
+Overall, the American period in the Philippines was a complex and multifaceted time in the country's history, marked by significant events, policies, and developments that shaped the course of the nation [TOPIC 6 _ American Period.pdf, 2].
+User: create me an introduction of using all of the documents
+Bot: The American Period in Philippine history is a significant era that spans from the end of the 19th century to the mid-20th century. This period was marked by significant events and documents, including the Treaty of Paris, McKinley’s Prayer, Benevolent Assimilation Proclamation, Our Campaign for Independence, The Corner Stone of Philippine Independence, The Jones Law of 1916, The Philippine Organic Act of 1902, Diary of Carrie Chapman, The Philippine Independence Act, and many others [1, 62-67].
+
+The American Period began with the Treaty of Paris in 1898, which formally ended the Spanish-American War and ceded the Philippines from Spain to the United States [1, 62]. Following this, McKinley’s Prayer revealed President William McKinley's decision to Christianize and civilize the Filipinos, justifying the U.S. colonization of the Philippines [1, 63]. The Benevolent Assimilation Proclamation, issued by President McKinley, aimed to assimilate the Philippines into American culture and society [1, 63].
+
+The Philippine-American War broke out on February 4, 1899, two days prior to the US Congress’ ratification of the 1898 Treaty of Paris [2, 126]. This war was fought between the forces of the first Philippine Republic, headed by President Emilio F. Aguinaldo, and the American Forces in the country [2, 126]. The war ended with Aguinaldo’s Declaration of Surrender [2, 127].
+
+During the American Period, there were also efforts to understand the affairs and problems of women in other countries [3, 67]. The Philippine Organic Act of 1902 provided for the establishment of a government in the Philippines and recognized the property rights of ecclesiastical or civic bodies, or any other associations having legal capacity to acquire and possess property in the ceded territories [4, 6]. The Jones Law of 1916 provided for the establishment of a Philippine Senate and a House of Representatives [1, 65]. The Philippine Independence Act, also known as the Tydings-McDuffie Act, was passed in 1934, providing for the granting of independence to the Philippines after a period of ten years [1, 66].
+
+In conclusion, the American Period in Philippine history was marked by significant events, documents, and wars that shaped the country's future. These events include the Treaty of Paris, McKinley’s Prayer, Benevolent Assimilation Proclamation, Philippine-American War, and various legislations that recognized the rights of the Filipino people.
+User: summarize this document
+Bot: The document discusses the accounting process at the National University, which is observed to be transparent and easy to understand [Context, Page 1]. The accounting data is presented in a clear format, allowing users to see the amount they have paid and the amount they still need to pay [Context, Page 1]. Additionally, the system handles excess payments by providing a clear output of the excess amount and applying it to the next enrollment transaction [Context, Page 1]. This clarity of accounting data is noted to leave a good impression on users [Context, Page 1].
+
+    Latest User Question: 
+    what is the letter about
+
+    Standalone Question:
+    
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-10 07:23:42
+MODELS QUEUED: ['meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+        Analyze the user's query and classify it into one of three distinct Retrieval Categories:
+
+        1. "GLOBAL_SUMMARY": The user wants a summary, outline, or overview of the *entire* document.
+        2. "BROAD_SEARCH": The user asks for a list, comparison, or explanation that requires gathering many scattered details.
+        3. "SPECIFIC_SEARCH": The user asks for a precise fact, date, name, or definition.
+        4. "PAGE_SPECIFIC": The user explicitly asks for content from specific pages.
+        5. "GREETING": Conversational filler, greetings, thanks.
+        6. "NONSENSE": The input is gibberish.
+
+        User Query: "what is the letter about"
+        OUTPUT: Output ONLY the category name. No other text.
+        
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-10 07:23:44
+MODELS QUEUED: ['meta-llama/Llama-3.3-70B-Instruct-Turbo', 'openai/gpt-oss-120b', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+ROLE: You are a meticulous academic historian. Your task is to analyze the provided sources (Context) and synthesize a response to the user's inquiry.
+
+GUIDELINES:
+1. STRICT SOURCE ADHERENCE (FACTS): Derive facts ONLY from the provided Context.
+2. FORMATTING PERMISSION (STYLE): You may structure the response as requested (bullets, tables, etc.).
+3. CITATION REQUIREMENT: Every assertion must be backed by an inline citation: [source, page].
+4. UNKNOWN INFO: If the Context does not contain the answer, reply: "Please elaborate your question further."
+5. DIRECTNESS: Just answer the question.
+
+=== FEW-SHOT EXAMPLES ===
+[EXAMPLE 1: Greeting]
+Query: Hello
+Response: Hello, how can i help you?
+
+[EXAMPLE 2: Standard Narrative Query]
+Query: Why did Rizal leave?
+Response: According to the records, Rizal departed for Spain in May 1882 primarily to complete his medical education, a departure undertaken without his parents' knowledge [Rizal_Bio.pdf, 12].
+
+[EXAMPLE 3: Formatting/List Request]
+Query: List the goals of the movement in bullet points.
+Response:
+The Propaganda Movement aimed to achieve the following:
+* **Assimilation:** Making the Philippines a formal province of Spain [Propaganda_Movement.pdf, 45].
+* **Representation:** Securing seats in the Spanish Cortes [Propaganda_Movement.pdf, 45].
+
+NOW THE INQUIRY:
+
+Query:
+what is the letter about
+
+Context:
+
+--- 0% MARK (Page 1) ---
+March 3, 2026
+Reignite Cyber Solutions Inc. 14 Domingo M. Guevara, Mandaluyong, 1550 Metro Manila
+Dear Reignite Cyber Solutions:
+As a requirement of the Computer Science program at National University, students must
+undergo internship for 400 hours for one (1) term. The main objective of the internship
+program is to expose students to actual scenarios and real-life applications of the principles
+and concepts learned inside the classroom. In this regard, we would like to recommend Miguel Raphael Layos, a BS Computer Science
+student, for internship with your company. Mr.
+
+--- 50% MARK (Page 1) ---
+Layos has completed at least 70% of the
+required academic units and is expected to graduate within the academic year. The
+opportunity for Mr. Layos to work with you will allow him to apply what he has learned and
+will expose him to the actual workplace environment. Attached is his resumé for your
+reference. Should you have any questions, please feel free to get in touch with us through our landline,
++632 7121900 loc 1456, or through email, nuccit@national-u.edu.ph. We are looking forward to being your partner in producing graduates who can make positive
+contributions to the industry. Thank you. Very truly yours,
+Julie Anne A. Crystal
+Internship Coordinator
+ACO-CI-F-013
+
+Response (Narrative with Citations):
+
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-10 07:26:35
+MODELS QUEUED: ['meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+    Given a chat history and the latest user question which might reference context in the chat history, 
+    formulate a standalone question which can be understood without the chat history. 
+    
+    RULES:
+    1. Do NOT answer the question. 
+    2. Just reformulate it if it contains pronouns.
+    3. If the question is already standalone, return it exactly as is.
+    4. PRESERVE CONSTRAINTS: If the user asks for a specific format, tone, page, etc., KEEP IT.
+    5. GREETINGS: If the user says "Hello" or "Thanks", keep it as is.
+
+    Chat History:
+    User: create me an introduction of using all of the documents
+Bot: The American Period in Philippine history is a significant era that spans from the end of the 19th century to the mid-20th century. This period was marked by significant events and documents, including the Treaty of Paris, McKinley’s Prayer, Benevolent Assimilation Proclamation, Our Campaign for Independence, The Corner Stone of Philippine Independence, The Jones Law of 1916, The Philippine Organic Act of 1902, Diary of Carrie Chapman, The Philippine Independence Act, and many others [1, 62-67].
+
+The American Period began with the Treaty of Paris in 1898, which formally ended the Spanish-American War and ceded the Philippines from Spain to the United States [1, 62]. Following this, McKinley’s Prayer revealed President William McKinley's decision to Christianize and civilize the Filipinos, justifying the U.S. colonization of the Philippines [1, 63]. The Benevolent Assimilation Proclamation, issued by President McKinley, aimed to assimilate the Philippines into American culture and society [1, 63].
+
+The Philippine-American War broke out on February 4, 1899, two days prior to the US Congress’ ratification of the 1898 Treaty of Paris [2, 126]. This war was fought between the forces of the first Philippine Republic, headed by President Emilio F. Aguinaldo, and the American Forces in the country [2, 126]. The war ended with Aguinaldo’s Declaration of Surrender [2, 127].
+
+During the American Period, there were also efforts to understand the affairs and problems of women in other countries [3, 67]. The Philippine Organic Act of 1902 provided for the establishment of a government in the Philippines and recognized the property rights of ecclesiastical or civic bodies, or any other associations having legal capacity to acquire and possess property in the ceded territories [4, 6]. The Jones Law of 1916 provided for the establishment of a Philippine Senate and a House of Representatives [1, 65]. The Philippine Independence Act, also known as the Tydings-McDuffie Act, was passed in 1934, providing for the granting of independence to the Philippines after a period of ten years [1, 66].
+
+In conclusion, the American Period in Philippine history was marked by significant events, documents, and wars that shaped the country's future. These events include the Treaty of Paris, McKinley’s Prayer, Benevolent Assimilation Proclamation, Philippine-American War, and various legislations that recognized the rights of the Filipino people.
+User: summarize this document
+Bot: The document discusses the accounting process at the National University, which is observed to be transparent and easy to understand [Context, Page 1]. The accounting data is presented in a clear format, allowing users to see the amount they have paid and the amount they still need to pay [Context, Page 1]. Additionally, the system handles excess payments by providing a clear output of the excess amount and applying it to the next enrollment transaction [Context, Page 1]. This clarity of accounting data is noted to leave a good impression on users [Context, Page 1].
+User: what is the letter about
+Bot: The letter is about recommending a student, Miguel Raphael Layos, for an internship at Reignite Cyber Solutions Inc. [Context, Page 1]. The internship is a requirement for the Computer Science program at National University, aiming to expose students to real-life applications of the principles and concepts learned in the classroom [Context, Page 1]. The student has completed at least 70% of the required academic units and is expected to graduate within the academic year [Context, Page 1]. The letter includes the student's resumé and provides contact information for any questions [Context, Page 1].
+
+    Latest User Question: 
+    who is miguel
+
+    Standalone Question:
+    
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-10 07:26:36
+MODELS QUEUED: ['meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+        Analyze the user's query and classify it into one of three distinct Retrieval Categories:
+
+        1. "GLOBAL_SUMMARY": The user wants a summary, outline, or overview of the *entire* document.
+        2. "BROAD_SEARCH": The user asks for a list, comparison, or explanation that requires gathering many scattered details.
+        3. "SPECIFIC_SEARCH": The user asks for a precise fact, date, name, or definition.
+        4. "PAGE_SPECIFIC": The user explicitly asks for content from specific pages.
+        5. "GREETING": Conversational filler, greetings, thanks.
+        6. "NONSENSE": The input is gibberish.
+
+        User Query: "who is the student being recommended for an internship"
+        OUTPUT: Output ONLY the category name. No other text.
+        
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-10 07:26:41
+MODELS QUEUED: ['meta-llama/Llama-3.3-70B-Instruct-Turbo', 'openai/gpt-oss-120b', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+ROLE: You are a meticulous academic historian. Your task is to analyze the provided sources (Context) and synthesize a response to the user's inquiry.
+
+GUIDELINES:
+1. STRICT SOURCE ADHERENCE (FACTS): Derive facts ONLY from the provided Context.
+2. FORMATTING PERMISSION (STYLE): You may structure the response as requested (bullets, tables, etc.).
+3. CITATION REQUIREMENT: Every assertion must be backed by an inline citation: [source, page].
+4. UNKNOWN INFO: If the Context does not contain the answer, reply: "Please elaborate your question further."
+5. DIRECTNESS: Just answer the question.
+
+=== FEW-SHOT EXAMPLES ===
+[EXAMPLE 1: Greeting]
+Query: Hello
+Response: Hello, how can i help you?
+
+[EXAMPLE 2: Standard Narrative Query]
+Query: Why did Rizal leave?
+Response: According to the records, Rizal departed for Spain in May 1882 primarily to complete his medical education, a departure undertaken without his parents' knowledge [Rizal_Bio.pdf, 12].
+
+[EXAMPLE 3: Formatting/List Request]
+Query: List the goals of the movement in bullet points.
+Response:
+The Propaganda Movement aimed to achieve the following:
+* **Assimilation:** Making the Philippines a formal province of Spain [Propaganda_Movement.pdf, 45].
+* **Representation:** Securing seats in the Spanish Cortes [Propaganda_Movement.pdf, 45].
+
+NOW THE INQUIRY:
+
+Query:
+who is miguel
+
+Context:
+[1] Source: Miguel Raphael Layos Endorsement Letter.docx (1).pdf, Page: 1
+Content: March 3, 2026
+Reignite Cyber Solutions Inc. 14 Domingo M. Guevara, Mandaluyong, 1550 Metro Manila
+Dear Reignite Cyber Solutions:
+As a requirement of the Computer Science program at National University, students must
+undergo internship for 400 hours for one (1) term. The main objective of the internship
+program is to expose students to actual scenarios and real-life applications of the principles
+and concepts learned inside the classroom. In this regard, we would like to recommend Miguel Raphael Layos, a BS Computer Science
+student, for internship with your company. Mr.
+
+[2] Source: Miguel Raphael Layos Endorsement Letter.docx (1).pdf, Page: 1
+Content: Layos has completed at least 70% of the
+required academic units and is expected to graduate within the academic year. The
+opportunity for Mr. Layos to work with you will allow him to apply what he has learned and
+will expose him to the actual workplace environment. Attached is his resumé for your
+reference. Should you have any questions, please feel free to get in touch with us through our landline,
++632 7121900 loc 1456, or through email, nuccit@national-u.edu.ph. We are looking forward to being your partner in producing graduates who can make positive
+contributions to the industry. Thank you. Very truly yours,
+Julie Anne A. Crystal
+Internship Coordinator
+ACO-CI-F-013
+
+Response (Narrative with Citations):
+
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-10 07:48:32
+MODELS QUEUED: ['meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+    Given a chat history and the latest user question which might reference context in the chat history, 
+    formulate a standalone question which can be understood without the chat history. 
+    
+    RULES:
+    1. Do NOT answer the question. 
+    2. Just reformulate it if it contains pronouns.
+    3. If the question is already standalone, return it exactly as is.
+    4. PRESERVE CONSTRAINTS: If the user asks for a specific format, tone, page, etc., KEEP IT.
+    5. GREETINGS: If the user says "Hello" or "Thanks", keep it as is.
+
+    Chat History:
+    User: summarize this document
+Bot: The document discusses the accounting process at the National University, which is observed to be transparent and easy to understand [Context, Page 1]. The accounting data is presented in a clear format, allowing users to see the amount they have paid and the amount they still need to pay [Context, Page 1]. Additionally, the system handles excess payments by providing a clear output of the excess amount and applying it to the next enrollment transaction [Context, Page 1]. This clarity of accounting data is noted to leave a good impression on users [Context, Page 1].
+User: what is the letter about
+Bot: The letter is about recommending a student, Miguel Raphael Layos, for an internship at Reignite Cyber Solutions Inc. [Context, Page 1]. The internship is a requirement for the Computer Science program at National University, aiming to expose students to real-life applications of the principles and concepts learned in the classroom [Context, Page 1]. The student has completed at least 70% of the required academic units and is expected to graduate within the academic year [Context, Page 1]. The letter includes the student's resumé and provides contact information for any questions [Context, Page 1].
+User: who is miguel
+Bot: Miguel Raphael Layos is a BS Computer Science student at National University, who has completed at least 70% of the required academic units and is expected to graduate within the academic year [Miguel Raphael Layos Endorsement Letter.docx (1).pdf, 1]. He has been recommended for an internship with Reignite Cyber Solutions Inc. as part of the university's internship program, which aims to expose students to actual scenarios and real-life applications of the principles and concepts learned inside the classroom [Miguel Raphael Layos Endorsement Letter.docx (1).pdf, 1].
+
+    Latest User Question: 
+    what is the rizal first emo about
+
+    Standalone Question:
+    
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-10 07:48:33
+MODELS QUEUED: ['meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+        Analyze the user's query and classify it into one of three distinct Retrieval Categories:
+
+        1. "GLOBAL_SUMMARY": The user wants a summary, outline, or overview of the *entire* document.
+        2. "BROAD_SEARCH": The user asks for a list, comparison, or explanation that requires gathering many scattered details.
+        3. "SPECIFIC_SEARCH": The user asks for a precise fact, date, name, or definition.
+        4. "PAGE_SPECIFIC": The user explicitly asks for content from specific pages.
+        5. "GREETING": Conversational filler, greetings, thanks.
+        6. "NONSENSE": The input is gibberish.
+
+        User Query: "what is the first emotion expressed in the rizal novel"
+        OUTPUT: Output ONLY the category name. No other text.
+        
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-10 07:48:43
+MODELS QUEUED: ['meta-llama/Llama-3.3-70B-Instruct-Turbo', 'openai/gpt-oss-120b', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+ROLE: You are a meticulous academic historian. Your task is to analyze the provided sources (Context) and synthesize a response to the user's inquiry.
+
+GUIDELINES:
+1. STRICT SOURCE ADHERENCE (FACTS): Derive facts ONLY from the provided Context.
+2. FORMATTING PERMISSION (STYLE): You may structure the response as requested (bullets, tables, etc.).
+3. CITATION REQUIREMENT: Every assertion must be backed by an inline citation: [source, page].
+4. UNKNOWN INFO: If the Context does not contain the answer, reply: "Please elaborate your question further."
+5. DIRECTNESS: Just answer the question.
+
+=== FEW-SHOT EXAMPLES ===
+[EXAMPLE 1: Greeting]
+Query: Hello
+Response: Hello, how can i help you?
+
+[EXAMPLE 2: Standard Narrative Query]
+Query: Why did Rizal leave?
+Response: According to the records, Rizal departed for Spain in May 1882 primarily to complete his medical education, a departure undertaken without his parents' knowledge [Rizal_Bio.pdf, 12].
+
+[EXAMPLE 3: Formatting/List Request]
+Query: List the goals of the movement in bullet points.
+Response:
+The Propaganda Movement aimed to achieve the following:
+* **Assimilation:** Making the Philippines a formal province of Spain [Propaganda_Movement.pdf, 45].
+* **Representation:** Securing seats in the Spanish Cortes [Propaganda_Movement.pdf, 45].
+
+NOW THE INQUIRY:
+
+Query:
+what is the rizal first emo about
+
+Context:
+[1] Source: Rizal_The_First_Emo.pdf, Page: 1
+Content: al industry, I aim to give my take on his story by drawing simple life lessons to
+what many see as an extraordinary life. It is high time that we search our humanity in Rizal, and in
+turn, find Rizal in ourselves.3
+The First Emo: Biography of Rizal as a Romantic
+Rizal has been given many labels. He has been called a Philippine Nationalist and Martyr by British
+biographer Austin Coates, The Great Malayan by historical writer Carlos Quirino and even Kristong
+Pilipino by the Rizalist Religious groups, now appropriated as title of the new book by mountaineer
+
+[2] Source: Rizal_The_First_Emo.pdf, Page: 23
+Content: case of the Philippines, the first (critically
+acclaimed and nationally admired) emo would have been Francisco Balagtas—not Rizal! But
+then again, how would calling Balagtas (or Rizal) an emo add to our understanding of his life
+and works? Or of Philippine literature? Or of Philippine nationalism? XC: Again, this being not really a very strictly academic lecture and doesn’t really
+present a new understanding of the hero, this paper which is my own repackaging of the Rizal
+story and also reflecting my own biases and even personality, would like to just teach people
+that one way to be like Rizal is to be at tune with your loving emotions and harness it to
+everything that we are doing. I think that is the simple life lesson I would like to impart on the
+readers along with the other simple lessons from his extraordinary journey. Many writers and
+artists are already emos, I am calling on every Filipino to do the same. To take down the culture
+of apathy and replace it with love of country and fellowmen as Rizal and Bonifacio taught us.
+
+[3] Source: Rizal_The_First_Emo.pdf, Page: 2
+Content: boring. I discussed this with the people from Rock Ed Philippines, Aiza Seguerra and Gloc-9,
+among others, and researchers from the National Historical Commission of the Philippines (NHCP)
+during a consultation about the Rock Rizal Album in April 2011. One of them, Mona Lisa Quizon,
+agrees in an article for Philippines Free Press that came out on the week of Rizal’s 150th birthday:
+Many of the youth today are crazy about emo, a fad that started in the 80s. According
+to them, emo is a person who is emotional or may pagka senti, meaning sentimental in
+many ways and loves to wear black. Being a passionate and sensitive person ...Rizal
+could have been an emo today.6
+I have always said that the number one evidence of this was his signature one sided hair.7 There
+were also his emotionally-charged writings. For example, this is what he wrote when he left Ateneo:
+Paalam, magandang panahong di ko malilimot.
+
+[4] Source: Rizal_The_First_Emo.pdf, Page: 12
+Content: The next time you see your mom, dad, a sibling or a loved one, give them a
+hug. You’ll see that no family or people have the greatest capacity to love but the Filipino. Bottomline, Rizal exemplified this great emotion of love and this is something each one of us can
+emulate. If every Filipino did the same, a better future would be more concrete. To harness this
+
+[5] Source: Rizal_The_First_Emo.pdf, Page: 2
+Content: His
+last love, his dulce extranjera, was no other than Josephine Bracken. Other women linked to Rizal may
+be considered in today’s terms as MUs (mutual understanding) and flings, consequences of his
+travelling. As Rizal enthusiast and member of his 1961 Centennial Commission, Vicente del Carmen,
+wrote:
+Rizal’s relationship with women embodied a wholesome philosophy of life. He was
+a lover of beautiful women but no one could say that he took liberties. His
+friendships were joyous and worthwhile experiences without any trace of deception. ...it is pleasing to note that there was never any sources of scandals, heartbreaks and
+disappointments.5
+Then, I dared to call Rizal The First Emo. This statement is one of my most benta jokes during my lectures, on a subject many perceive as
+boring. I discussed this with the people from Rock Ed Philippines, Aiza Seguerra and Gloc-9,
+among others, and researchers from the National Historical Commission of the Philippines (NHCP)
+during a consultation about the Rock Riz
+
+Response (Narrative with Citations):
+
+-------------------- PROMPT END ---------------------
+============================================================
+
