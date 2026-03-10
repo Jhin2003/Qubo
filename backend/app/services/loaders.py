@@ -7,6 +7,8 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 from sentence_transformers import CrossEncoder
 from langchain_community.vectorstores.utils import DistanceStrategy
 
+from together import Together
+import os
 
 from transformers import pipeline
 
@@ -15,13 +17,33 @@ from transformers import pipeline
 EMBED_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 CE_MODEL_NAME = "BAAI/bge-reranker-base"
 CC_MODEL_NAME = "grahamaco/question-complexity-classifier"
-
 INDEX_DIR = "data_store/vector_database"
 
+from langchain_core.embeddings import Embeddings
+
+
+class TogetherEmbeddings(Embeddings):
+    def __init__(self, model="intfloat/multilingual-e5-large-instruct"):
+        self.client = Together(api_key="f093074f102974466d625db36d8bd171b92df916fa78eb7b91faa9108e6ed5c2")
+        self.model = model
+
+    def embed_documents(self, texts):
+        response = self.client.embeddings.create(
+            model=self.model,
+            input=texts
+        )
+        return [item.embedding for item in response.data]
+
+    def embed_query(self, text):
+        response = self.client.embeddings.create(
+            model=self.model,
+            input=[text]
+        )
+        return response.data[0].embedding
 
 @lru_cache(maxsize=1)
 def get_embedder():
-    return HuggingFaceEmbeddings(model_name=EMBED_MODEL_NAME)
+    return TogetherEmbeddings()
 
 
 @lru_cache(maxsize=1)
@@ -40,20 +62,6 @@ def get_vectorstore(allow_unsafe: bool = False):
         distance_strategy=DistanceStrategy.COSINE
     )
 
-@lru_cache(maxsize=1)
-def get_complexity_classifier():
-    """
-    Initializes and caches the query complexity classification pipeline.
-    """
-    # Check for GPU availability and assign to device 0 if available, otherwise use CPU (-1)
-    device_id = 0 if torch.cuda.is_available() else -1
-    
-    return pipeline(
-        "text-classification",
-        model=CC_MODEL_NAME,
-        # Assign the device for faster inference
-        device=device_id
-    )
 
 
 def warmup():
@@ -61,22 +69,12 @@ def warmup():
     emb = get_embedder()
     try:
         emb.embed_documents(["__warmup__"])
-    
-    except Exception:
-        # fallback for older LangChain versions
-        emb.client.encode(["__warmup__"], convert_to_numpy=True, normalize_embeddings=False)
+    except Exception as e:
+        print(f"Skipping FAISS warmup: {e}")
 
-    # Cross-encoder: force a real predict
+        # Cross-encoder: force a real predict
     ce = get_cross_encoder()
     ce.predict([("__warmup__", "__warmup__")])
-
-    try:
-        classifier = get_complexity_classifier()
-        # Run a minimal prediction to load the model onto the device
-        classifier("__warmup__") 
-        print("Complexity Classifier warmed up successfully.")
-    except Exception as e:
-        print(f"Skipping Complexity Classifier warmup: {e}")
 
 
     # FAISS: load if present
@@ -96,4 +94,4 @@ def invalidate_all():
     get_vectorstore.cache_clear()
     get_embedder.cache_clear()
     get_cross_encoder.cache_clear()
-    get_complexity_classifier.cache_clear()
+    

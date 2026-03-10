@@ -34392,3 +34392,193 @@ Response (Narrative with Citations):
 -------------------- PROMPT END ---------------------
 ============================================================
 
+
+============================================================
+TIMESTAMP: 2026-03-11 04:14:21
+MODELS QUEUED: ['meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+    Given a chat history and the latest user question which might reference context in the chat history, 
+    formulate a standalone question which can be understood without the chat history. 
+    
+    RULES:
+    1. Do NOT answer the question. 
+    2. Just reformulate it if it contains pronouns (he, she, it, that) referring to previous context.
+    3. If the question is already standalone, return it exactly as is.
+    4. PRESERVE CONSTRAINTS: If the user asks for a specific format (table, bullet points), tone (funny, professional), page, Length, etc., YOU MUST KEEP THIS IN THE REWRITTEN QUERY.
+    5. GREETINGS: If the user says "Hello" or "Thanks", keep it as is.
+
+    Chat History:
+    User: what is the letter about
+Bot: The letter is about recommending a student, Miguel Raphael Layos, for an internship at Reignite Cyber Solutions Inc. [Context, Page 1]. The internship is a requirement for the Computer Science program at National University, aiming to expose students to real-life applications of the principles and concepts learned in the classroom [Context, Page 1]. The student has completed at least 70% of the required academic units and is expected to graduate within the academic year [Context, Page 1]. The letter includes the student's resumé and provides contact information for any questions [Context, Page 1].
+User: who is miguel
+Bot: Miguel Raphael Layos is a BS Computer Science student at National University, who has completed at least 70% of the required academic units and is expected to graduate within the academic year [Miguel Raphael Layos Endorsement Letter.docx (1).pdf, 1]. He has been recommended for an internship with Reignite Cyber Solutions Inc. as part of the university's internship program, which aims to expose students to actual scenarios and real-life applications of the principles and concepts learned inside the classroom [Miguel Raphael Layos Endorsement Letter.docx (1).pdf, 1].
+User: what is the rizal first emo about
+Bot: The concept of Rizal as the "first emo" refers to his emotional and sentimental nature, which is reminiscent of the characteristics associated with the emo subculture [Rizal_The_First_Emo.pdf, 2]. According to Mona Lisa Quizon, Rizal could have been considered an emo today due to his passionate and sensitive personality [Rizal_The_First_Emo.pdf, 2]. The author of the book "Rizal: The First Emo" also points out that Rizal's emotionally-charged writings, such as his farewell message when he left Ateneo, "Paalam, magandang panahong di ko malilimot," demonstrate his emotional nature [Rizal_The_First_Emo.pdf, 2]. Additionally, Rizal's relationships with women, including his last love Josephine Bracken, are described as embodying a wholesome philosophy of life, with no scandals or heartbreaks [Rizal_The_First_Emo.pdf, 2]. The author's intention in calling Rizal the "first emo" is to teach people to be in tune with their loving emotions and harness them to make a positive impact, just like Rizal did [Rizal_The_First_Emo.pdf, 23].
+
+    Latest User Question: 
+    who is miguel layos
+
+    Standalone Question:
+    
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-11 04:14:22
+MODELS QUEUED: ['meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+        Analyze the user's query and classify it into one of three distinct Retrieval Categories:
+
+        1. "GLOBAL_SUMMARY": The user wants a summary, outline, or overview of the *entire* document. (e.g., "Summarize the paper", "Give me the main points", "What is the doocument about?")
+        2. "BROAD_SEARCH": The user asks for a list, comparison, or explanation that requires gathering many scattered details. (e.g., "List all the themes", "What are the 5 goals?", "Compare X and Y")
+        3. "SPECIFIC_SEARCH": The user asks for a precise fact, date, name, or definition. (e.g., "Who is Rizal?", "When did he leave?", "What is the capital?")
+        4. "PAGE_SPECIFIC": The user explicitly asks for content from specific pages or page ranges. (e.g., "Summarize page 10", "What happens on pages 15-20?", "Read the last page")
+        5. "GREETING": Conversational filler, greetings, thanks, or questions NOT requiring external information. (e.g., "Hi", "Hello", "Thank you", "Who are you?")
+        6. "NONSENSE": The input is gibberish, random characters, too short to mean anything, or linguistically incoherent. (e.g., "asdf", "sdsdsd", "..." )
+        User Query: "who is Miguel Layos"
+        OUTPUT: Output ONLY the category name. No other text.
+        
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-11 04:14:27
+MODELS QUEUED: ['meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+ROLE: You are a meticulous academic historian. Your task is to analyze the provided sources (Context) and synthesize a response to the user's inquiry.
+
+GUIDELINES:
+1. STRICT SOURCE ADHERENCE (FACTS): You must derive all historical facts, dates, names, and events ONLY from the provided Context.
+2. FORMATTING PERMISSION (STYLE): You are explicitly allowed to structure the response as requested by the user (e.g., bullet points, tables, numbered lists, summaries). You may change the *format* of the information, provided the *factual content* remains strictly grounded in the Context.
+3. CITATION REQUIREMENT: Every historical assertion must be backed by an inline citation: [source, page].
+4. UNKNOWN INFO: If the provided archives (Context) do not contain the answer, reply strictly: "Please elaborate your question further."
+
+6. DIRECTNESS (CRITICAL): State facts directly and confidently. DO NOT start sentences with "Based on the provided sources," "The documents state," or "According to the context." Just answer the question.
+
+=== FEW-SHOT EXAMPLES (LEARN FROM THESE PATTERNS) ===
+
+[EXAMPLE 1: Greeting]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Jose Rizal left for Spain in May 1882 without the knowledge of his parents, focused on finishing his medical studies.
+Query: Hello
+Response:
+Hello, how can i help you?
+
+[EXAMPLE 2: Standard Narrative Query]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Jose Rizal left for Spain in May 1882 without the knowledge of his parents, focused on finishing his medical studies.
+Query: Why did Rizal leave?
+Response:
+According to the records, Rizal departed for Spain in May 1882 primarily to complete his medical education, a departure undertaken without his parents' knowledge [Rizal_Bio.pdf, 12].
+
+[EXAMPLE 3: Formatting/List Request]
+Context:
+[1] Source: Propaganda_Movement.pdf, Page: 45
+Content: The movement had three main goals: assimilation of the Philippines as a province of Spain, representation in the Spanish Cortes, and equality before the law.
+Query: List the goals of the movement in bullet points.
+Response:
+The Propaganda Movement aimed to achieve the following:
+* **Assimilation:** Making the Philippines a formal province of Spain [Propaganda_Movement.pdf, 45].
+* **Representation:** Securing seats in the Spanish Cortes [Propaganda_Movement.pdf, 45].
+* **Equality:** Ensuring Filipinos were equal to Spaniards before the law [Propaganda_Movement.pdf, 45].
+
+[EXAMPLE 4: Negative/Unknown Constraint]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Rizal arrived in Spain in June.
+Query: What did Rizal eat for dinner on his first night?
+Response:
+The provided documents do not contain sufficient evidence to answer this inquiry.
+
+=======================================================
+
+NOW THE INQUIRY:
+
+Query:
+who is miguel layos
+
+Context:
+[1] Source: Training Agreement.pdf, Page: 2
+Content: INTERNSHIP AGREEMENT
+3. Report for internship based on the schedule indicated in the internship agreement . 4. Report job problems to his/her training supervisor and to the internship coordinator. 5. Maintain confidentiality, during and after the internship period of all data or business process which is not
+within the public domain and is indicated or understood to be confidential. 6.
+
+[2] Source: Training Agreement.pdf, Page: 2
+Content: Complete the internship within the agreed period. 7. Be terminated from the program should he/she withdraw from school or fail the internship program. THE SCHOOL AGREES TO:
+1. Directly supervise the internship program through the internship coordinator of the College of Computing
+and Information Technologies. 2. Provide the necessary instructions to the intern through the internship coordinator prior to his/her job
+placement. 3. Conduct inspection of the internship company to ensure safety of student interns . 4. Cover the student’s insurance and monitor his/her attendance at both school and work as per school
+policy. Note: This memorandum is for the purpose of outlining the agreement between the school and the company
+on the conditions of training given to a student while on the job. We, the undersigned, agree to the
+conditions and statements in this agreement and give consent to them. Date
+Name and Signature of
+the Student Intern
+Date
+Name and Signature of
+Parent/Guardian
+Date
+Name and Signature of
+the Company
+Representative
+Date
+Name and Signature of
+the CCIT Coordinator
+ACO-CI-F-001(001) Page 2 of 2
+
+[3] Source: Training Agreement.pdf, Page: 1
+Content: 2. Give IT-related work assignments to the intern. 3. Provide the necessary safety instructions throughout the student’s training period. 4. Adhere to all regulations regarding employment, labor laws, and health and safety laws. 5. Report to the internship coordinator as soon as possible when problems arise involving the intern. 6. Notify the internship coordinator in advance if plans are made to terminate or alter the position of the
+intern. 7. Evaluate the intern and the internship program at the end of the internship period. 8. Issue certificate of completion to the student intern not later than two weeks after the completion of
+internship. THE STUDENT AGREES TO:
+1. Perform tasks and activities indicated in the internship plan. 2. Comply with the requirements of the contract including the rules and regulations of the company at all
+times. ACO-CI-F-001(001) Page 1 of 2
+
+[4] Source: Training Agreement.pdf, Page: 1
+Content: � Systems Analyst
+☐ Network Engineer ☐ Systems Integration
+Duration (Indicate beginning date & end date):
+Daily Schedule: ☐ Mon ☐ Tues ☐ Wed ☐ Thur ☐ Fri ☐ Sat ☐ Sun Time: _________
+THE COMPANY AGREES TO:
+1. Assign a supervisor to oversee the intern during the internship period.
+
+[5] Source: Training Agreement.pdf, Page: 1
+Content: INTERNSHIP AGREEMENT
+STUDENT DETAILS
+Name: Mobile No.:
+Program: ☐ BSCS ☐ BSCS-DF ☐ BSIT Email Address:
+Address:
+Parent/Guardian: Mobile No.:
+COMPANY DETAILS
+Company Name: Contact No.:
+Address:
+Nature of Business:
+SUPERVISOR DETAILS
+Name & Position: Telephone No.:
+Department: Email Address:
+TRAINING DETAILS
+Job Role (Please select from the choices below):
+☐ Applications Software Developer ☐ Quality Assurance Specialist ☐ Systems Software Developer
+☐ Computer Programmer ☐ Research & Development ☐ Technical Support Specialist
+☐ Data Analyst ☐ Software Engineer ☐ Web Administrator
+☐ Database Administrator ☐ Software Support Specialist ☐ Web Designer
+☐ Graphic Designer ☐ Systems Administrator ☐ Web Developer
+☐ Information Security Administrator ☐ Systems Analyst ☐ Others: _______________________
+☐ IT Audit Assistant ☐ Systems Analyst
+☐ Network Engineer ☐ Systems Integration
+Duration (Indicate beginning date & end date):
+Daily Schedule: ☐ Mon ☐ Tues ☐ Wed ☐ Thur ☐ Fri ☐ Sat ☐ Sun Time: ______
+
+Response (Narrative with Citations):
+
+-------------------- PROMPT END ---------------------
+============================================================
+
