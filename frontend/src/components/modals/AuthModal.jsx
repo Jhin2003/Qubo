@@ -46,8 +46,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
     setConfirm("");
   };
 
- 
-const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
     setError("");
@@ -56,51 +55,55 @@ const handleSubmit = async (e) => {
       // --- SIGNUP FLOW ---
       if (mode === "signup") {
         if (password !== confirm) throw new Error("Passwords do not match.");
-        
+
         const res = await fetch(`${API_URL}/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, email, password }),
         });
-        
-        if (!res.ok) throw new Error((await res.text()) || "Sign up failed.");
-        
-        // Optional: Automatically switch to login mode after success
-        // setMode('login'); 
-        // setError("Account created! Please log in.");
-        
-        onClose(); 
+
+        // Parse FastAPI error format
+        if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.detail || "Sign up failed.");
+        }
+
+        // Switch to login mode smoothly instead of closing abruptly
+        setMode("login");
+        setError("Account created! You can now log in.");
+        setPassword("");
+        setConfirm("");
         return;
       }
 
-      // --- LOGIN FLOW (Updated) ---
-      // 1. Change endpoint to "/login"
+      // --- LOGIN FLOW ---
       const res = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password }),
+        // We only send email and password for login
+        body: JSON.stringify({ email, password }),
       });
 
       if (!res.ok) {
-        throw new Error((await res.text()) || "Invalid credentials.");
+        const errData = await res.json();
+        throw new Error(errData.detail || "Invalid credentials.");
       }
 
-      // 2. The data is now the User object, not a token
-      const user = await res.json();
+      // 1. Parse the new Supabase payload
+      const data = await res.json(); // { message, access_token, user }
 
+      // 2. Save the token to localStorage so future API calls can use it
+      localStorage.setItem("qubo_access_token", data.access_token);
 
-
-      // 5. Update Context
-      login(user); 
+      // 3. Update your React Context with the user data
+      login(data.user);
       onClose();
-
     } catch (err) {
       setError(err.message || "Something went wrong.");
     } finally {
       setSubmitting(false);
     }
   };
-  
 
   if (!isOpen) return null;
 
@@ -136,18 +139,21 @@ const handleSubmit = async (e) => {
         </h2>
 
         <form className="modal__form" onSubmit={handleSubmit}>
-          <label className="modal__label">
-            Username
-            <input
-              type="text"
-              autoComplete="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              className="modal__input"
-              disabled={submitting}
-            />
-          </label>
+          {/* ONLY show Username during Sign Up */}
+          {mode === "signup" && (
+            <label className="modal__label">
+              Username
+              <input
+                type="text"
+                autoComplete="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                className="modal__input"
+                disabled={submitting}
+              />
+            </label>
+          )}
 
           <label className="modal__label">
             Email
@@ -202,8 +208,8 @@ const handleSubmit = async (e) => {
                 ? "Logging in..."
                 : "Creating account..."
               : mode === "login"
-              ? "Login"
-              : "Sign Up"}
+                ? "Login"
+                : "Sign Up"}
           </button>
         </form>
 
@@ -226,6 +232,6 @@ const handleSubmit = async (e) => {
         </p>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }

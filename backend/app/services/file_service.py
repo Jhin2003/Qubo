@@ -6,31 +6,37 @@ from datetime import datetime
 from pathlib import Path
 import numpy as np
 
+from supabase import create_client, Client
+
 # --- Dependencies ---
 import pdfplumber
 import docx2pdf 
 from langchain_text_splitters import TokenTextSplitter
-from langchain_community.vectorstores import FAISS
 from langchain_experimental.text_splitter import SemanticChunker
-from langchain_community.vectorstores.utils import DistanceStrategy
+from dotenv import load_dotenv
+
+# 🔥 NEW IMPORT: LangChain's Supabase Vector Store
+from langchain_community.vectorstores import SupabaseVectorStore
 
 # --- Local Imports ---
-from app.services.loaders import clear_vectorstore_cache
-from .loaders import get_embedder, get_vectorstore
+# NOTE: You probably don't need clear_vectorstore_cache or get_vectorstore 
+# from loaders.py anymore if they are FAISS-specific, but I've left get_embedder.
+from .loaders import get_embedder 
 
 # --- Configuration & Constants ---
+load_dotenv()
 embedding_model = get_embedder()
 
 TARGET_TOPIC = "Philippine cultural history, indigenous traditions, national heritage, local society, and historical events of the Philippines."
 DOC_THRESHOLD = 0.45
 
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# ==========================================
-# --- Helper Functions (Pure Logic) ---
-# ==========================================
+# --- Helper Functions ---
 
 def sha1_of_file(path: str, buf_size: int = 1024 * 1024) -> str:
-    """Generate a SHA-1 hash of the file's contents."""
     h = hashlib.sha1()
     with open(path, "rb") as f:
         for chunk in iter(lambda: f.read(buf_size), b""):
@@ -38,12 +44,10 @@ def sha1_of_file(path: str, buf_size: int = 1024 * 1024) -> str:
     return h.hexdigest()
 
 def make_chunk_id(source_sha1: str, page: int, global_idx: int, page_idx: int) -> str:
-    """Generate a unique ID for each chunk."""
     core = f"{source_sha1[:12]}:p{page}:g{global_idx}:k{page_idx}"
     return hashlib.sha1(core.encode("utf-8")).hexdigest()
 
 def _extract_text_from_pdf(pdf_path: str) -> list[tuple[int, str]]:
-    """Extracts selectable text from a PDF, returning a list of (page_num, text)."""
     page_texts = []
     with pdfplumber.open(pdf_path) as pdf:
         for page_num, page in enumerate(pdf.pages, start=1):
@@ -53,7 +57,6 @@ def _extract_text_from_pdf(pdf_path: str) -> list[tuple[int, str]]:
     return page_texts
 
 def _chunk_text(page_texts: list[tuple[int, str]]) -> list[tuple[int, int, str]]:
-    """Splits text semantically, then refines with a token splitter."""
     chunker = SemanticChunker(
         embeddings=embedding_model,
         breakpoint_threshold_type="percentile",
@@ -82,7 +85,6 @@ def _chunk_text(page_texts: list[tuple[int, str]]) -> list[tuple[int, int, str]]
     return chunks_with_pages
 
 def _evaluate_relevance(raw_texts: list[str]) -> tuple[float, list]:
-    """Scores the document against the target topic and returns (score, chunk_vectors)."""
     target_vector = embedding_model.embed_query(TARGET_TOPIC)
     chunk_vectors = embedding_model.embed_documents(raw_texts)
     
@@ -97,140 +99,98 @@ def _evaluate_relevance(raw_texts: list[str]) -> tuple[float, list]:
     
     return document_score, chunk_vectors
 
+def upload_file_to_supabase(file_path: str, bucket: str = "uploads") -> str:
+    file_name = Path(file_path).name
 
-# ==========================================
+    with open(file_path, "rb") as f:
+        file_bytes = f.read()
+
+    response = supabase.storage.from_(bucket).upload(
+        path=file_name,
+        file=file_bytes,
+        file_options={
+            "content-type": "application/pdf",
+            "upsert": "true"
+        }
+    )
+
+    return supabase.storage.from_(bucket).get_public_url(file_name)
 # --- Main Processors ---
-# ==========================================
 
-def process_file(file_path: str, filename: str):
-    """
-    Processes a file (PDF or DOCX) into chunks and stores them in FAISS.
-    Returns: (num_chunks, output_path)
-    """
+def process_file(file_path: str, filename: str, content_type: str) -> int:
     extension = Path(file_path).suffix.lower()
     processing_path = file_path
     temp_pdf_path = None
 
     try:
-        # 1. Handle DOCX Conversion
         if extension == '.docx':
-            print(f"DOCX file detected. Converting '{filename}' to temporary PDF...")
             temp_pdf_path = os.path.join(tempfile.gettempdir(), f"{Path(filename).stem}.pdf")
             docx2pdf.convert(file_path, temp_pdf_path)
             processing_path = temp_pdf_path
-            print("Conversion complete.")
+            content_type = "application/pdf"
         elif extension != '.pdf':
-            print(f"Unsupported file type: '{extension}'. Skipping.")
-            return 0, None
+            return 0
 
-        # 2. Extract Text
-        page_texts = _extract_text_from_pdf(processing_path)
-        if not page_texts:
-            print(f"No text extracted from '{filename}'. Aborting.")
-            return 0, None
+        # Extract Text
+        page_texts = []
+        with pdfplumber.open(processing_path) as pdf:
+            for i, page in enumerate(pdf.pages, 1):
+                text = page.extract_text()
+                if text: page_texts.append((i, text))
 
-        # 3. Chunk Text & Prepare Metadata
-        chunks_with_pages = _chunk_text(page_texts)
-        source_sha1 = sha1_of_file(file_path)
-        created_at = datetime.utcnow().isoformat(timespec="seconds") + "Z"
+        if not page_texts: return 0
+
+        # Semantic Chunking
+        chunker = SemanticChunker(embedding_model, breakpoint_threshold_type="percentile")
+        token_splitter = TokenTextSplitter(chunk_size=240, chunk_overlap=50)
         
-        raw_texts = [chunk for _, _, chunk in chunks_with_pages]
-        raw_metadatas = [
-            {"id": make_chunk_id(source_sha1, p_num, g_idx, p_idx), "source": filename, "page": p_num, "created_at": created_at}
-            for g_idx, (p_num, p_idx, _) in enumerate(chunks_with_pages)
-        ]
+        all_chunks = []
+        for p_num, p_text in page_texts:
+            s_chunks = chunker.split_text(p_text)
+            for sc in s_chunks:
+                for final_chunk in token_splitter.split_text(sc):
+                    all_chunks.append((p_num, final_chunk))
 
-        # 4. Evaluate Semantic Relevance
-        print(f"Evaluating document '{filename}' for relevance...")
-        document_score, chunk_vectors = _evaluate_relevance(raw_texts)
-        print(f"Document relevance score: {document_score:.3f} (Threshold: {DOC_THRESHOLD})")
+        # Relevance Check
+        texts_only = [c[1] for c in all_chunks]
+        doc_score, vectors = _evaluate_relevance(texts_only)
+        
+        if doc_score < DOC_THRESHOLD:
+            return 0
 
-        if document_score < DOC_THRESHOLD:
-            print(f"Document '{filename}' REJECTED. Did not meet the semantic threshold.")
-            try:
-                if Path(file_path).exists():
-                    Path(file_path).unlink()
-                    print(f"Deleted rejected file from storage: {file_path}")
-            except Exception as e:
-                print(f"Warning: Could not delete rejected file '{file_path}': {e}")
-            return 0, None
-            
-        print(f"Document '{filename}' PASSED. Adding {len(raw_texts)} chunks to database.")
+        # 1. Upload Raw File to Storage
+        if not upload_file_to_supabase(file_path, content_type):
+            return 0
 
-        # 5. Save to Storage (FAISS & JSONL)
-        base_dir = Path("data_store")
-        index_dir = base_dir / "vector_database"
-        output_dir = base_dir / "chunked_output"
-        output_dir.mkdir(parents=True, exist_ok=True)
-        index_dir.mkdir(parents=True, exist_ok=True)
-        output_path = output_dir / f"{Path(filename).stem}_chunks.jsonl"
+        # 2. Upload Vectors to DB
+        source_sha1 = sha1_of_file(file_path)
+        rows = [{
+            "content": all_chunks[i][1],
+            "embedding": vectors[i],
+            "metadata": {
+                "source": filename,
+                "page": all_chunks[i][0],
+                "id": make_chunk_id(source_sha1, all_chunks[i][0], i)
+            }
+        } for i in range(len(all_chunks))]
 
-        index_file = index_dir / "index.faiss"
-        if index_file.exists():
-            vectorstore = get_vectorstore(allow_unsafe=True)
-            vectorstore.add_embeddings(text_embeddings=list(zip(raw_texts, chunk_vectors)), metadatas=raw_metadatas)
-        else:
-            vectorstore = FAISS.from_embeddings(
-                text_embeddings=list(zip(raw_texts, chunk_vectors)), 
-                embedding=embedding_model, 
-                metadatas=raw_metadatas, 
-                distance_strategy=DistanceStrategy.COSINE
-            )
-        vectorstore.save_local(str(index_dir))
-
-        with open(output_path, "w", encoding="utf-8") as f:
-            for i, chunk_text in enumerate(raw_texts):
-                f.write(json.dumps({"content": chunk_text, "metadata": raw_metadatas[i]}, ensure_ascii=False) + "\n")
-
-        return len(raw_texts), output_path
+        supabase.table("documents").insert(rows).execute()
+        return len(all_chunks)
     
     finally:
-        # 6. Clean up temp PDF
-        if temp_pdf_path and os.path.exists(temp_pdf_path):
-            os.remove(temp_pdf_path)
+        if temp_pdf_path and os.path.exists(temp_pdf_path): os.remove(temp_pdf_path)
+        if os.path.exists(file_path): os.remove(file_path)
 
-
-def delete_file_data(filename: str, upload_dir: Path) -> dict:
-    """
-    Completely removes a file's existence from the system (Files + Vector DB).
-    """
-    base_dir = Path("data_store")
-    index_dir = base_dir / "vector_database"
-    output_dir = base_dir / "chunked_output"
-    
-    file_path = upload_dir / filename
-    jsonl_path = output_dir / f"{Path(filename).stem}_chunks.jsonl"
-    
-    report = {"file_deleted": False, "jsonl_deleted": False, "vectors_deleted": 0}
-
-    # 1. Delete Physical Files
-    if file_path.exists():
-        file_path.unlink()
-        report["file_deleted"] = True
-    
-    if jsonl_path.exists():
-        jsonl_path.unlink()
-        report["jsonl_deleted"] = True
-
-    # 2. Clean FAISS Vector Store
+def delete_file_data(filename: str) -> dict:
+    report = {"vectors_deleted": 0, "storage_deleted": False}
     try:
-        if index_dir.exists():
-            vectorstore = get_vectorstore(allow_unsafe=True)
-            ids_to_delete = [
-                doc_id for doc_id, doc in vectorstore.docstore._dict.items() 
-                if doc.metadata.get("source") == filename
-            ]
-            
-            if ids_to_delete:
-                vectorstore.delete(ids_to_delete)
-                vectorstore.save_local(str(index_dir))
-                clear_vectorstore_cache()
-                report["vectors_deleted"] = len(ids_to_delete)
-                print(f"Removed {len(ids_to_delete)} vectors for '{filename}' from FAISS.")
-            else:
-                print(f"No vectors found in FAISS for '{filename}'.")
-                
+        # Delete from DB using arrow filter for JSONB metadata
+        res = supabase.table("documents").delete().filter("metadata->>source", "eq", filename).execute()
+        report["vectors_deleted"] = len(res.data) if res.data else 0
+        
+        # Delete from Storage
+        supabase.storage.from_("uploads").remove([filename])
+        report["storage_deleted"] = True
     except Exception as e:
-        print(f"Error cleaning FAISS: {e}")
-    
+        print(f"Delete error: {e}")
     return report

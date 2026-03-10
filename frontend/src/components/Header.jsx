@@ -56,7 +56,7 @@ export default function Header() {
           {menuOpen && (
             <div className="dropdown-menu">
               <div className="dropdown-header">
-                <span className="user-name">{user?.username || "User"}</span>
+                <span className="user-name">{user.user_metadata?.username| "User"}</span>
                 <span className="user-email">{user?.email}</span>
               </div>
               <div className="dropdown-divider"></div>

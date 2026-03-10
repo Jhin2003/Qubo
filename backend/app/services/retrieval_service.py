@@ -70,7 +70,6 @@ def _extract_page_constraints(query: str) -> Optional[tuple | int]:
 
 
 # --- HELPER 4: JSONL Page Reader (Direct Access) ---
-# --- HELPER 4: JSONL Page Reader (Direct Access) ---
 def get_specific_pages_from_jsonl(filename: str, pages: tuple | int) -> Optional[str]:
     """
     Reads the JSONL file and extracts chunks. 
@@ -217,12 +216,6 @@ def get_global_context_from_jsonl(filename: str) -> Optional[str]:
     return "\n".join(context_parts)
 # --- Context shaping helpers (Unchanged) ---
 
-from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
-
-def remove_stopwords(query: str) -> str:
-    query_tokens = query.split()
-    query_without_stopwords = [word for word in query_tokens if word.lower() not in ENGLISH_STOP_WORDS]
-    return " ".join(query_without_stopwords)
 
 def _bookend(docs):
     left, right = [], []
@@ -459,10 +452,8 @@ async def search_vectorstore(
 
     all_docs = list(vectorstore.docstore._dict.values())
 
-    if should_strip_stopwords:
-        query_to_use = remove_stopwords(query)
-    else:
-        query_to_use = query
+    
+    query_to_use = query
 
     # 2. Build BM25 (Only if use_hybrid is True)
     bm25_docs, bm25_scores = [], []

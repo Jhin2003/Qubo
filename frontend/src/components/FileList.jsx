@@ -1,16 +1,20 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+// navigate import removed as it's no longer needed for the new tab behavior
 import "./FileList.scss";
 import { useFetch } from "../hooks/fetchWithAuth";
 import { useSource } from "../context/SourceContext";
 import ItemActions from "./ItemActions";
-// 1. IMPORT NEW ICONS HERE
 import { FaTrashAlt, FaFilePdf, FaFileWord, FaFileAlt } from "react-icons/fa";
 import { CiFileOn, CiSquareCheck } from "react-icons/ci";
-import { FiPlus } from "react-icons/fi"; // Added FiPlus import
+import { FiPlus } from "react-icons/fi"; 
 import { MdClose } from "react-icons/md";
-
+import { createClient } from "@supabase/supabase-js";
 import FileUploaderDialog from "./FileUploaderDialog"; 
+
+// 🔥 Initialize Supabase with your Anon Public Key
+const SUPABASE_URL = "https://otdgrrdockkotvknavbs.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90ZGdycmRvY2trb3R2a25hdmJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxNzEyNjYsImV4cCI6MjA4Nzc0NzI2Nn0.WOSyyUYaRR-cLSDR4ugAmsksOsxV9l_5O6PsJ3bQHZ4";
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 function FileList({ refreshToken = 0, onLoadingChange }) {
   const [files, setFiles] = useState([]);
@@ -22,20 +26,26 @@ function FileList({ refreshToken = 0, onLoadingChange }) {
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
 
-  const navigate = useNavigate();
   const { source, setSource } = useSource();
   const fileInputRef = useRef(null);
 
+  // 🔥 1. Fetch files directly from Supabase Storage
   const fetchFiles = async () => {
     try {
-      const response = await fetchWithAuth("http://localhost:8000/files", {
-        method: "GET",
-      });
-      if (!response) return;
-      const data = await response.json();
-      setFiles(data.files || []);
+      setIsLoading(true);
+      const { data, error } = await supabase.storage.from("uploads").list();
+      
+      if (error) {
+        throw error;
+      }
+      
+      const formattedFiles = data
+        .filter(file => file.name !== ".emptyFolderPlaceholder")
+        .map(file => ({ filename: file.name }));
+        
+      setFiles(formattedFiles);
     } catch (error) {
-      console.error("Error fetching files:", error);
+      console.error("Error fetching files from Supabase:", error.message);
       alert("Failed to fetch files.");
     } finally {
       setIsLoading(false);
@@ -47,9 +57,7 @@ function FileList({ refreshToken = 0, onLoadingChange }) {
     fetchFiles();
   }, [refreshToken]);
 
-  // --- FIX: Define the missing handleUploaded function ---
   const handleUploaded = () => {
-    // Refresh the list after a successful upload
     fetchFiles();
   };
 
@@ -78,6 +86,7 @@ function FileList({ refreshToken = 0, onLoadingChange }) {
     );
   };
 
+  // 🔥 2. Delete keeps hitting your Python backend so pgvector gets cleaned up
   const handleBulkDelete = async () => {
     if (!window.confirm(`Delete ${selectedFiles.length} selected files?`))
       return;
@@ -126,15 +135,23 @@ function FileList({ refreshToken = 0, onLoadingChange }) {
     }
   };
 
-  const handleSourceClick = (fileName, page) => {
-    navigate(`/view-pdf?file=${encodeURIComponent(fileName)}&page=${page}`);
+  // 🔥 3. Generate public URL from Supabase and view it in a new tab
+  const handleSourceClick = (fileName) => {
+    const { data } = supabase.storage
+      .from("uploads")
+      .getPublicUrl(fileName);
+
+    if (data?.publicUrl) {
+      window.open(data.publicUrl, "_blank");
+    } else {
+        alert("Could not generate a view link for this file.")
+    }
   };
 
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
     console.log("File selected:", file.name);
-    // You might want to trigger upload dialog or logic here depending on your flow
   };
 
   const getFileIcon = (filename) => {
@@ -164,7 +181,6 @@ function FileList({ refreshToken = 0, onLoadingChange }) {
   };
 
   return (
-    // --- FIX: Added React Fragment (<> ... </>) to wrap multiple children ---
     <>
       <div className="file-list-container">
         <div className="file-list-header">
@@ -245,8 +261,9 @@ function FileList({ refreshToken = 0, onLoadingChange }) {
                       {!isLoading && (
                         <button
                           className="file-link"
-                          onClick={() => handleSourceClick(file.filename, 1)}
-                          title="Open"
+                          // Only pass the filename now, as we don't need a page number for a raw URL
+                          onClick={() => handleSourceClick(file.filename)}
+                          title="Open in new tab"
                         >
                           {file.filename}
                         </button>
