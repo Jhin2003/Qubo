@@ -29,7 +29,7 @@ export default function Chatbot() {
     }
   });
 
-  const [mode, setMode] = useState("fast");
+  const [mode, setMode] = useState("precise");
 
   useEffect(() => {
     const el = textareaRef.current;
