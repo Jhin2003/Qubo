@@ -50,16 +50,53 @@ def _classify_query_intent(query: str) -> str:
     """
     try:
         ROUTER_PROMPT = """
-        Analyze the user's query and classify it into one of three distinct Retrieval Categories:
+        You are an intent classifier for a retrieval system focused ONLY on Philippine cultural history and Philippine history.
 
-        1. "GLOBAL_SUMMARY": The user wants a summary, outline, or overview of the *entire* document. (e.g., "Summarize the paper", "Give me the main points", "What is the doocument about?")
-        2. "BROAD_SEARCH": The user asks for a list, comparison, or explanation that requires gathering many scattered details. (e.g., "List all the themes", "What are the 5 goals?", "Compare X and Y")
-        3. "SPECIFIC_SEARCH": The user asks for a precise fact, date, name, or definition. (e.g., "Who is Rizal?", "When did he leave?", "What is the capital?")
-        4. "PAGE_SPECIFIC": The user explicitly asks for content from specific pages or page ranges. (e.g., "Summarize page 10", "What happens on pages 15-20?", "Read the last page")
-        5. "GREETING": Conversational filler, greetings, thanks, or questions NOT requiring external information. (e.g., "Hi", "Hello", "Thank you", "Who are you?")
-        6. "NONSENSE": The input is gibberish, random characters, too short to mean anything, or linguistically incoherent. (e.g., "asdf", "sdsdsd", "..." )
+        First determine whether the user's query is related to:
+        - Philippine history
+        - Philippine culture
+        - Philippine historical figures
+        - Philippine historical events
+        - Philippine literature, traditions, or heritage
+
+        If the query is NOT related to Philippine cultural history or Philippine history, classify it as:
+        "OUT_OF_SCOPE"
+
+        If it IS related, classify it into ONE of the following categories:
+
+        1. "GLOBAL_SUMMARY":
+        The user wants a summary, outline, or overview of the entire document.
+        Examples: "Summarize the paper", "Give me the main points", "What is the document about?"
+
+        2. "BROAD_SEARCH":
+        The user asks for a list, comparison, or explanation requiring multiple pieces of information.
+        Examples: "List all the themes", "What are the five goals?", "Compare Rizal and Bonifacio"
+
+        3. "SPECIFIC_SEARCH":
+        The user asks for a precise fact, date, name, or definition.
+        Examples: "Who is Jose Rizal?", "When did Rizal go to Europe?", "What is the Katipunan?"
+
+        4. "PAGE_SPECIFIC":
+        The user explicitly asks about specific pages or page ranges.
+        Examples: "Summarize page 10", "What happens on pages 15-20?", "Read the last page"
+
+        5. "GREETING":
+        Conversational messages that do not require retrieval.
+        Examples: "Hi", "Hello", "Thanks", "Who are you?"
+
+        6. "NONSENSE":
+        The input is gibberish or meaningless.
+        Examples: "asdf", "sdsdsd", "..."
+
+        7. "OUT_OF_SCOPE":
+        The query is NOT about Philippine cultural history or Philippine history.
+        Examples: "What is the capital of France?", "Explain quantum physics", "Who is Elon Musk?"
+
         User Query: "{query}"
-        OUTPUT: Output ONLY the category name. No other text.
+
+        OUTPUT:
+        Return ONLY the category name.
+        Do NOT include explanations.
         """
 
         # Construct the message for the helper
@@ -229,11 +266,11 @@ async def generate_response(context: str, query: str, history: List[Dict[str, st
 ROLE: You are a meticulous academic historian. Your task is to analyze the provided sources (Context) and synthesize a response to the user's inquiry.
 
 GUIDELINES:
-1. STRICT SOURCE ADHERENCE (FACTS): You must derive all historical facts, dates, names, and events ONLY from the provided Context.
-2. FORMATTING PERMISSION (STYLE): You are explicitly allowed to structure the response as requested by the user (e.g., bullet points, tables, numbered lists, summaries). You may change the *format* of the information, provided the *factual content* remains strictly grounded in the Context.
-3. CITATION REQUIREMENT: Every historical assertion must be backed by an inline citation: [source, page].
-4. UNKNOWN INFO: If the provided archives (Context) do not contain the answer, reply strictly: "Please elaborate your question further."
-
+1. Philippine History Inquiries: Only answer questions related to Philippine cultural history, history of the Philippines, Filipino heritage, indigenous traditions, Filipino icons, and historical events. If the question is outside this scope, respond with "I only answer questions about Philippine cultural history and Philippine history."
+2. STRICT SOURCE ADHERENCE (FACTS): You must derive all historical facts, dates, names, and events ONLY from the provided Context.
+3. FORMATTING PERMISSION (STYLE): You are explicitly allowed to structure the response as requested by the user (e.g., bullet points, tables, numbered lists, summaries). You may change the *format* of the information, provided the *factual content* remains strictly grounded in the Context.
+4. CITATION REQUIREMENT: Every historical assertion must be backed by an inline citation: [source, page].
+5. UNKNOWN INFO: If the provided archives (Context) do not contain the answer, reply strictly: "Please elaborate your question further."
 6. DIRECTNESS (CRITICAL): State facts directly and confidently. DO NOT start sentences with "Based on the provided sources," "The documents state," or "According to the context." Just answer the question.
 
 === FEW-SHOT EXAMPLES (LEARN FROM THESE PATTERNS) ===

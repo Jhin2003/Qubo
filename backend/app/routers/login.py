@@ -15,58 +15,64 @@ from app.utils.jwt_auth import create_access_token, SECRET_KEY, ALGORITHM
 
 
 
+import os
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from jose import jwt, JWTError
+from pydantic import BaseModel
+
 router = APIRouter()
-
-
-Base.metadata.create_all(bind=engine)  # For dev; use Alembic in real apps
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 security = HTTPBearer(auto_error=False)
 
-@router.post("/register", response_model=UserOut, status_code=201)
-def register(body: UserCreate, db: Session = Depends(get_db)):
-    if get_user_by_email(db, body.email):
-        print("done")
-        raise HTTPException(status_code=400, detail="Email already registered")
-    user = create_user(db, body.username, body.email,  body.password)
-    return user
+from dotenv import load_dotenv
+load_dotenv()  # 
 
-@router.post("/token", response_model=TokenOut)
-def login(body: UserCreate, db: Session = Depends(get_db)):
-    user = get_user_by_email(db, body.email)
-    if not user or not verify_password(body.password, user.password_hash) or not user.is_active:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    token = create_access_token(sub=str(user.id))
-    return {"access_token": token, "token_type": "bearer"}
+# 1. Your Supabase JWT Secret (Dashboard -> Project Settings -> API)
+SUPABASE_JWT_SECRET = os.environ.get("SUPABASE_JWT_SECRET")
+ALGORITHM = "HS256"
 
-def current_user(creds: HTTPAuthorizationCredentials = Depends(security), db: Session = Depends(get_db)) -> User:
+# 2. A simple Pydantic schema to represent the authenticated user
+class AuthenticatedUser(BaseModel):
+    id: str
+    email: str
+    username: str
+
+# 3. The Dependency: Verifies the token and extracts user data directly from it
+def current_user(creds: HTTPAuthorizationCredentials = Depends(security)) -> AuthenticatedUser:
     if not creds or creds.scheme.lower() != "bearer":
         raise HTTPException(status_code=401, detail="Missing bearer token")
 
     try:
-        payload = jwt.decode(creds.credentials, SECRET_KEY, algorithms=[ALGORITHM])
-    except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
+        # Decode the token cryptographically 
+        payload = jwt.decode(
+            creds.credentials, 
+            SUPABASE_JWT_SECRET, 
+            algorithms=[ALGORITHM],
+            audience="authenticated"
+        )
+    except JWTError as e:
+        print(f"JWT Error: {e}") 
+        raise HTTPException(status_code=401, detail="Invalid or expired Supabase token")
 
-    # Ensure the token contains a valid user ID (sub)
+    # Extract the user's UUID
     uid = payload.get("sub")
     if not uid:
         raise HTTPException(status_code=401, detail="Token does not contain a valid user ID")
 
-    # Retrieve user from the database
-    user = db.get(User, int(uid)) if uid is not None else None
-    if not user or not user.is_active:
-        raise HTTPException(status_code=401, detail="User not found or inactive")
+    # Extract email and the custom username we saved during frontend signup
+    email = payload.get("email", "")
+    user_metadata = payload.get("user_metadata", {})
+    username = user_metadata.get("username", "")
 
-    return user
+    # Return the Pydantic model. No database lookup required!
+    return AuthenticatedUser(id=uid, email=email, username=username)
 
-@router.get("/auth/me", response_model=UserOut)
-def me(user: User = Depends(current_user)):
-    print(f"Authenticated user: {user.email}")  # Debug print
+# 4. Your Protected Route(s)
+@router.get("/auth/me", response_model=AuthenticatedUser)
+def me(user: AuthenticatedUser = Depends(current_user)):
+    """
+    Any route that uses `Depends(current_user)` is automatically protected.
+    If the token is invalid, it throws a 401 before this code ever runs.
+    """
+    print(f"Successfully verified user: {user.email} (ID: {user.id})")  
     return user

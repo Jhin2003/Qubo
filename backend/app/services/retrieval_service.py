@@ -326,7 +326,12 @@ async def search_vectorstore(
         print(f"\n[RETRIEVER] 🧠 Analyzing intent for: '{query}' (Mode: {mode})")
         intent = _classify_query_intent(query)
         print(f"[RETRIEVER] 🎯 Intent Detected: {intent}")
-        
+
+        if intent == "OUT_OF_SCOPE":
+            print("[RETRIEVER] 🌀 Out of Scope detected. Skipping retrieval.")
+            
+            return "", []
+                
         # STRATEGY A: Global Summary (JSONL Bypass)
         if intent == "GLOBAL_SUMMARY" and source:
             global_context = get_global_context_from_jsonl(source)
@@ -358,6 +363,7 @@ async def search_vectorstore(
             print("[RETRIEVER] 💬 Greeting detected. Skipping retrieval.")
             # Return EMPTY context. This tells the Generator to just chat normally.
             return "", []
+        
 
         # STRATEGY B: Broad Search (Wide Net)
         if intent == "BROAD_SEARCH":

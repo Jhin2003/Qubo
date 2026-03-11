@@ -1,25 +1,33 @@
-import { useJWTAuth } from "./useJWTAuth";
+// src/hooks/fetchWithAuth.js (or wherever this is located)
+import { useUser } from "../context/UserContext";
+import { supabase } from "../components/modals/AuthModal"; // Make sure this path points to where you export 'supabase'
 
 export const useFetch = () => {
-  const { token, logOut } = useJWTAuth(); // We no longer need refreshAuthToken
+  // We grab logout from your new UserContext so the UI updates if a 401 happens
+  const { logout } = useUser(); 
 
   const fetchWithAuth = async (url, options = {}) => {
+    // 1. Ask Supabase for the current session right before the request
+    // This ensures you ALWAYS have the freshest token, even if it just auto-refreshed in the background!
+    const { data: { session } } = await supabase.auth.getSession();
+
     // Default headers object
     const headers = {
       ...options.headers,
     };
 
-    // If token is available, add the Authorization header
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
+    // 2. If token is available, add the Authorization header
+    if (session?.access_token) {
+      headers["Authorization"] = `Bearer ${session.access_token}`;
     }
 
     try {
       const response = await fetch(url, { ...options, headers });
 
-      // If token is expired or invalid, log the user out
+      // 3. If the backend says the token is invalid/expired, log them out
       if (response.status === 401) {
-        logOut();
+        console.warn("Token rejected by backend. Logging out...");
+        logout(); 
         return null;
       }
 

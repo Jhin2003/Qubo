@@ -19,18 +19,9 @@ UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-
-def get_current_user(token: str = Depends(oauth2_scheme)):
-    try:
-        payload = verify_access_token(token)
-        print(f"Received token: {token}")  # Debug print
-        return payload  # You can return the user data or any other info from the token
-    except HTTPException as e:
-        raise e
-
 # List all files with a secured token
 @router.get("/files")
-async def list_files(current_user: dict = Depends(get_current_user)):  # Depend on get_current_user
+async def list_files():  # Depend on get_current_user
     files = []
     for file in UPLOAD_DIR.glob("*.pdf"):
         files.append({
@@ -49,7 +40,7 @@ async def get_file(filename: str):
         raise HTTPException(status_code=404, detail="File not found")
 
 @router.post("/upload")
-async def upload_files(files: List[UploadFile] = File(...), current_user: dict = Depends(get_current_user)):
+async def upload_files(files: List[UploadFile] = File(...)):
     results = []
     
     allowed_extensions = {".pdf", ".docx", ".txt"}
@@ -98,7 +89,7 @@ from app.services.file_service import process_file, delete_file_data # Import th
 # ... (Previous code) ...
 
 @router.delete("/files/{filename}")
-async def delete_file(filename: str, current_user: dict = Depends(get_current_user)):
+async def delete_file(filename: str):
     # 1. Security: Prevent path traversal
     upload_dir_resolved = UPLOAD_DIR.resolve()
     file_path = (UPLOAD_DIR / filename).resolve()
