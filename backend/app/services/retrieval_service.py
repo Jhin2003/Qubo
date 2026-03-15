@@ -327,10 +327,6 @@ async def search_vectorstore(
         intent = _classify_query_intent(query)
         print(f"[RETRIEVER] 🎯 Intent Detected: {intent}")
 
-        if intent == "OUT_OF_SCOPE":
-            print("[RETRIEVER] 🌀 Out of Scope detected. Skipping retrieval.")
-            
-            return "", []
                 
         # STRATEGY A: Global Summary (JSONL Bypass)
         if intent == "GLOBAL_SUMMARY" and source:
@@ -354,6 +350,10 @@ async def search_vectorstore(
                     print("[WARN] Pages not found in JSONL. Falling back to Vector Search.")
             else:
                 print("[WARN] 'Page' intent detected but no numbers found. Fallback.")
+        
+        if intent == "OUT_OF_SCOPE":
+            print("[RETRIEVER] 🌀 Out of Scope detected. Skipping retrieval.")   
+            return "", []
 
         if intent == "NONSENSE":
             print("[RETRIEVER] 🌀 Nonsense detected. Skipping retrieval.")

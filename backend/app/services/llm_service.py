@@ -111,24 +111,30 @@ def _classify_query_intent(query: str) -> str:
         ).upper()
         
         print(f"[RETRIEVER] LLM Classifier Output: '{raw_text}'")
+        
+        # Convert to upper and strip whitespace to be safe
+        raw_text = raw_text.strip().upper()
 
-        if re.search(r"\b(NONSENSE|GIBBERISH|INVALID)", raw_text):
+        if "NONSENSE" in raw_text:
             return "NONSENSE"
 
-        if re.search(r"\b(GREETING|CHAT|HI|HELLO)", raw_text):
+        if "GREETING" in raw_text or "HI" in raw_text:
             return "GREETING"
         
-        # HUNT for Keywords
-        if re.search(r"\b(PAGE|PAGES|RANGE)", raw_text):
+        # FIX: Added the underscore to match the prompt/LLM output
+        if "OUT_OF_SCOPE" in raw_text or "OUT OF SCOPE" in raw_text:
+            return "OUT_OF_SCOPE"
+
+        if "PAGE_SPECIFIC" in raw_text:
             return "PAGE_SPECIFIC"
         
-        if re.search(r"\b(GLOBAL|SUMMARY|OUTLINE)", raw_text):
+        if "GLOBAL_SUMMARY" in raw_text:
             return "GLOBAL_SUMMARY"
             
-        if re.search(r"\b(BROAD|LIST|COMPARE)", raw_text):
+        if "BROAD_SEARCH" in raw_text:
             return "BROAD_SEARCH"
             
-        if re.search(r"\b(SPECIFIC|PRECISE|FACT)", raw_text):
+        if "SPECIFIC_SEARCH" in raw_text:
             return "SPECIFIC_SEARCH"
         
 
