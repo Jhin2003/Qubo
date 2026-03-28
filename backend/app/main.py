@@ -12,7 +12,7 @@ load_dotenv()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Runs once per worker when the process starts
-    warmup()
+   # warmup()
     yield
 
 app = FastAPI(lifespan=lifespan)
@@ -28,8 +28,10 @@ app.add_middleware(
 # Include the routers
 app.include_router(chat.router)
 app.include_router(file_upload.router)
-
 app.include_router(login.router)
 
-# Run:
+# Dev
 # uvicorn app.main:app --reload
+
+#prod
+#uvicorn app.main:app --host 0.0.0.0 --port $PORT

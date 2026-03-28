@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+import torch
 
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
@@ -28,7 +29,8 @@ def get_embedder():
 
 @lru_cache(maxsize=1)
 def get_cross_encoder():
-    return CrossEncoder(CE_MODEL_NAME, max_length=512)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    return CrossEncoder(CE_MODEL_NAME, max_length=512, device=device)
 
 
 @lru_cache(maxsize=1)
@@ -44,11 +46,12 @@ def get_vectorstore(allow_unsafe: bool = False):
 
 @lru_cache(maxsize=1)
 def get_complexity_classifier():
-
+    device_id = 0 if torch.cuda.is_available() else -1
+    
     return pipeline(
         "text-classification",
         model=CC_MODEL_NAME,
-       
+        device=device_id
     )
 
 
