@@ -1,19 +1,9 @@
 
 
 import os    
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from sqlalchemy.orm import Session
 from jose import jwt, JWTError
-
-from app.db import Base, engine, SessionLocal
-from app.models import User
-from app.schemas import UserCreate, UserOut, TokenOut
-from app.crud import get_user_by_email, create_user
-from app.utils.password_hash import verify_password
-from app.utils.jwt_auth import create_access_token, SECRET_KEY, ALGORITHM
-
-
 from pydantic import BaseModel
 
 router = APIRouter()
