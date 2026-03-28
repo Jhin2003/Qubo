@@ -7,18 +7,16 @@ from app.routers import chat, file_upload, login
 from app.services.loaders import warmup
 
 from dotenv import load_dotenv
-load_dotenv()  # <-- Add this at the very top!
+load_dotenv() 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Runs once per worker when the process starts
     warmup()
     yield
-    # optional: shutdown cleanup here
 
 app = FastAPI(lifespan=lifespan)
 
-# Allow CORS for all origins (for development)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

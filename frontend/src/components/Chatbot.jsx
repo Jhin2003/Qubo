@@ -6,6 +6,8 @@ import { useSource } from "../context/SourceContext";
 import { useUser } from "../context/UserContext";
 import ChatActions from "./Actions/ChatActions";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function Chatbot() {
   const { user } = useUser();
   const textareaRef = useRef(null);
@@ -125,7 +127,7 @@ export default function Chatbot() {
     abortControllerRef.current = controller;
 
     try {
-      const response = await fetch("http://localhost:8000/chat", {
+      const response = await fetch(`${API_URL}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         // Attach the signal to the fetch call

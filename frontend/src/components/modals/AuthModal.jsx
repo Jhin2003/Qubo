@@ -10,6 +10,9 @@ const supabaseUrl = "https://otdgrrdockkotvknavbs.supabase.co";
 const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90ZGdycmRvY2trb3R2a25hdmJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxNzEyNjYsImV4cCI6MjA4Nzc0NzI2Nn0.WOSyyUYaRR-cLSDR4ugAmsksOsxV9l_5O6PsJ3bQHZ4";
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+// src/config.js
+
+
 export default function AuthModal({ isOpen, onClose, onSuccess }) {
   const [mode, setMode] = useState("login"); // "login" | "signup"
   const [username, setUsername] = useState(""); 

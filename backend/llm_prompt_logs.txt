@@ -38315,3 +38315,1600 @@ Response (Narrative with Citations):
 -------------------- PROMPT END ---------------------
 ============================================================
 
+
+============================================================
+TIMESTAMP: 2026-03-15 20:23:03
+MODELS QUEUED: ['meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+    Given a chat history and the latest user question which might reference context in the chat history, 
+    formulate a standalone question which can be understood without the chat history. 
+    
+    RULES:
+    1. Do NOT answer the question. 
+    2. Just reformulate it if it contains pronouns (he, she, it, that) referring to previous context.
+    3. If the question is already standalone, return it exactly as is.
+    4. PRESERVE CONSTRAINTS: If the user asks for a specific format (table, bullet points), tone (funny, professional), page, Length, etc., YOU MUST KEEP THIS IN THE REWRITTEN QUERY.
+    5. GREETINGS: If the user says "Hello" or "Thanks", keep it as is.
+
+    Chat History:
+    User: hi
+Bot: Hello, how can I help you?
+User: how to create a database in Python
+Bot: I only answer questions about Philippine cultural history and Philippine history.
+User: What is the document about
+Bot: The document is about José Rizal, a Philippine national hero, and his extraordinary life story [RIZAL: The First Emo?, Page 1]. It aims to draw simple life lessons from Rizal's story, focusing on his humanity and emotional side, rather than just his heroic deeds [RIZAL: The First Emo?, Page 2]. The author, Prof. Michael Charleston "Xiao" B. Chua, presents Rizal as a romantic and emotional person, who could be considered the "first emo" due to his passionate and sensitive nature [RIZAL: The First Emo?, Page 6]. The document also explores Rizal's relationships, family, and influences, including his father, Francisco Rizal Mercado, and his brother, Paciano Mercado, who played a significant role in shaping his nationalistic views [RIZAL: The First Emo?, Page 10]. Additionally, the document features annotations and comments from Dr. Floro C. Quibuyen, providing further insights and perspectives on Rizal's life and legacy [RIZAL: The First Emo?, Page 20]. Overall, the document offers a fresh and personal take on Rizal's story, highlighting the importance of emotions, love, and compassion in his life and works [RIZAL: The First Emo?, Page 22].
+
+    Latest User Question: 
+    what is the datase structure of mysql
+
+    Standalone Question:
+    
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-15 20:42:01
+MODELS QUEUED: ['Qwen/Qwen3-VL-8B-Instructmeta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+    Given a chat history and the latest user question which might reference context in the chat history, 
+    formulate a standalone question which can be understood without the chat history. 
+    
+    RULES:
+    1. Do NOT answer the question. 
+    2. Just reformulate it if it contains pronouns (he, she, it, that) referring to previous context.
+    3. If the question is already standalone, return it exactly as is.
+    4. PRESERVE CONSTRAINTS: If the user asks for a specific format (table, bullet points), tone (funny, professional), page, Length, etc., YOU MUST KEEP THIS IN THE REWRITTEN QUERY.
+    5. GREETINGS: If the user says "Hello" or "Thanks", keep it as is.
+
+    Chat History:
+    User: how to create a database in Python
+Bot: I only answer questions about Philippine cultural history and Philippine history.
+User: What is the document about
+Bot: The document is about José Rizal, a Philippine national hero, and his extraordinary life story [RIZAL: The First Emo?, Page 1]. It aims to draw simple life lessons from Rizal's story, focusing on his humanity and emotional side, rather than just his heroic deeds [RIZAL: The First Emo?, Page 2]. The author, Prof. Michael Charleston "Xiao" B. Chua, presents Rizal as a romantic and emotional person, who could be considered the "first emo" due to his passionate and sensitive nature [RIZAL: The First Emo?, Page 6]. The document also explores Rizal's relationships, family, and influences, including his father, Francisco Rizal Mercado, and his brother, Paciano Mercado, who played a significant role in shaping his nationalistic views [RIZAL: The First Emo?, Page 10]. Additionally, the document features annotations and comments from Dr. Floro C. Quibuyen, providing further insights and perspectives on Rizal's life and legacy [RIZAL: The First Emo?, Page 20]. Overall, the document offers a fresh and personal take on Rizal's story, highlighting the importance of emotions, love, and compassion in his life and works [RIZAL: The First Emo?, Page 22].
+User: what is the datase structure of mysql
+Bot: Sorry, I couldn’t reach the server.
+
+    Latest User Question: 
+    hi
+
+    Standalone Question:
+    
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-15 20:42:26
+MODELS QUEUED: ['meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+        You are an intent classifier for a retrieval system focused ONLY on Philippine cultural history and Philippine history.
+
+        First determine whether the user's query is related to:
+        - Philippine history
+        - Philippine culture
+        - Philippine historical figures
+        - Philippine historical events
+        - Philippine literature, traditions, or heritage
+
+        If the query is NOT related to Philippine cultural history or Philippine history, classify it as:
+        "OUT_OF_SCOPE"
+
+        If it IS related, classify it into ONE of the following categories:
+
+        1. "GLOBAL_SUMMARY":
+        The user wants a summary, outline, or overview of the entire document.
+        Examples: "Summarize the paper", "Give me the main points", "What is the document about?"
+
+        2. "BROAD_SEARCH":
+        The user asks for a list, comparison, or explanation requiring multiple pieces of information.
+        Examples: "List all the themes", "What are the five goals?", "Compare Rizal and Bonifacio"
+
+        3. "SPECIFIC_SEARCH":
+        The user asks for a precise fact, date, name, or definition.
+        Examples: "Who is Jose Rizal?", "When did Rizal go to Europe?", "What is the Katipunan?"
+
+        4. "PAGE_SPECIFIC":
+        The user explicitly asks about specific pages or page ranges.
+        Examples: "Summarize page 10", "What happens on pages 15-20?", "Read the last page"
+
+        5. "GREETING":
+        Conversational messages that do not require retrieval.
+        Examples: "Hi", "Hello", "Thanks", "Who are you?"
+
+        6. "NONSENSE":
+        The input is gibberish or meaningless.
+        Examples: "asdf", "sdsdsd", "..."
+
+        7. "OUT_OF_SCOPE":
+        The query is NOT about Philippine cultural history or Philippine history.
+        Examples: "What is the capital of France?", "Explain quantum physics", "Who is Elon Musk?"
+
+        User Query: "[No standalone question can be formulated from the given "hi" user input following the rules provided.]"
+
+        OUTPUT:
+        Return ONLY the category name.
+        Do NOT include explanations.
+        
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-15 20:42:27
+MODELS QUEUED: ['meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+ROLE: You are a meticulous academic historian. Your task is to analyze the provided sources (Context) and synthesize a response to the user's inquiry.
+
+GUIDELINES:
+1. Philippine History Inquiries: Only answer questions related to Philippine cultural history, history of the Philippines, Filipino heritage, indigenous traditions, Filipino icons, and historical events. If the question is outside this scope, respond with "I only answer questions about Philippine cultural history and Philippine history."
+2. STRICT SOURCE ADHERENCE (FACTS): You must derive all historical facts, dates, names, and events ONLY from the provided Context.
+3. FORMATTING PERMISSION (STYLE): You are explicitly allowed to structure the response as requested by the user (e.g., bullet points, tables, numbered lists, summaries). You may change the *format* of the information, provided the *factual content* remains strictly grounded in the Context.
+4. CITATION REQUIREMENT: Every historical assertion must be backed by an inline citation: [source, page].
+5. UNKNOWN INFO: If the provided archives (Context) do not contain the answer, reply strictly: "Please elaborate your question further."
+6. DIRECTNESS (CRITICAL): State facts directly and confidently. DO NOT start sentences with "Based on the provided sources," "The documents state," or "According to the context." Just answer the question.
+
+=== FEW-SHOT EXAMPLES (LEARN FROM THESE PATTERNS) ===
+
+[EXAMPLE 1: Greeting]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Jose Rizal left for Spain in May 1882 without the knowledge of his parents, focused on finishing his medical studies.
+Query: Hello
+Response:
+Hello, how can i help you?
+
+[EXAMPLE 2: Standard Narrative Query]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Jose Rizal left for Spain in May 1882 without the knowledge of his parents, focused on finishing his medical studies.
+Query: Why did Rizal leave?
+Response:
+According to the records, Rizal departed for Spain in May 1882 primarily to complete his medical education, a departure undertaken without his parents' knowledge [Rizal_Bio.pdf, 12].
+
+[EXAMPLE 3: Formatting/List Request]
+Context:
+[1] Source: Propaganda_Movement.pdf, Page: 45
+Content: The movement had three main goals: assimilation of the Philippines as a province of Spain, representation in the Spanish Cortes, and equality before the law.
+Query: List the goals of the movement in bullet points.
+Response:
+The Propaganda Movement aimed to achieve the following:
+* **Assimilation:** Making the Philippines a formal province of Spain [Propaganda_Movement.pdf, 45].
+* **Representation:** Securing seats in the Spanish Cortes [Propaganda_Movement.pdf, 45].
+* **Equality:** Ensuring Filipinos were equal to Spaniards before the law [Propaganda_Movement.pdf, 45].
+
+[EXAMPLE 4: Negative/Unknown Constraint]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Rizal arrived in Spain in June.
+Query: What did Rizal eat for dinner on his first night?
+Response:
+The provided documents do not contain sufficient evidence to answer this inquiry.
+
+=======================================================
+
+NOW THE INQUIRY:
+
+Query:
+hi
+
+Context:
+
+
+Response (Narrative with Citations):
+
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-15 20:42:39
+MODELS QUEUED: ['Qwen/Qwen3-VL-8B-Instructmeta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+    Given a chat history and the latest user question which might reference context in the chat history, 
+    formulate a standalone question which can be understood without the chat history. 
+    
+    RULES:
+    1. Do NOT answer the question. 
+    2. Just reformulate it if it contains pronouns (he, she, it, that) referring to previous context.
+    3. If the question is already standalone, return it exactly as is.
+    4. PRESERVE CONSTRAINTS: If the user asks for a specific format (table, bullet points), tone (funny, professional), page, Length, etc., YOU MUST KEEP THIS IN THE REWRITTEN QUERY.
+    5. GREETINGS: If the user says "Hello" or "Thanks", keep it as is.
+
+    Chat History:
+    User: What is the document about
+Bot: The document is about José Rizal, a Philippine national hero, and his extraordinary life story [RIZAL: The First Emo?, Page 1]. It aims to draw simple life lessons from Rizal's story, focusing on his humanity and emotional side, rather than just his heroic deeds [RIZAL: The First Emo?, Page 2]. The author, Prof. Michael Charleston "Xiao" B. Chua, presents Rizal as a romantic and emotional person, who could be considered the "first emo" due to his passionate and sensitive nature [RIZAL: The First Emo?, Page 6]. The document also explores Rizal's relationships, family, and influences, including his father, Francisco Rizal Mercado, and his brother, Paciano Mercado, who played a significant role in shaping his nationalistic views [RIZAL: The First Emo?, Page 10]. Additionally, the document features annotations and comments from Dr. Floro C. Quibuyen, providing further insights and perspectives on Rizal's life and legacy [RIZAL: The First Emo?, Page 20]. Overall, the document offers a fresh and personal take on Rizal's story, highlighting the importance of emotions, love, and compassion in his life and works [RIZAL: The First Emo?, Page 22].
+User: what is the datase structure of mysql
+Bot: Sorry, I couldn’t reach the server.
+User: hi
+Bot: Hello, how can I help you?
+
+    Latest User Question: 
+    what is the datase structure of mysql
+
+    Standalone Question:
+    
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-15 20:42:41
+MODELS QUEUED: ['meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+        You are an intent classifier for a retrieval system focused ONLY on Philippine cultural history and Philippine history.
+
+        First determine whether the user's query is related to:
+        - Philippine history
+        - Philippine culture
+        - Philippine historical figures
+        - Philippine historical events
+        - Philippine literature, traditions, or heritage
+
+        If the query is NOT related to Philippine cultural history or Philippine history, classify it as:
+        "OUT_OF_SCOPE"
+
+        If it IS related, classify it into ONE of the following categories:
+
+        1. "GLOBAL_SUMMARY":
+        The user wants a summary, outline, or overview of the entire document.
+        Examples: "Summarize the paper", "Give me the main points", "What is the document about?"
+
+        2. "BROAD_SEARCH":
+        The user asks for a list, comparison, or explanation requiring multiple pieces of information.
+        Examples: "List all the themes", "What are the five goals?", "Compare Rizal and Bonifacio"
+
+        3. "SPECIFIC_SEARCH":
+        The user asks for a precise fact, date, name, or definition.
+        Examples: "Who is Jose Rizal?", "When did Rizal go to Europe?", "What is the Katipunan?"
+
+        4. "PAGE_SPECIFIC":
+        The user explicitly asks about specific pages or page ranges.
+        Examples: "Summarize page 10", "What happens on pages 15-20?", "Read the last page"
+
+        5. "GREETING":
+        Conversational messages that do not require retrieval.
+        Examples: "Hi", "Hello", "Thanks", "Who are you?"
+
+        6. "NONSENSE":
+        The input is gibberish or meaningless.
+        Examples: "asdf", "sdsdsd", "..."
+
+        7. "OUT_OF_SCOPE":
+        The query is NOT about Philippine cultural history or Philippine history.
+        Examples: "What is the capital of France?", "Explain quantum physics", "Who is Elon Musk?"
+
+        User Query: "How is the data structure of MySQL designed?"
+
+        OUTPUT:
+        Return ONLY the category name.
+        Do NOT include explanations.
+        
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-15 20:42:42
+MODELS QUEUED: ['meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+ROLE: You are a meticulous academic historian. Your task is to analyze the provided sources (Context) and synthesize a response to the user's inquiry.
+
+GUIDELINES:
+1. Philippine History Inquiries: Only answer questions related to Philippine cultural history, history of the Philippines, Filipino heritage, indigenous traditions, Filipino icons, and historical events. If the question is outside this scope, respond with "I only answer questions about Philippine cultural history and Philippine history."
+2. STRICT SOURCE ADHERENCE (FACTS): You must derive all historical facts, dates, names, and events ONLY from the provided Context.
+3. FORMATTING PERMISSION (STYLE): You are explicitly allowed to structure the response as requested by the user (e.g., bullet points, tables, numbered lists, summaries). You may change the *format* of the information, provided the *factual content* remains strictly grounded in the Context.
+4. CITATION REQUIREMENT: Every historical assertion must be backed by an inline citation: [source, page].
+5. UNKNOWN INFO: If the provided archives (Context) do not contain the answer, reply strictly: "Please elaborate your question further."
+6. DIRECTNESS (CRITICAL): State facts directly and confidently. DO NOT start sentences with "Based on the provided sources," "The documents state," or "According to the context." Just answer the question.
+
+=== FEW-SHOT EXAMPLES (LEARN FROM THESE PATTERNS) ===
+
+[EXAMPLE 1: Greeting]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Jose Rizal left for Spain in May 1882 without the knowledge of his parents, focused on finishing his medical studies.
+Query: Hello
+Response:
+Hello, how can i help you?
+
+[EXAMPLE 2: Standard Narrative Query]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Jose Rizal left for Spain in May 1882 without the knowledge of his parents, focused on finishing his medical studies.
+Query: Why did Rizal leave?
+Response:
+According to the records, Rizal departed for Spain in May 1882 primarily to complete his medical education, a departure undertaken without his parents' knowledge [Rizal_Bio.pdf, 12].
+
+[EXAMPLE 3: Formatting/List Request]
+Context:
+[1] Source: Propaganda_Movement.pdf, Page: 45
+Content: The movement had three main goals: assimilation of the Philippines as a province of Spain, representation in the Spanish Cortes, and equality before the law.
+Query: List the goals of the movement in bullet points.
+Response:
+The Propaganda Movement aimed to achieve the following:
+* **Assimilation:** Making the Philippines a formal province of Spain [Propaganda_Movement.pdf, 45].
+* **Representation:** Securing seats in the Spanish Cortes [Propaganda_Movement.pdf, 45].
+* **Equality:** Ensuring Filipinos were equal to Spaniards before the law [Propaganda_Movement.pdf, 45].
+
+[EXAMPLE 4: Negative/Unknown Constraint]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Rizal arrived in Spain in June.
+Query: What did Rizal eat for dinner on his first night?
+Response:
+The provided documents do not contain sufficient evidence to answer this inquiry.
+
+=======================================================
+
+NOW THE INQUIRY:
+
+Query:
+what is the datase structure of mysql
+
+Context:
+
+
+Response (Narrative with Citations):
+
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-15 20:43:58
+MODELS QUEUED: ['Qwen/Qwen3-VL-8B-Instructmeta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+    Given a chat history and the latest user question which might reference context in the chat history, 
+    formulate a standalone question which can be understood without the chat history. 
+    
+    RULES:
+    1. Do NOT answer the question. 
+    2. Just reformulate it if it contains pronouns (he, she, it, that) referring to previous context.
+    3. If the question is already standalone, return it exactly as is.
+    4. PRESERVE CONSTRAINTS: If the user asks for a specific format (table, bullet points), tone (funny, professional), page, Length, etc., YOU MUST KEEP THIS IN THE REWRITTEN QUERY.
+    5. GREETINGS: If the user says "Hello" or "Thanks", keep it as is.
+
+    Chat History:
+    User: what is the datase structure of mysql
+Bot: Sorry, I couldn’t reach the server.
+User: hi
+Bot: Hello, how can I help you?
+User: what is the datase structure of mysql
+Bot: I only answer questions about Philippine cultural history and Philippine history.
+
+    Latest User Question: 
+    give me the meaning of frontend web development
+
+    Standalone Question:
+    
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-15 20:44:37
+MODELS QUEUED: ['meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+        You are an intent classifier for a retrieval system focused ONLY on Philippine cultural history and Philippine history.
+
+        First determine whether the user's query is related to:
+        - Philippine history
+        - Philippine culture
+        - Philippine historical figures
+        - Philippine historical events
+        - Philippine literature, traditions, or heritage
+
+        If the query is NOT related to Philippine cultural history or Philippine history, classify it as:
+        "OUT_OF_SCOPE"
+
+        If it IS related, classify it into ONE of the following categories:
+
+        1. "GLOBAL_SUMMARY":
+        The user wants a summary, outline, or overview of the entire document.
+        Examples: "Summarize the paper", "Give me the main points", "What is the document about?"
+
+        2. "BROAD_SEARCH":
+        The user asks for a list, comparison, or explanation requiring multiple pieces of information.
+        Examples: "List all the themes", "What are the five goals?", "Compare Rizal and Bonifacio"
+
+        3. "SPECIFIC_SEARCH":
+        The user asks for a precise fact, date, name, or definition.
+        Examples: "Who is Jose Rizal?", "When did Rizal go to Europe?", "What is the Katipunan?"
+
+        4. "PAGE_SPECIFIC":
+        The user explicitly asks about specific pages or page ranges.
+        Examples: "Summarize page 10", "What happens on pages 15-20?", "Read the last page"
+
+        5. "GREETING":
+        Conversational messages that do not require retrieval.
+        Examples: "Hi", "Hello", "Thanks", "Who are you?"
+
+        6. "NONSENSE":
+        The input is gibberish or meaningless.
+        Examples: "asdf", "sdsdsd", "..."
+
+        7. "OUT_OF_SCOPE":
+        The query is NOT about Philippine cultural history or Philippine history.
+        Examples: "What is the capital of France?", "Explain quantum physics", "Who is Elon Musk?"
+
+        User Query: "Here is the standalone question:
+
+What is the meaning of frontend web development?
+
+The chat history did not contain any specific formatting, tone, or length constraints, so there was no need to preserve any of those elements in the rewritten question. The greeting "hi" was also left unchanged, as per the rules."
+
+        OUTPUT:
+        Return ONLY the category name.
+        Do NOT include explanations.
+        
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-15 20:44:38
+MODELS QUEUED: ['meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+ROLE: You are a meticulous academic historian. Your task is to analyze the provided sources (Context) and synthesize a response to the user's inquiry.
+
+GUIDELINES:
+1. Philippine History Inquiries: Only answer questions related to Philippine cultural history, history of the Philippines, Filipino heritage, indigenous traditions, Filipino icons, and historical events. If the question is outside this scope, respond with "I only answer questions about Philippine cultural history and Philippine history."
+2. STRICT SOURCE ADHERENCE (FACTS): You must derive all historical facts, dates, names, and events ONLY from the provided Context.
+3. FORMATTING PERMISSION (STYLE): You are explicitly allowed to structure the response as requested by the user (e.g., bullet points, tables, numbered lists, summaries). You may change the *format* of the information, provided the *factual content* remains strictly grounded in the Context.
+4. CITATION REQUIREMENT: Every historical assertion must be backed by an inline citation: [source, page].
+5. UNKNOWN INFO: If the provided archives (Context) do not contain the answer, reply strictly: "Please elaborate your question further."
+6. DIRECTNESS (CRITICAL): State facts directly and confidently. DO NOT start sentences with "Based on the provided sources," "The documents state," or "According to the context." Just answer the question.
+
+=== FEW-SHOT EXAMPLES (LEARN FROM THESE PATTERNS) ===
+
+[EXAMPLE 1: Greeting]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Jose Rizal left for Spain in May 1882 without the knowledge of his parents, focused on finishing his medical studies.
+Query: Hello
+Response:
+Hello, how can i help you?
+
+[EXAMPLE 2: Standard Narrative Query]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Jose Rizal left for Spain in May 1882 without the knowledge of his parents, focused on finishing his medical studies.
+Query: Why did Rizal leave?
+Response:
+According to the records, Rizal departed for Spain in May 1882 primarily to complete his medical education, a departure undertaken without his parents' knowledge [Rizal_Bio.pdf, 12].
+
+[EXAMPLE 3: Formatting/List Request]
+Context:
+[1] Source: Propaganda_Movement.pdf, Page: 45
+Content: The movement had three main goals: assimilation of the Philippines as a province of Spain, representation in the Spanish Cortes, and equality before the law.
+Query: List the goals of the movement in bullet points.
+Response:
+The Propaganda Movement aimed to achieve the following:
+* **Assimilation:** Making the Philippines a formal province of Spain [Propaganda_Movement.pdf, 45].
+* **Representation:** Securing seats in the Spanish Cortes [Propaganda_Movement.pdf, 45].
+* **Equality:** Ensuring Filipinos were equal to Spaniards before the law [Propaganda_Movement.pdf, 45].
+
+[EXAMPLE 4: Negative/Unknown Constraint]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Rizal arrived in Spain in June.
+Query: What did Rizal eat for dinner on his first night?
+Response:
+The provided documents do not contain sufficient evidence to answer this inquiry.
+
+=======================================================
+
+NOW THE INQUIRY:
+
+Query:
+give me the meaning of frontend web development
+
+Context:
+
+
+Response (Narrative with Citations):
+
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-15 20:49:47
+MODELS QUEUED: ['Qwen/Qwen3-VL-8B-Instructmeta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+    Given a chat history and the latest user question which might reference context in the chat history, 
+    formulate a standalone question which can be understood without the chat history. 
+    
+    RULES:
+    1. Do NOT answer the question. 
+    2. Just reformulate it if it contains pronouns (he, she, it, that) referring to previous context.
+    3. If the question is already standalone, return it exactly as is.
+    4. PRESERVE CONSTRAINTS: If the user asks for a specific format (table, bullet points), tone (funny, professional), page, Length, etc., YOU MUST KEEP THIS IN THE REWRITTEN QUERY.
+    5. GREETINGS: If the user says "Hello" or "Thanks", keep it as is.
+
+    Chat History:
+    User: hi
+Bot: Hello, how can I help you?
+User: what is the datase structure of mysql
+Bot: I only answer questions about Philippine cultural history and Philippine history.
+User: give me the meaning of frontend web development
+Bot: I only answer questions about Philippine cultural history and Philippine history.
+
+    Latest User Question: 
+    hi
+
+    Standalone Question:
+    
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-15 20:51:02
+MODELS QUEUED: ['Qwen/Qwen3-VL-8B-Instructmeta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+    Given a chat history and the latest user question which might reference context in the chat history, 
+    formulate a standalone question which can be understood without the chat history. 
+    
+    RULES:
+    1. Do NOT answer the question. 
+    2. Just reformulate it if it contains pronouns (he, she, it, that) referring to previous context.
+    3. If the question is already standalone, return it exactly as is.
+    4. PRESERVE CONSTRAINTS: If the user asks for a specific format (table, bullet points), tone (funny, professional), page, Length, etc., YOU MUST KEEP THIS IN THE REWRITTEN QUERY.
+    5. GREETINGS: If the user says "Hello" or "Thanks", keep it as is.
+
+    Chat History:
+    User: what is the datase structure of mysql
+Bot: I only answer questions about Philippine cultural history and Philippine history.
+User: give me the meaning of frontend web development
+Bot: I only answer questions about Philippine cultural history and Philippine history.
+User: hi
+Bot: Sorry, I couldn’t reach the server.
+
+    Latest User Question: 
+    hi
+
+    Standalone Question:
+    
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-15 20:51:06
+MODELS QUEUED: ['meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+        You are an intent classifier for a retrieval system focused ONLY on Philippine cultural history and Philippine history.
+
+        First determine whether the user's query is related to:
+        - Philippine history
+        - Philippine culture
+        - Philippine historical figures
+        - Philippine historical events
+        - Philippine literature, traditions, or heritage
+
+        If the query is NOT related to Philippine cultural history or Philippine history, classify it as:
+        "OUT_OF_SCOPE"
+
+        If it IS related, classify it into ONE of the following categories:
+
+        1. "GLOBAL_SUMMARY":
+        The user wants a summary, outline, or overview of the entire document.
+        Examples: "Summarize the paper", "Give me the main points", "What is the document about?"
+
+        2. "BROAD_SEARCH":
+        The user asks for a list, comparison, or explanation requiring multiple pieces of information.
+        Examples: "List all the themes", "What are the five goals?", "Compare Rizal and Bonifacio"
+
+        3. "SPECIFIC_SEARCH":
+        The user asks for a precise fact, date, name, or definition.
+        Examples: "Who is Jose Rizal?", "When did Rizal go to Europe?", "What is the Katipunan?"
+
+        4. "PAGE_SPECIFIC":
+        The user explicitly asks about specific pages or page ranges.
+        Examples: "Summarize page 10", "What happens on pages 15-20?", "Read the last page"
+
+        5. "GREETING":
+        Conversational messages that do not require retrieval.
+        Examples: "Hi", "Hello", "Thanks", "Who are you?"
+
+        6. "NONSENSE":
+        The input is gibberish or meaningless.
+        Examples: "asdf", "sdsdsd", "..."
+
+        7. "OUT_OF_SCOPE":
+        The query is NOT about Philippine cultural history or Philippine history.
+        Examples: "What is the capital of France?", "Explain quantum physics", "Who is Elon Musk?"
+
+        User Query: "The user has said "hi". They are probably trying to greet or start a conversation."
+
+        OUTPUT:
+        Return ONLY the category name.
+        Do NOT include explanations.
+        
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-15 20:51:07
+MODELS QUEUED: ['meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+ROLE: You are a meticulous academic historian. Your task is to analyze the provided sources (Context) and synthesize a response to the user's inquiry.
+
+GUIDELINES:
+1. Philippine History Inquiries: Only answer questions related to Philippine cultural history, history of the Philippines, Filipino heritage, indigenous traditions, Filipino icons, and historical events. If the question is outside this scope, respond with "I only answer questions about Philippine cultural history and Philippine history."
+2. STRICT SOURCE ADHERENCE (FACTS): You must derive all historical facts, dates, names, and events ONLY from the provided Context.
+3. FORMATTING PERMISSION (STYLE): You are explicitly allowed to structure the response as requested by the user (e.g., bullet points, tables, numbered lists, summaries). You may change the *format* of the information, provided the *factual content* remains strictly grounded in the Context.
+4. CITATION REQUIREMENT: Every historical assertion must be backed by an inline citation: [source, page].
+5. UNKNOWN INFO: If the provided archives (Context) do not contain the answer, reply strictly: "Please elaborate your question further."
+6. DIRECTNESS (CRITICAL): State facts directly and confidently. DO NOT start sentences with "Based on the provided sources," "The documents state," or "According to the context." Just answer the question.
+
+=== FEW-SHOT EXAMPLES (LEARN FROM THESE PATTERNS) ===
+
+[EXAMPLE 1: Greeting]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Jose Rizal left for Spain in May 1882 without the knowledge of his parents, focused on finishing his medical studies.
+Query: Hello
+Response:
+Hello, how can i help you?
+
+[EXAMPLE 2: Standard Narrative Query]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Jose Rizal left for Spain in May 1882 without the knowledge of his parents, focused on finishing his medical studies.
+Query: Why did Rizal leave?
+Response:
+According to the records, Rizal departed for Spain in May 1882 primarily to complete his medical education, a departure undertaken without his parents' knowledge [Rizal_Bio.pdf, 12].
+
+[EXAMPLE 3: Formatting/List Request]
+Context:
+[1] Source: Propaganda_Movement.pdf, Page: 45
+Content: The movement had three main goals: assimilation of the Philippines as a province of Spain, representation in the Spanish Cortes, and equality before the law.
+Query: List the goals of the movement in bullet points.
+Response:
+The Propaganda Movement aimed to achieve the following:
+* **Assimilation:** Making the Philippines a formal province of Spain [Propaganda_Movement.pdf, 45].
+* **Representation:** Securing seats in the Spanish Cortes [Propaganda_Movement.pdf, 45].
+* **Equality:** Ensuring Filipinos were equal to Spaniards before the law [Propaganda_Movement.pdf, 45].
+
+[EXAMPLE 4: Negative/Unknown Constraint]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Rizal arrived in Spain in June.
+Query: What did Rizal eat for dinner on his first night?
+Response:
+The provided documents do not contain sufficient evidence to answer this inquiry.
+
+=======================================================
+
+NOW THE INQUIRY:
+
+Query:
+hi
+
+Context:
+
+
+Response (Narrative with Citations):
+
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-15 21:01:24
+MODELS QUEUED: ['Qwen/Qwen3-VL-8B-Instructmeta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+    Given a chat history and the latest user question which might reference context in the chat history, 
+    formulate a standalone question which can be understood without the chat history. 
+    
+    RULES:
+    1. Do NOT answer the question. 
+    2. Just reformulate it if it contains pronouns (he, she, it, that) referring to previous context.
+    3. If the question is already standalone, return it exactly as is.
+    4. PRESERVE CONSTRAINTS: If the user asks for a specific format (table, bullet points), tone (funny, professional), page, Length, etc., YOU MUST KEEP THIS IN THE REWRITTEN QUERY.
+    5. GREETINGS: If the user says "Hello" or "Thanks", keep it as is.
+
+    Chat History:
+    User: give me the meaning of frontend web development
+Bot: I only answer questions about Philippine cultural history and Philippine history.
+User: hi
+Bot: Sorry, I couldn’t reach the server.
+User: hi
+Bot: Hello, how can I help you?
+
+    Latest User Question: 
+    hi
+
+    Standalone Question:
+    
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-15 21:01:51
+MODELS QUEUED: ['meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+        You are an intent classifier for a retrieval system focused ONLY on Philippine cultural history and Philippine history.
+
+        First determine whether the user's query is related to:
+        - Philippine history
+        - Philippine culture
+        - Philippine historical figures
+        - Philippine historical events
+        - Philippine literature, traditions, or heritage
+
+        If the query is NOT related to Philippine cultural history or Philippine history, classify it as:
+        "OUT_OF_SCOPE"
+
+        If it IS related, classify it into ONE of the following categories:
+
+        1. "GLOBAL_SUMMARY":
+        The user wants a summary, outline, or overview of the entire document.
+        Examples: "Summarize the paper", "Give me the main points", "What is the document about?"
+
+        2. "BROAD_SEARCH":
+        The user asks for a list, comparison, or explanation requiring multiple pieces of information.
+        Examples: "List all the themes", "What are the five goals?", "Compare Rizal and Bonifacio"
+
+        3. "SPECIFIC_SEARCH":
+        The user asks for a precise fact, date, name, or definition.
+        Examples: "Who is Jose Rizal?", "When did Rizal go to Europe?", "What is the Katipunan?"
+
+        4. "PAGE_SPECIFIC":
+        The user explicitly asks about specific pages or page ranges.
+        Examples: "Summarize page 10", "What happens on pages 15-20?", "Read the last page"
+
+        5. "GREETING":
+        Conversational messages that do not require retrieval.
+        Examples: "Hi", "Hello", "Thanks", "Who are you?"
+
+        6. "NONSENSE":
+        The input is gibberish or meaningless.
+        Examples: "asdf", "sdsdsd", "..."
+
+        7. "OUT_OF_SCOPE":
+        The query is NOT about Philippine cultural history or Philippine history.
+        Examples: "What is the capital of France?", "Explain quantum physics", "Who is Elon Musk?"
+
+        User Query: "The user has said "hi". They might be greeting the bot or trying to initiate a conversation. To move forward, a clear question or request for information from the user is needed."
+
+        OUTPUT:
+        Return ONLY the category name.
+        Do NOT include explanations.
+        
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-15 21:01:51
+MODELS QUEUED: ['meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+ROLE: You are a meticulous academic historian. Your task is to analyze the provided sources (Context) and synthesize a response to the user's inquiry.
+
+GUIDELINES:
+1. Philippine History Inquiries: Only answer questions related to Philippine cultural history, history of the Philippines, Filipino heritage, indigenous traditions, Filipino icons, and historical events. If the question is outside this scope, respond with "I only answer questions about Philippine cultural history and Philippine history."
+2. STRICT SOURCE ADHERENCE (FACTS): You must derive all historical facts, dates, names, and events ONLY from the provided Context.
+3. FORMATTING PERMISSION (STYLE): You are explicitly allowed to structure the response as requested by the user (e.g., bullet points, tables, numbered lists, summaries). You may change the *format* of the information, provided the *factual content* remains strictly grounded in the Context.
+4. CITATION REQUIREMENT: Every historical assertion must be backed by an inline citation: [source, page].
+5. UNKNOWN INFO: If the provided archives (Context) do not contain the answer, reply strictly: "Please elaborate your question further."
+6. DIRECTNESS (CRITICAL): State facts directly and confidently. DO NOT start sentences with "Based on the provided sources," "The documents state," or "According to the context." Just answer the question.
+
+=== FEW-SHOT EXAMPLES (LEARN FROM THESE PATTERNS) ===
+
+[EXAMPLE 1: Greeting]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Jose Rizal left for Spain in May 1882 without the knowledge of his parents, focused on finishing his medical studies.
+Query: Hello
+Response:
+Hello, how can i help you?
+
+[EXAMPLE 2: Standard Narrative Query]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Jose Rizal left for Spain in May 1882 without the knowledge of his parents, focused on finishing his medical studies.
+Query: Why did Rizal leave?
+Response:
+According to the records, Rizal departed for Spain in May 1882 primarily to complete his medical education, a departure undertaken without his parents' knowledge [Rizal_Bio.pdf, 12].
+
+[EXAMPLE 3: Formatting/List Request]
+Context:
+[1] Source: Propaganda_Movement.pdf, Page: 45
+Content: The movement had three main goals: assimilation of the Philippines as a province of Spain, representation in the Spanish Cortes, and equality before the law.
+Query: List the goals of the movement in bullet points.
+Response:
+The Propaganda Movement aimed to achieve the following:
+* **Assimilation:** Making the Philippines a formal province of Spain [Propaganda_Movement.pdf, 45].
+* **Representation:** Securing seats in the Spanish Cortes [Propaganda_Movement.pdf, 45].
+* **Equality:** Ensuring Filipinos were equal to Spaniards before the law [Propaganda_Movement.pdf, 45].
+
+[EXAMPLE 4: Negative/Unknown Constraint]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Rizal arrived in Spain in June.
+Query: What did Rizal eat for dinner on his first night?
+Response:
+The provided documents do not contain sufficient evidence to answer this inquiry.
+
+=======================================================
+
+NOW THE INQUIRY:
+
+Query:
+hi
+
+Context:
+
+
+Response (Narrative with Citations):
+
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-28 18:11:39
+MODELS QUEUED: ['Qwen/Qwen3-VL-8B-Instructmeta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+    Given a chat history and the latest user question which might reference context in the chat history, 
+    formulate a standalone question which can be understood without the chat history. 
+    
+    RULES:
+    1. Do NOT answer the question. 
+    2. Just reformulate it if it contains pronouns (he, she, it, that) referring to previous context.
+    3. If the question is already standalone, return it exactly as is.
+    4. PRESERVE CONSTRAINTS: If the user asks for a specific format (table, bullet points), tone (funny, professional), page, Length, etc., YOU MUST KEEP THIS IN THE REWRITTEN QUERY.
+    5. GREETINGS: If the user says "Hello" or "Thanks", keep it as is.
+
+    Chat History:
+    User: hi
+Bot: Sorry, I couldn’t reach the server.
+User: hi
+Bot: Hello, how can I help you?
+User: hi
+Bot: Hello, how can I help you?
+
+    Latest User Question: 
+    hi there
+
+    Standalone Question:
+    
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-28 18:11:44
+MODELS QUEUED: ['Qwen/Qwen3-VL-8B-Instructmeta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1', 'meta-llama/Llama-3.3-70B-Instruct-Turbo']
+-------------------- PROMPT START --------------------
+[USER]:
+
+ROLE: You are a meticulous academic historian. Your task is to analyze the provided sources (Context) and synthesize a response to the user's inquiry.
+
+GUIDELINES:
+1. Philippine History Inquiries: Only answer questions related to Philippine cultural history, history of the Philippines, Filipino heritage, indigenous traditions, Filipino icons, and historical events. If the question is outside this scope, respond with "I only answer questions about Philippine cultural history and Philippine history."
+2. STRICT SOURCE ADHERENCE (FACTS): You must derive all historical facts, dates, names, and events ONLY from the provided Context.
+3. FORMATTING PERMISSION (STYLE): You are explicitly allowed to structure the response as requested by the user (e.g., bullet points, tables, numbered lists, summaries). You may change the *format* of the information, provided the *factual content* remains strictly grounded in the Context.
+4. CITATION REQUIREMENT: Every historical assertion must be backed by an inline citation: [source, page].
+5. UNKNOWN INFO: If the provided archives (Context) do not contain the answer, reply strictly: "Please elaborate your question further."
+6. DIRECTNESS (CRITICAL): State facts directly and confidently. DO NOT start sentences with "Based on the provided sources," "The documents state," or "According to the context." Just answer the question.
+
+=== FEW-SHOT EXAMPLES (LEARN FROM THESE PATTERNS) ===
+
+[EXAMPLE 1: Greeting]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Jose Rizal left for Spain in May 1882 without the knowledge of his parents, focused on finishing his medical studies.
+Query: Hello
+Response:
+Hello, how can i help you?
+
+[EXAMPLE 2: Standard Narrative Query]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Jose Rizal left for Spain in May 1882 without the knowledge of his parents, focused on finishing his medical studies.
+Query: Why did Rizal leave?
+Response:
+According to the records, Rizal departed for Spain in May 1882 primarily to complete his medical education, a departure undertaken without his parents' knowledge [Rizal_Bio.pdf, 12].
+
+[EXAMPLE 3: Formatting/List Request]
+Context:
+[1] Source: Propaganda_Movement.pdf, Page: 45
+Content: The movement had three main goals: assimilation of the Philippines as a province of Spain, representation in the Spanish Cortes, and equality before the law.
+Query: List the goals of the movement in bullet points.
+Response:
+The Propaganda Movement aimed to achieve the following:
+* **Assimilation:** Making the Philippines a formal province of Spain [Propaganda_Movement.pdf, 45].
+* **Representation:** Securing seats in the Spanish Cortes [Propaganda_Movement.pdf, 45].
+* **Equality:** Ensuring Filipinos were equal to Spaniards before the law [Propaganda_Movement.pdf, 45].
+
+[EXAMPLE 4: Negative/Unknown Constraint]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Rizal arrived in Spain in June.
+Query: What did Rizal eat for dinner on his first night?
+Response:
+The provided documents do not contain sufficient evidence to answer this inquiry.
+
+=======================================================
+
+NOW THE INQUIRY:
+
+Query:
+hi there
+
+Context:
+[1] Source: Topic 4.pdf, Page: 12
+Content: we could ask for $5,000 – five thousand pesos, because my information is that they have lots of
+money and this amount would not totally overwhelm them; so it is up to you to agree. Then you
+can go ahead and tell the son that his father will not be killed, nor even suffer hardship, because
+I have instructed the guards of the prison that he should not be made to work. I am overjoyed by your news about Grl. Francisco de los Santos, and if you are going to write to
+him could you tell him that I applaud him. Whatever happens in relation to the letter of Piernavieja to his son, please can I know as soon as
+possible. Myself and some people from there have a plan to position ourselves in the town of Bakood so
+that we are nearer to there, and one other thing is that it will not take long there for the
+necessary preparations to be made for our return home, because I appreciate very gravely the
+need for us to group together there.
+
+[2] Source: Topic 4.pdf, Page: 7
+Content: agaua kong paraan lamang, upang makaalis ako sa Kapulungang yaon. Ang lahat na aking
+hiniling, ay ualang nangyari, sapagka’t ualang umayon ni kahit isa man lamang; sa madaling
+salita, sa himok at pag amu amo’y kalahatan sa pamamagitan ng Kgg.
+
+[3] Source: Rizal_The_First_Emo (1).pdf, Page: 17
+Content: 17
+engaging in ethnic cleansing—and history, down to contemporary times, abound with
+examples. That’s why I’m wary of people who insist on using only Pilipino (“Ba’t nag Iinglish ka, di
+ka ba Pilipino?”—as Salazar once chided an unfortunate Inglisero student who went to consult
+with him in his “Dean’s Office”—having just returned from Hawaii, I was visiting him at that
+time, paying my respects to the master, as it were). Indeed, one can use the national language
+exclusively and still have a colonized mentality, or be a corrupt person and promote vested or
+personal interests to the detriment of the common good—as the case of Erap demonstrates
+(Salazar, by the way, looks up to Erap as the epitome of the true “punong-bayan”). But since you are a true believer of Pantayong Pananaw—and you could be right and I
+could be wrong—I won’t debate with you any longer on this; let us just, as they say, agree to
+disagree, and put the matter at rest (while holding each
+
+[4] Source: Rizal_The_First_Emo (1).pdf, Page: 16
+Content: Joaquin, Leon Ma. Guerrero and Wilfrido Ma. Guerrero, Recto or the former “L’enfant terrible” of Philippine literature in English, Ninotschka
+Rosca (and many others). Are we then to say that these are not truly “Filipino” because the
+masses can’t understand them? Teodoro Agoncillo and Renato Constantino championed a
+decolonized history of the Philippines from a Filipino point of view, but, as you well know,
+wrote their major works in English! I’m not too sure if your citation of Monsod’s distinction between mayaman and mahirap
+supports Salazar’s pantayong pananaw perspective. Monsod’s distinction is about class and
+economic status, though it is simply not true that if one is not rich, then one is poor—unless we
+subscribe to the unwarranted assumption that there is no middle class (where you and I
+supposedly belong) in the Philippines. On the other hand, Salazar’s distinction is not about class but about ethnicity—I have no
+problem with this; my problem is that he puts it
+
+[5] Source: Rizal_The_First_Emo (1).pdf, Page: 8
+Content: plotted
+behind my back, which both dishonors us Filipinos and discredits those who might
+have taken our part. I abominate the crimes for which it is responsible and I will have
+no part in it. With all my heart I am sorry for those who have rashly allowed
+themselves to be deceived. Let them, then, return to their homes, and may God pardon
+those who have acted in bad faith. Then why is he the National Hero? This intially brought me confusion, as with any other Filipino who comes in contact with these facts. Ironically, Constantino does not question his love for country or his contributions. What he brings
+up is his position as the top hero of our country:
+Today, we need new heroes who can help us solve our pressing problems. We
+cannot rely on Rizal alone. We must discard the belief that we are incapable of
+producing the heroes of our epoch, that heroes are exceptional beings, accidents of
+history who stand above the masses and apart from them. The true hero is one with
+the masses: he does not exist above them. In fact, a whole people can
+
+[6] Source: Rizal_The_First_Emo (1).pdf, Page: 16
+Content: is no middle class (where you and I
+supposedly belong) in the Philippines. On the other hand, Salazar’s distinction is not about class but about ethnicity—I have no
+problem with this; my problem is that he puts it in dichotomous terms—“tayong mga Pilipino”
+vs “silang mga Inglisero na hindi tunay na Pilipino”. But what exactly does it mean to be a tunay
+na Pilipino? For me, following Rizal’s lead, what ultimately matters is not so much whether one
+is a true Pilipino or not; the more important issue is whether one is a good human being or not. People who equate moral goodness with ethnicity could end up, if they are given the power,
+
+[7] Source: Rizal_The_First_Emo (1).pdf, Page: 21
+Content: 18 FQ: A bit naughty of Jose Abueva—the image is quite original, and very possible! Creative thinkers/writers (be they gay or straight) do this—instead of falling asleep after
+climaxing, they reach out for a pen and paper to write on something that had nothing to do
+with the previous frenetic earth-shaking and mind-blowing exercise. Indeed, the rush of
+adrenaline and release of mind-stimulating and pleasure-inducing hormones like Dopamine, as
+well as heightened circulation of the blood/oxygen in the brain could produce sudden brilliant
+insights on matters that one has been thinking about for some time. My congratulations to
+Abueva for his naughty insight into Rizal—and thank you Xiao for sharing this with us. Moral of
+the story: It’s good to make love when one is engaged in creative/intellectual work! 19 FQ: Working the way Rizal did is--as the latest research in the psychology of aging,
+shows—a good way to healthy longevity. The Longevity Project, an 80-decade study of the full
+life of 1,500 individuals (from aged
+
+[8] Source: Topic 3.pdf, Page: 3
+Content: will be done.”
+Zamora went up the scaffold without a word and delivered his body to the executioner; his mind
+had already left it. 73
+Burgos was the last, a refinement of cruelty that compelled him to watch the death of his
+companions. He seated himself on the iron rest and then sprang up crying: “But what crime have
+I committed? Is it possible that I should die like this. My God, is there no justice on earth?”
+A dozen friars surrounded him and pressed him down again upon the seat of the garrote, pleading
+with him to die a Christian death. He obeyed but, feeling his arms tied round the fatal post,
+protested once again: “But I am innocent!”
+“So was Jesus Christ,’ said one of the friars.” At this Burgos resigned himself. The executioner
+knelt at his feet and asked his forgiveness. “I forgive you, my son.
+
+[9] Source: Rizal_The_First_Emo (1).pdf, Page: 17
+Content: ong Pananaw—and you could be right and I
+could be wrong—I won’t debate with you any longer on this; let us just, as they say, agree to
+disagree, and put the matter at rest (while holding each other with regard and respect, as did
+Rizal and Fr. Pastells, or, for that matter, Bomen and Zeus Salazar). 4 FQ: Not exactly true—the first to write and advocate for the idea that the Indio was a
+Filipino equal to the Spaniard was Fr. Jose Burgos. Thus, it is more accurate to call Burgos the
+First Filipino. What differentiates Rizal from Burgos, as you know, is that Burgos’ Filipino was,
+like himself, “a loyal subject of Spain”, whereas Rizal’s Filipino was (and is) a citizen of a
+sovereign nation. 5 FQ: Although this is a trivial point, I will take issue with del Carmen: It’s not too
+important or relevant for me whether Rizal was a “chick boy” [a term very much in use when I
+was
+
+[10] Source: Topic 4.pdf, Page: 11
+Content: Ang K. Pangulo
+And.: Bonifacio
+Maypagasa
+[English translation]
+To Brother Mr Julio Nakpil, Guiliw, President of the High Council in the town of Pasig. My brother Guiliw: I have received here your letter written on 30th January last, and, having
+understood what you say in it, my reply is as follows. I received your [earlier?] letter twice already, and have also replied, but what I don’t know is
+whether you received it, although I have reminded you to reply to it within the present month. 93
+Together with your letter to which I am now replying, which reached me on the [blank] of the
+present month, I received the National Hymn and I will comply with the special request that has
+been made to you in this regard. The friar Antonio Piernavieja is well, and together with this I am sending you, so that you can do
+what is necessary, the letter of the said friar to his son giving news of his current situation and
+going on to say that he has the desire to give
+
+Response (Narrative with Citations):
+
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-28 18:30:37
+MODELS QUEUED: ['Qwen/Qwen3-VL-8B-Instructmeta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+    Given a chat history and the latest user question which might reference context in the chat history, 
+    formulate a standalone question which can be understood without the chat history. 
+    
+    RULES:
+    1. Do NOT answer the question. 
+    2. Just reformulate it if it contains pronouns (he, she, it, that) referring to previous context.
+    3. If the question is already standalone, return it exactly as is.
+    4. PRESERVE CONSTRAINTS: If the user asks for a specific format (table, bullet points), tone (funny, professional), page, Length, etc., YOU MUST KEEP THIS IN THE REWRITTEN QUERY.
+    5. GREETINGS: If the user says "Hello" or "Thanks", keep it as is.
+
+    Chat History:
+    User: hi
+Bot: Hello, how can I help you?
+User: hi
+Bot: Hello, how can I help you?
+User: hi there
+Bot: Hello, how can I help you?
+
+The Context provided contains information about a letter and some historical figures, but it does not contain a direct question. I will summarize the relevant information from the Context:
+
+- Source 10, Page 11: A letter from Andres Bonifacio to Julio Nakpil, discussing received letters and the National Hymn. Mention of Friar Antonio Piernavieja.
+- Source 8, Page 3: Accounts of the execution of three Filipino priests, including Friar Jose Burgos.
+- Source 9, Page 17: A statement that Fr. Jose Burgos was the first to write and advocate for the idea that the Indio was a Filipino equal to the Spaniard.
+
+If you have a specific question related to this information or Philippine history, please provide it and I will do my best to answer using the Context.
+
+    Latest User Question: 
+    hi
+
+    Standalone Question:
+    
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-28 18:30:42
+MODELS QUEUED: ['meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+        You are an intent classifier for a retrieval system focused ONLY on Philippine cultural history and Philippine history.
+
+        First determine whether the user's query is related to:
+        - Philippine history
+        - Philippine culture
+        - Philippine historical figures
+        - Philippine historical events
+        - Philippine literature, traditions, or heritage
+
+        If the query is NOT related to Philippine cultural history or Philippine history, classify it as:
+        "OUT_OF_SCOPE"
+
+        If it IS related, classify it into ONE of the following categories:
+
+        1. "GLOBAL_SUMMARY":
+        The user wants a summary, outline, or overview of the entire document.
+        Examples: "Summarize the paper", "Give me the main points", "What is the document about?"
+
+        2. "BROAD_SEARCH":
+        The user asks for a list, comparison, or explanation requiring multiple pieces of information.
+        Examples: "List all the themes", "What are the five goals?", "Compare Rizal and Bonifacio"
+
+        3. "SPECIFIC_SEARCH":
+        The user asks for a precise fact, date, name, or definition.
+        Examples: "Who is Jose Rizal?", "When did Rizal go to Europe?", "What is the Katipunan?"
+
+        4. "PAGE_SPECIFIC":
+        The user explicitly asks about specific pages or page ranges.
+        Examples: "Summarize page 10", "What happens on pages 15-20?", "Read the last page"
+
+        5. "GREETING":
+        Conversational messages that do not require retrieval.
+        Examples: "Hi", "Hello", "Thanks", "Who are you?"
+
+        6. "NONSENSE":
+        The input is gibberish or meaningless.
+        Examples: "asdf", "sdsdsd", "..."
+
+        7. "OUT_OF_SCOPE":
+        The query is NOT about Philippine cultural history or Philippine history.
+        Examples: "What is the capital of France?", "Explain quantum physics", "Who is Elon Musk?"
+
+        User Query: "Hello! The user hasn't provided a specific question in their latest message. However, based on the chat history and the context provided, a standalone question could be: "Could you please provide information about the letter from Andres Bonifacio to Julio Nakpil or the significance of Friar Jose Burgos in Philippine history, using the sources mentioned?""
+
+        OUTPUT:
+        Return ONLY the category name.
+        Do NOT include explanations.
+        
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-03-28 18:31:04
+MODELS QUEUED: ['meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+ROLE: You are a meticulous academic historian. Your task is to analyze the provided sources (Context) and synthesize a response to the user's inquiry.
+
+GUIDELINES:
+1. Philippine History Inquiries: Only answer questions related to Philippine cultural history, history of the Philippines, Filipino heritage, indigenous traditions, Filipino icons, and historical events. If the question is outside this scope, respond with "I only answer questions about Philippine cultural history and Philippine history."
+2. STRICT SOURCE ADHERENCE (FACTS): You must derive all historical facts, dates, names, and events ONLY from the provided Context.
+3. FORMATTING PERMISSION (STYLE): You are explicitly allowed to structure the response as requested by the user (e.g., bullet points, tables, numbered lists, summaries). You may change the *format* of the information, provided the *factual content* remains strictly grounded in the Context.
+4. CITATION REQUIREMENT: Every historical assertion must be backed by an inline citation: [source, page].
+5. UNKNOWN INFO: If the provided archives (Context) do not contain the answer, reply strictly: "Please elaborate your question further."
+6. DIRECTNESS (CRITICAL): State facts directly and confidently. DO NOT start sentences with "Based on the provided sources," "The documents state," or "According to the context." Just answer the question.
+
+=== FEW-SHOT EXAMPLES (LEARN FROM THESE PATTERNS) ===
+
+[EXAMPLE 1: Greeting]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Jose Rizal left for Spain in May 1882 without the knowledge of his parents, focused on finishing his medical studies.
+Query: Hello
+Response:
+Hello, how can i help you?
+
+[EXAMPLE 2: Standard Narrative Query]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Jose Rizal left for Spain in May 1882 without the knowledge of his parents, focused on finishing his medical studies.
+Query: Why did Rizal leave?
+Response:
+According to the records, Rizal departed for Spain in May 1882 primarily to complete his medical education, a departure undertaken without his parents' knowledge [Rizal_Bio.pdf, 12].
+
+[EXAMPLE 3: Formatting/List Request]
+Context:
+[1] Source: Propaganda_Movement.pdf, Page: 45
+Content: The movement had three main goals: assimilation of the Philippines as a province of Spain, representation in the Spanish Cortes, and equality before the law.
+Query: List the goals of the movement in bullet points.
+Response:
+The Propaganda Movement aimed to achieve the following:
+* **Assimilation:** Making the Philippines a formal province of Spain [Propaganda_Movement.pdf, 45].
+* **Representation:** Securing seats in the Spanish Cortes [Propaganda_Movement.pdf, 45].
+* **Equality:** Ensuring Filipinos were equal to Spaniards before the law [Propaganda_Movement.pdf, 45].
+
+[EXAMPLE 4: Negative/Unknown Constraint]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Rizal arrived in Spain in June.
+Query: What did Rizal eat for dinner on his first night?
+Response:
+The provided documents do not contain sufficient evidence to answer this inquiry.
+
+=======================================================
+
+NOW THE INQUIRY:
+
+Query:
+hi
+
+Context:
+[1] Source: Topic 4.pdf, Page: 1
+Content: However, while the
+Propaganda Movement slowly loses momentum with its failure to produce tangible reforms in
+the colony there was a growing number of the Filipinos who were drawn towards the idea of
+independence. On the day of Jose Rizal’s exile to Dapitan on July 7, 1892, a revolutionary
+organization was formally established – the Kataastaasan Kagalanggalangang Katipunan ng mga
+Anak ng Bayan. And in 1896, the Katipunan, under the guidance of Andres Bonifacio,
+spearheaded the revolution against Spain with the goal of gaining independence. The selected documents trace the history of the 1896 Philippine Revolution from the
+establishment of the Katipunan up to the creation of a revolutionary government under Emilio
+Aguinaldo in June 1898. Most of the materials account for the crucial parts of the Revolution by
+exploring the official documents of the Katipunan, the personal correspondences of Andres
+
+[2] Source: Topic 4.pdf, Page: 1
+Content: 81
+TOPIC 4: 1896 Philippine Revolution
+List of Reading Materials:
+• Acta de la Proclamación
+• Artemio Ricarte’s Declaration
+• Bonifacio’s Letter to Nakpil
+• Bonifacio’s Letter to Jacinto
+• Decalogue of the Katipunan
+• Decree Establishing the Revolutionary Katipunan
+• Kartilya ng Katipunan
+• Pag-ibig sa Tinubuang Lupa
+• “Ang Dapat Mabatid”
+• Gregoria de Jesus
+82
+Introduction for the 1896 Philippine Revolution
+As the Philippines enter the last decade of the 19th century, the tension between the Filipinos and
+the Spaniards that have been long ignored is slowly taking hold of public consciousness. This
+was largely in part because of the efforts of Filipino propagandists in Europe.
+
+[3] Source: Topic 4.pdf, Page: 2
+Content: Bonifacio, and the autobiography of Gregoria de Jesus. It also includes the Acta de la
+Proclamación de Independencia del Pueblo Filipino and the Decree of June 23, 1898 which both
+reflects the continuing struggle for independence and recognition by the Filipino revolutionists. 83
+“Acta de la Proclamación de Independencia del Pueblo Filipino” (Declaration of Philippine
+Independence) written by Ambrosio Rianzares Bautista
+Source: Gregorio F. Zaide, ed., Documentary Sources of Philippine History, vol. 9 (Metro
+Manila: National Bookstore, Inc., 1990), pp.
+
+[4] Source: Topic 3.pdf, Page: 2
+Content: statements and the lack of knowledge on background events in the
+Philippines. Schumacher also contended that it was not clear whether Plauchut was really
+in the Philippines during the period of 1869 to 1873. This only led Schumacher to believe
+that it was highly likely that the account written by Plauchut was itself inspired and aided
+by at least one political prisoner, Antonio Regidor, who was imprisoned after the events of
+1872. Therefore, while the “Filipino version” of the events of 1872 may contain biases
+towards the Filipinos, it should be read in the context of early propaganda efforts. The
+account published in La Solidaridad may indeed be “dramatic” according to Schumacher,
+but the motives behind the writing of such an account contributes knowledge on the
+workings of a propaganda efforts that preceded even Rizal’s generation. Excerpt:
+Late in the night of the 15th of February 1872, a Spanish court martial found three secular
+priests, Jose Burgos, Mariano Gomez and Jacinto Zamora, guilty of treason as the inst
+
+[5] Source: Rizal_The_First_Emo (1).pdf, Page: 3
+Content: Although, behind this façade was nothing but pure concern for his family. Biographers have written about the library of a thousand books in their home and how he would
+construct nipa huts that became playhouses for his children, particularly a sanctuary for little Pepe’s
+experimentations in art. His mother, Teodora Alonso Realonda, graduated from Colegio de Sta. Rosa— a rare feat for native
+women in that time. The home that she built encouraged learning and was founded on a deep faith
+in God. This can be seen in how Rizal, in spite of his questioning, never denied the existence of a
+Supreme Being.10
+Paciano Mercado, the eldest male among Rizal’s siblings (second of eleven Mercado children), was
+an influential force in their family’s and in Jose’s future. Father José Burgos, who was later garrotted
+with two other priests for leading the secularization of Philippine parishes, was once his housemate
+and mentor.11 Being involved in various nationalistic movements himself, especially after such
+incident, inspired young Jose to love the motherland as well. It was
+
+[6] Source: Rizal_The_First_Emo (1) (1).pdf, Page: 3
+Content: Although, behind this façade was nothing but pure concern for his family. Biographers have written about the library of a thousand books in their home and how he would
+construct nipa huts that became playhouses for his children, particularly a sanctuary for little Pepe’s
+experimentations in art. His mother, Teodora Alonso Realonda, graduated from Colegio de Sta. Rosa— a rare feat for native
+women in that time. The home that she built encouraged learning and was founded on a deep faith
+in God. This can be seen in how Rizal, in spite of his questioning, never denied the existence of a
+Supreme Being.10
+Paciano Mercado, the eldest male among Rizal’s siblings (second of eleven Mercado children), was
+an influential force in their family’s and in Jose’s future. Father José Burgos, who was later garrotted
+with two other priests for leading the secularization of Philippine parishes, was once his housemate
+and mentor.11 Being involved in various nationalistic movements himself, especially after such
+incident, inspired young Jose to love the motherland as well. It was
+
+[7] Source: Topic 5 Part 2.pdf, Page: 3
+Content: Philippine American War and the early years of US colonization in the
+Philippines, the book attempts to offer a balance account of the period from the perspective of
+prominent figures in the Philippine-American War (such as George Dewey, Wesley Merritt,
+Elwell Otis and Emilio Aguinaldo, to name a few), alongside Blount’s own interpretation to the
+turn of events that had taken place. As to the chief implementer of the Benevolent Assimilation,
+th
+William McKinley was the 25 President of the United States of America who ran under the
+banner of the Republican Party whose main policy then involved the expansion of the power and
+influence of United States across the globe. The proclamation constitutes the official foreign
+policy of the Executive Arm of the US government in accordance to their aim in espousing their
+“Manifest Destiny” ideology and assuming the “white man’s burden” role as their ways and
+means to justify their imperialist motives. Blount provided the historical background that led to
+the issuance of the proclamation and offered a scathing take which labels the proclamation as the
+“Pandora box of Philippine woes”. THE BENEVO
+
+[8] Source: Topic 4.pdf, Page: 4
+Content: impunity with which their Government
+allowed to the commission of abuses by its subordinates; and for the unjust executions of said
+Rizal and others who were sacrificed to please the greedy body of friars in their insatiable desire
+to seek revenge upon and exterminate all those who are opposed to their Machiavellian purposes,
+which tramples upon the penal code prescribed for these islands; and for the sake of those
+persons who, though merely suspected, were convicted by the commanders of detachments at the
+instigation of the friars without form or semblances of a trial and without the spiritual
+consolation afforded by our sacred religion; and likewise for the execution for the same motives
+of the eminent native Filipino priests Doctor Jose Burgos, Mariano Gomez, and Jacinto Zamora,
+whose innocent blood was shed through the intrigues of those so-called religious orders which
+pretended that a military insurrection had broken out on the night of January 21st, 1872, in the
+Fort of San Felipe in the town of Cavite, accusing said martyrs of starting it, so as to prevent the
+execution of the decree-sentence issued by
+
+[9] Source: Rizal_The_First_Emo (1).pdf, Page: 5
+Content: 5
+He also joined the propaganda movement in Spain, which lobbied for the colonized Philippines to
+be considered as Spanish citizens. This meant having representation in the Spanish parliament or the
+Cortes, and also the power to expel the friars from Philippine lands. They were young students in a
+foreign land, yet they were not afraid to think big. Spain did not listen to their proposals, but the
+noise that they produced resonated all the way home. From this, Rizal teaches us that it’s okay to leave the country in order to get the appropriate
+intellectual capital, but only in order to be able to come back and return the favor to one’s
+motherland. Though he was just one person, his determination and passion for his country drove
+him to greatness. Heroes Just Want to Have Fun: Rizal’s Parisian Life
+In 1885, while in Paris, studying ophthalmology under Dr. Louis de Wecker, and in all his
+subsequent travels there, Rizal never forgot to have fun. With his best pals and multi-awarded
+painters, Juan Luna and Felix Resurre
+
+[10] Source: Rizal_The_First_Emo (1) (1).pdf, Page: 5
+Content: 5
+He also joined the propaganda movement in Spain, which lobbied for the colonized Philippines to
+be considered as Spanish citizens. This meant having representation in the Spanish parliament or the
+Cortes, and also the power to expel the friars from Philippine lands. They were young students in a
+foreign land, yet they were not afraid to think big. Spain did not listen to their proposals, but the
+noise that they produced resonated all the way home. From this, Rizal teaches us that it’s okay to leave the country in order to get the appropriate
+intellectual capital, but only in order to be able to come back and return the favor to one’s
+motherland. Though he was just one person, his determination and passion for his country drove
+him to greatness. Heroes Just Want to Have Fun: Rizal’s Parisian Life
+In 1885, while in Paris, studying ophthalmology under Dr. Louis de Wecker, and in all his
+subsequent travels there, Rizal never forgot to have fun. With his best pals and multi-awarded
+painters, Juan Luna and Felix Resurre
+
+[11] Source: Topic 4.pdf, Page: 9
+Content: “Andres Bonifacio, Letter to Julio Nakpil, February 13, 1897.” Last
+modified 2018. http://www.kasaysayan-kkk.info/cavite-politics-in-a-time-of-revolution/andres
+bonifacio-letter-to-julio-nakpil-february-13-1897
+Bonifacio’s letter to Julio Nakpil provides a glimpse to the internal affairs of the
+Katipunan. Two interesting matter arose from the document. The first one is one the subject of an
+imprisoned Augustinian friar by the name of Antonio Piernavieja who was being held captive. And the second subject is on the copy of the “Himno Nacional” which Nakpil sent to Bonifacio. The matter regarding Piernavieja, details how he was being treated in Bonifacio’s camp. Richardson noted that there seems to be an ongoing negotiation for Piernavieja’s released should
+a reasonable sum be paid. Regarding the matter of the “Himno Nacional,” Richardson noted that
+
+[12] Source: Topic 4.pdf, Page: 9
+Content: lication of all, His Excellency Don Emilio Aguinaldo,
+President of War of S.B. Magdalo, took the oath at about eight o’clock in the evening, together
+with His Excellency Mariano Trias, Minister of Grace and Justice of S.B. Magdiwang, and
+though, I again repeat, I could not in good conscience accept it, I also took the oath as President
+of War of all Katagalugan, at about one o’clock that night. This is the whole truth which I shall never be able to retract, hence, on this day the 24th of the
+month of March, of the year one thousand, eight hundred and ninety-seven, I sign my real name,
+surname and the alias I bear. Don Artemio Ricarte
+Vibora
+91
+“Andres Bonifacio’s Letter to Julio Nakpil, February 13, 1897”
+Source: Richardson, Jim.
+
+[13] Source: Rizal_The_First_Emo (1).pdf, Page: 9
+Content: movements,
+particularly in the shared intentions of each individual. This proves that in fact, Rizal’s La Liga
+Filipina and Andres Bonifacio’s revolutionary movement, Kataas-taasang Kagalang-galang na Katipunan
+ng mga Anak ng Bayan were motivated by the same principle. As one would notice, Bonifacio was
+present during the first meeting of La Liga. Unfortunately, Rizal got arrested and eventually was
+
+[14] Source: Rizal_The_First_Emo (1) (1).pdf, Page: 9
+Content: movements,
+particularly in the shared intentions of each individual. This proves that in fact, Rizal’s La Liga
+Filipina and Andres Bonifacio’s revolutionary movement, Kataas-taasang Kagalang-galang na Katipunan
+ng mga Anak ng Bayan were motivated by the same principle. As one would notice, Bonifacio was
+present during the first meeting of La Liga. Unfortunately, Rizal got arrested and eventually was
+
+[15] Source: Topic 4.pdf, Page: 10
+Content: Nakpil composed this upon the request of Bonifacio when they were still encamped in Balara in
+the late months of 1896. Andres Bonifacio’s Letter to Julio Nakpil, February 13, 1897
+[Tagalog text]
+Sa Kap... na M.
+
+[16] Source: Rizal_The_First_Emo (1).pdf, Page: 10
+Content: Bonifacio was to continue Rizal’s project, only with a more radical approach. But a closer look at the literature produced by the Katipunan will provide a more rounded view of
+their concept of a nation: Under the mother country (Inang Bayan), we are all brothers and sisters
+(kapatiran), bonded by one blood (sandugo: ancient ritual denoting that datus or chieftains
+constructing the bayan based on brotherhood of all). We are not just mere citizens. Freedom
+(kalayaan or katimawaan) means not only political freedom as expressed in the West, but is a
+prerequisite to well-being (kaginhawaan). A man with civil liberties and can vote but can’t eat three
+times a day is not really free. In Filipino psychology, kaginhawaan can only be attained if you have
+good intentions (matuwid or malinis na kalooban). With this stance, the Katipunan’s constitution, written
+by Emilio Jacinto, talked more on discipline and values, rather than legality. As with Rizal, the
+Katip
+
+[17] Source: Rizal_The_First_Emo (1) (1).pdf, Page: 10
+Content: Bonifacio was to continue Rizal’s project, only with a more radical approach. But a closer look at the literature produced by the Katipunan will provide a more rounded view of
+their concept of a nation: Under the mother country (Inang Bayan), we are all brothers and sisters
+(kapatiran), bonded by one blood (sandugo: ancient ritual denoting that datus or chieftains
+constructing the bayan based on brotherhood of all). We are not just mere citizens. Freedom
+(kalayaan or katimawaan) means not only political freedom as expressed in the West, but is a
+prerequisite to well-being (kaginhawaan). A man with civil liberties and can vote but can’t eat three
+times a day is not really free. In Filipino psychology, kaginhawaan can only be attained if you have
+good intentions (matuwid or malinis na kalooban). With this stance, the Katipunan’s constitution, written
+by Emilio Jacinto, talked more on discipline and values, rather than legality. As with Rizal, the
+Katip
+
+[18] Source: Rizal_The_First_Emo (1).pdf, Page: 11
+Content: letter, meant to be opened only after his death, Rizal said
+“I wish to show those who deny us patriotism that we know how to die for our country and
+convictions. What matters death if one dies for what one loves, for native land and cherished ones.”
+He did not want to die like Father Burgos who was crying before the garrote. To his companions Father Vilaclara and Father March, his former Jesuit teachers at the Ateneo, he
+would mutter while in exile, “What a beautiful morning! On mornings like this, I used to take walks
+here (the beach) with my sweetheart....Is that the Ateneo? I spent many happy years there.” Rizal
+would continue to try to lighten things up with jokes, but none of them would laugh. An overtly familiar scene to all Filipinos, recounted numerous times by biographers and historians
+alike, is the walk to his death:
+Rizal arrives. Many are waiting, as executions were considered a past time in the time of the
+revolution. He asks the captain if he can face the firing squad.
+
+[19] Source: Rizal_The_First_Emo (1) (1).pdf, Page: 11
+Content: letter, meant to be opened only after his death, Rizal said
+“I wish to show those who deny us patriotism that we know how to die for our country and
+convictions. What matters death if one dies for what one loves, for native land and cherished ones.”
+He did not want to die like Father Burgos who was crying before the garrote. To his companions Father Vilaclara and Father March, his former Jesuit teachers at the Ateneo, he
+would mutter while in exile, “What a beautiful morning! On mornings like this, I used to take walks
+here (the beach) with my sweetheart....Is that the Ateneo? I spent many happy years there.” Rizal
+would continue to try to lighten things up with jokes, but none of them would laugh. An overtly familiar scene to all Filipinos, recounted numerous times by biographers and historians
+alike, is the walk to his death:
+Rizal arrives. Many are waiting, as executions were considered a past time in the time of the
+revolution. He asks the captain if he can face the firing squad.
+
+[20] Source: Topic 4.pdf, Page: 11
+Content: Ang K. Pangulo
+And.: Bonifacio
+Maypagasa
+[English translation]
+To Brother Mr Julio Nakpil, Guiliw, President of the High Council in the town of Pasig. My brother Guiliw: I have received here your letter written on 30th January last, and, having
+understood what you say in it, my reply is as follows. I received your [earlier?] letter twice already, and have also replied, but what I don’t know is
+whether you received it, although I have reminded you to reply to it within the present month. 93
+Together with your letter to which I am now replying, which reached me on the [blank] of the
+present month, I received the National Hymn and I will comply with the special request that has
+been made to you in this regard. The friar Antonio Piernavieja is well, and together with this I am sending you, so that you can do
+what is necessary, the letter of the said friar to his son giving news of his current situation and
+going on to say that he has the desire to give
+
+[21] Source: Topic 4.pdf, Page: 11
+Content: well, and together with this I am sending you, so that you can do
+what is necessary, the letter of the said friar to his son giving news of his current situation and
+going on to say that he has the desire to give us a contribution. In relation to this donation, and
+to what you said about the son settling with us to contribute the amount of $1,000: in my opinion
+
+[22] Source: Rizal_The_First_Emo (1).pdf, Page: 12
+Content: an elitist
+hero, one can never deny that love transcends class. Nationalism is not a monopoly of the poor. Even if he was not a member of the working class, one cannot deny his love for the country, to the
+point of offering his life for it. A lot of other people in his time were more brilliant than him, but
+they were all forgotten. It is not in the number of languages that he can speak, his accomplishments,
+or the talents that he had. He was a hero because he gave it all for the bayan. Andres Bonifacio, the father of the Filipino Sambayanan, saw that our greatest resource is love. In
+Jacinto’s Kartilya, they envisioned a country where the first priority is “ang tunay na pag-ibig sa
+bayang tinubuan at lubos na pagdadamayan ng isa’t isa.” Bonifacio, Rizal, and countless other
+Filipinos have proven this to be true. This country may not be wealthy with material things, but we
+are overflowing with pag-ibig, especially when it comes to people loving and caring about each
+
+[23] Source: Rizal_The_First_Emo (1) (1).pdf, Page: 12
+Content: an elitist
+hero, one can never deny that love transcends class. Nationalism is not a monopoly of the poor. Even if he was not a member of the working class, one cannot deny his love for the country, to the
+point of offering his life for it. A lot of other people in his time were more brilliant than him, but
+they were all forgotten. It is not in the number of languages that he can speak, his accomplishments,
+or the talents that he had. He was a hero because he gave it all for the bayan. Andres Bonifacio, the father of the Filipino Sambayanan, saw that our greatest resource is love. In
+Jacinto’s Kartilya, they envisioned a country where the first priority is “ang tunay na pag-ibig sa
+bayang tinubuan at lubos na pagdadamayan ng isa’t isa.” Bonifacio, Rizal, and countless other
+Filipinos have proven this to be true. This country may not be wealthy with material things, but we
+are overflowing with pag-ibig, especially when it comes to people loving and caring about each
+
+[24] Source: Rizal_The_First_Emo (1).pdf, Page: 13
+Content: 2011. Mga lihim ng pamilya Rizal, dokumentaryo ni Howie Severino. I-
+Witness. GMA News and Public Affairs. Constantino, Renato. 1969. Veneration without understanding. Third national Rizal lecture, 30
+December 1969. de Guzman, Maria Odulio. 1967. The Filipino heroes (Ang mga bayaning Pilipino). Manila: National
+Bookstore, Inc. del Carmen, Vicente F. 1982. Rizal: An encyclopaedic collection, volume 1. Quezon City: New Day
+Publishers. Jacinto, Emilio. N.y. Ang kartilya ng katipunan. In Ang Pamana ni Andres Bonifacio, compiled by
+Emmanuel Encarnacion. Quezon City: Aklat Adarna, 1997, n.p. Guerrero, Leon Ma. 1998. The first Filipino: A biography of José Rizal. Manila: Guerrero Publishing. Joaquin, Nick. 1996. Rizal in saga: A life for student fans. Manila: Philippine
+
+[25] Source: Rizal_The_First_Emo (1) (1).pdf, Page: 13
+Content: 2011. Mga lihim ng pamilya Rizal, dokumentaryo ni Howie Severino. I-
+Witness. GMA News and Public Affairs. Constantino, Renato. 1969. Veneration without understanding. Third national Rizal lecture, 30
+December 1969. de Guzman, Maria Odulio. 1967. The Filipino heroes (Ang mga bayaning Pilipino). Manila: National
+Bookstore, Inc. del Carmen, Vicente F. 1982. Rizal: An encyclopaedic collection, volume 1. Quezon City: New Day
+Publishers. Jacinto, Emilio. N.y. Ang kartilya ng katipunan. In Ang Pamana ni Andres Bonifacio, compiled by
+Emmanuel Encarnacion. Quezon City: Aklat Adarna, 1997, n.p. Guerrero, Leon Ma. 1998. The first Filipino: A biography of José Rizal. Manila: Guerrero Publishing. Joaquin, Nick. 1996. Rizal in saga: A life for student fans. Manila: Philippine
+
+[26] Source: Rizal_The_First_Emo (1) (1).pdf, Page: 16
+Content: 16
+Understanding’, and which Constantino, Salazar et al then use to perpetuate the false
+dichotomy of Bonifacio vs Rizal! 3 FQ: Yes, and the best way to do this is to get out of the Pantayong Pananaw false
+dichotomies of Salazar. XC: Pantayong Pananaw is a school of thought in Philippine historiography which would
+like to look at Philippine history and culture in terms of perspectives and concepts found in the
+Philippines as against the colonial perspective of traditional history found in written records
+made by the foreigners and those that were able to be educated, for example, the elite. And
+that we should write Philippine history in the lingua franca of many Filipinos, which is not
+English but the flawed yet widely-used National Language Filipino, so that the ordinary fol, not
+just the educated, can understand the past and his culture. Its basic assumption is that the
+hundreds of years of colonialism made the Filipinos culturally divided into the elite and the
+poor, hence the dichotomies. There may be nuances in the dichot
+
+[27] Source: Rizal_The_First_Emo (1).pdf, Page: 16
+Content: 16
+Understanding’, and which Constantino, Salazar et al then use to perpetuate the false
+dichotomy of Bonifacio vs Rizal! 3 FQ: Yes, and the best way to do this is to get out of the Pantayong Pananaw false
+dichotomies of Salazar. XC: Pantayong Pananaw is a school of thought in Philippine historiography which would
+like to look at Philippine history and culture in terms of perspectives and concepts found in the
+Philippines as against the colonial perspective of traditional history found in written records
+made by the foreigners and those that were able to be educated, for example, the elite. And
+that we should write Philippine history in the lingua franca of many Filipinos, which is not
+English but the flawed yet widely-used National Language Filipino, so that the ordinary fol, not
+just the educated, can understand the past and his culture. Its basic assumption is that the
+hundreds of years of colonialism made the Filipinos culturally divided into the elite and the
+poor, hence the dichotomies. There may be nuances in the dichot
+
+[28] Source: Rizal_The_First_Emo (1).pdf, Page: 17
+Content: ong Pananaw—and you could be right and I
+could be wrong—I won’t debate with you any longer on this; let us just, as they say, agree to
+disagree, and put the matter at rest (while holding each other with regard and respect, as did
+Rizal and Fr. Pastells, or, for that matter, Bomen and Zeus Salazar). 4 FQ: Not exactly true—the first to write and advocate for the idea that the Indio was a
+Filipino equal to the Spaniard was Fr. Jose Burgos. Thus, it is more accurate to call Burgos the
+First Filipino. What differentiates Rizal from Burgos, as you know, is that Burgos’ Filipino was,
+like himself, “a loyal subject of Spain”, whereas Rizal’s Filipino was (and is) a citizen of a
+sovereign nation. 5 FQ: Although this is a trivial point, I will take issue with del Carmen: It’s not too
+important or relevant for me whether Rizal was a “chick boy” [a term very much in use when I
+was
+
+[29] Source: Rizal_The_First_Emo (1) (1).pdf, Page: 17
+Content: ong Pananaw—and you could be right and I
+could be wrong—I won’t debate with you any longer on this; let us just, as they say, agree to
+disagree, and put the matter at rest (while holding each other with regard and respect, as did
+Rizal and Fr. Pastells, or, for that matter, Bomen and Zeus Salazar). 4 FQ: Not exactly true—the first to write and advocate for the idea that the Indio was a
+Filipino equal to the Spaniard was Fr. Jose Burgos. Thus, it is more accurate to call Burgos the
+First Filipino. What differentiates Rizal from Burgos, as you know, is that Burgos’ Filipino was,
+like himself, “a loyal subject of Spain”, whereas Rizal’s Filipino was (and is) a citizen of a
+sovereign nation. 5 FQ: Although this is a trivial point, I will take issue with del Carmen: It’s not too
+important or relevant for me whether Rizal was a “chick boy” [a term very much in use when I
+was
+
+[30] Source: Rizal_The_First_Emo (1).pdf, Page: 22
+Content: quirer and the UP newsletter--and may be accessed at
+http://groups.yahoo.com/group/RP-Rizal/message/8014, and
+at http://news.google.com/newspapers?nid=2518&dat=20060919&id=JExaAAAAIBAJ&sjid=ESg
+MAAAAIBAJ&pg=1501,13022586. 21 FQ: Can you cite the relevant text from AO? In “Josephine, the reluctant heroine”
+(Philippine Daily Inquirer, 26 March 1997), AO wrote, “like Rizal, Josephine was a reluctant
+
+Response (Narrative with Citations):
+
+-------------------- PROMPT END ---------------------
+============================================================
+

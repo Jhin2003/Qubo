@@ -5,10 +5,13 @@ import { createPortal } from "react-dom";
 import toast from 'react-hot-toast';
 import "./FileUploaderDialog.scss";
 
+// src/config.js
+export const API_URL = import.meta.env.VITE_API_URL;
+
 export default function FileUploaderDialog({
   open,
   onClose,
-  uploadUrl = "http://localhost:8000/upload",
+  uploadUrl = `${API_URL}/upload`,
   onUpload,
 }) {
   const [files, setFiles] = useState([]);

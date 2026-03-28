@@ -11,17 +11,13 @@ from unicodedata import normalize as _unicode_normalize
 
 # --- External Libs ---
 from langchain_community.vectorstores import FAISS
-from sklearn.feature_extraction.text import TfidfVectorizer
 from rank_bm25 import BM25Okapi
 import numpy as np
-from together import Together  # <--- NEW: For internal routing
 from app.services.llm_service import _classify_query_intent  # <--- NEW: Import the intent classifier
 
 # --- Local Imports ---
 from .loaders import get_vectorstore, get_cross_encoder
 
-# --- CONFIGURATION ---
-# Initialize internal client for routing (Uses the same key)
 
 
 def _extract_page_constraints(query: str) -> Optional[tuple | int]:

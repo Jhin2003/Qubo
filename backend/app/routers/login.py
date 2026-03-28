@@ -1,6 +1,6 @@
 
 
-    
+import os    
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
@@ -14,11 +14,6 @@ from app.utils.password_hash import verify_password
 from app.utils.jwt_auth import create_access_token, SECRET_KEY, ALGORITHM
 
 
-
-import os
-from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from jose import jwt, JWTError
 from pydantic import BaseModel
 
 router = APIRouter()
@@ -70,9 +65,5 @@ def current_user(creds: HTTPAuthorizationCredentials = Depends(security)) -> Aut
 # 4. Your Protected Route(s)
 @router.get("/auth/me", response_model=AuthenticatedUser)
 def me(user: AuthenticatedUser = Depends(current_user)):
-    """
-    Any route that uses `Depends(current_user)` is automatically protected.
-    If the token is invalid, it throws a 401 before this code ever runs.
-    """
     print(f"Successfully verified user: {user.email} (ID: {user.id})")  
     return user

@@ -7,8 +7,15 @@ from together import Together
 import re  # Missing in your snippet, added for regex
 from typing import List, Dict, Optional
 
+from dotenv import load_dotenv
+
+
+load_dotenv()  # loads .env file
+
 # Initialize the client
-client = Together(api_key="f093074f102974466d625db36d8bd171b92df916fa78eb7b91faa9108e6ed5c2")
+client = Together(
+    api_key=os.getenv("TOGETHER_API_KEY")
+)
 
 # --- CONFIGURATION: FALLBACK MODEL LISTS ---
 # ... (Keep your existing model lists here) ...
@@ -20,15 +27,19 @@ MODELS_PRECISE = [
 ]
 
 MODELS_FAST = [
+    "Qwen/Qwen3-VL-8B-Instruct"
     "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
     "mistralai/Mixtral-8x7B-Instruct-v0.1",
     "meta-llama/Llama-3.3-70B-Instruct-Turbo"
 ]
 
 REWRITE_MODELS = [
+    "Qwen/Qwen3-VL-8B-Instruct"
     "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
     "mistralai/Mixtral-8x7B-Instruct-v0.1"
 ]
+
+
 
 MODELS_ROUTER = [
     "meta-llama/Llama-3.3-70B-Instruct-Turbo",
@@ -36,14 +47,7 @@ MODELS_ROUTER = [
     "mistralai/Mixtral-8x7B-Instruct-v0.1"
 ]
 
-
-# Initialize internal client for routing (Uses the same key)
-client = Together(api_key="f093074f102974466d625db36d8bd171b92df916fa78eb7b91faa9108e6ed5c2")
-
-
-
 # --- HELPER 1: Internal Classifier ---
-
 def _classify_query_intent(query: str) -> str:
     """
     Classifies intent using the Fallback Helper.
