@@ -5,10 +5,13 @@ import { createPortal } from "react-dom";
 import toast from 'react-hot-toast';
 import "./FileUploaderDialog.scss";
 
+// src/config.js
+export const API_URL = import.meta.env.VITE_API_URL;
+
 export default function FileUploaderDialog({
   open,
   onClose,
-  uploadUrl = "http://localhost:8000/upload",
+  uploadUrl = `${API_URL}/upload`,
   onUpload,
 }) {
   const [files, setFiles] = useState([]);
@@ -20,11 +23,8 @@ export default function FileUploaderDialog({
   // This is already correctly configured for all file types
   const accept = [
     "application/pdf",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "text/plain",
     ".pdf",
-    ".docx",
-    ".txt",
+ 
   ].join(",");
 
   useEffect(() => {
@@ -83,12 +83,13 @@ export default function FileUploaderDialog({
     files.forEach((f) => formData.append("files", f));
     const token = localStorage.getItem("auth_token");
 
- 
 
     try {
       const res = await fetch(uploadUrl, {
         method: "POST",
-    
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
         body: formData,
       });
       if (!res.ok) throw new Error(`Upload failed with status ${res.status}`);

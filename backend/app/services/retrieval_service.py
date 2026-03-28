@@ -11,17 +11,13 @@ from unicodedata import normalize as _unicode_normalize
 
 # --- External Libs ---
 from langchain_community.vectorstores import FAISS
-from sklearn.feature_extraction.text import TfidfVectorizer
 from rank_bm25 import BM25Okapi
 import numpy as np
-from together import Together  # <--- NEW: For internal routing
 from app.services.llm_service import _classify_query_intent  # <--- NEW: Import the intent classifier
 
 # --- Local Imports ---
 from .loaders import get_vectorstore, get_cross_encoder
 
-# --- CONFIGURATION ---
-# Initialize internal client for routing (Uses the same key)
 
 
 def _extract_page_constraints(query: str) -> Optional[tuple | int]:
@@ -406,7 +402,8 @@ async def search_vectorstore(
         print(f"\n[RETRIEVER] 🧠 Analyzing intent for: '{query}' (Mode: {mode})")
         intent = await _classify_query_intent(query)
         print(f"[RETRIEVER] 🎯 Intent Detected: {intent}")
-        
+
+                
         # STRATEGY A: Global Summary (JSONL Bypass)
         if intent == "GLOBAL_SUMMARY" and source:
             global_context = get_global_context_from_jsonl(source)
@@ -429,6 +426,10 @@ async def search_vectorstore(
                     print("[WARN] Pages not found in JSONL. Falling back to Vector Search.")
             else:
                 print("[WARN] 'Page' intent detected but no numbers found. Fallback.")
+        
+        if intent == "OUT_OF_SCOPE":
+            print("[RETRIEVER] 🌀 Out of Scope detected. Skipping retrieval.")   
+            return "", []
 
         if intent == "NONSENSE":
             print("[RETRIEVER] 🌀 Nonsense detected. Skipping retrieval.")
@@ -438,6 +439,7 @@ async def search_vectorstore(
             print("[RETRIEVER] 💬 Greeting detected. Skipping retrieval.")
             # Return EMPTY context. This tells the Generator to just chat normally.
             return "", []
+        
 
         # STRATEGY B: Broad Search (Wide Net)
         if intent == "BROAD_SEARCH":

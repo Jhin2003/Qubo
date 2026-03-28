@@ -1,13 +1,17 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 
+// src/config.js
+export const API_URL = import.meta.env.VITE_API_URL;
+
 const PdfViewer = () => {
   const { search } = useLocation();
   const queryParams = new URLSearchParams(search);
   const fileName = queryParams.get("file");
   const page = queryParams.get("page") || 1;
 
-  const pdfUrl = `http://localhost:8000/files/${fileName}#page=${page}`;
+
+  const pdfUrl = `${API_URL}/files/${fileName}#page=${page}`;
 
   return (
     <div>

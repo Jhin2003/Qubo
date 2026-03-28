@@ -7,7 +7,7 @@ from app.services.retrieval_service import search_vectorstore
 import asyncio
 router = APIRouter()
 
-messages_store = [] # Warning: Global variables are not thread-safe in production!
+messages_store = [] 
 
 class Message(BaseModel):
     sender: str

@@ -3,15 +3,12 @@ from pathlib import Path
 import shutil
 import os
 
-# Removed "Depends" and "OAuth2PasswordBearer" from imports
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException,Depends
 from fastapi.responses import FileResponse
+from fastapi.security import OAuth2PasswordBearer
+from app.utils.jwt_auth import verify_access_token
 
-# Removed jwt_auth import
-# from app.utils.jwt_auth import verify_access_token 
-
-# Consolidated imports
-from app.services.file_service import process_file, delete_file_data 
+from app.services.file_service import process_file
 
 router = APIRouter()
 
@@ -20,18 +17,20 @@ DATA_STORE = BASE_DIR / "data_store"
 UPLOAD_DIR = DATA_STORE / "pdfs"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
-# Removed oauth2_scheme definition
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+# List all files with a secured token
 @router.get("/files")
-async def list_files(): 
+async def list_files():  # Depend on get_current_user
     files = []
     for file in UPLOAD_DIR.glob("*.pdf"):
         files.append({
             "filename": file.name,
-            "url": f"http://localhost:8000/files/{file.name}", 
+            "url": f"http://localhost:8000/files/{file.name}",  # Adjust URL based on your server URL
         })
     return {"files": files}
 
+# get a files with a secured tok
 @router.get("/files/{filename}")
 async def get_file(filename: str):
     file_path = UPLOAD_DIR / filename
@@ -40,7 +39,6 @@ async def get_file(filename: str):
     else:
         raise HTTPException(status_code=404, detail="File not found")
 
-# Removed "current_user" argument and "Depends"
 @router.post("/upload")
 async def upload_files(files: List[UploadFile] = File(...)):
     results = []
@@ -48,8 +46,8 @@ async def upload_files(files: List[UploadFile] = File(...)):
     allowed_extensions = {".pdf", ".docx", ".txt"}
     for file in files:
         try:
-            filename = file.filename  
-            
+            filename = file.filename  # Securely handle the filename if necessary
+              
             file_extension = Path(filename).suffix.lower()
             
             if file_extension not in allowed_extensions:
@@ -57,11 +55,12 @@ async def upload_files(files: List[UploadFile] = File(...)):
                     status_code=400,
                     detail=f"File type '{file_extension}' is not allowed. Please upload PDF, DOCX, or TXT."
                 )
-            
+            # Save the uploaded file to the server
             file_path = UPLOAD_DIR / filename
             with open(file_path, "wb") as f:
                 shutil.copyfileobj(file.file, f)
 
+            # Process the PDF file with your service (chunks processing, etc.)
             num_chunks, output_path = process_file(str(file_path), filename)
 
             results.append({
@@ -79,7 +78,11 @@ async def upload_files(files: List[UploadFile] = File(...)):
 
     return {"results": results}
 
-# Removed "current_user" argument and "Depends"
+# ... imports ...
+from app.services.file_service import process_file, delete_file_data # Import the new function
+
+# ... (Previous code) ...
+
 @router.delete("/files/{filename}")
 async def delete_file(filename: str):
     # 1. Security: Prevent path traversal
@@ -89,12 +92,14 @@ async def delete_file(filename: str):
     if file_path.parent != upload_dir_resolved:
         raise HTTPException(status_code=400, detail="Invalid filename")
 
-    # 2. Check existence
+    # 2. Check existence (Optional: logic is handled in service, but good for 404s)
+    # Note: We loosen this check slightly in case the file is gone but vectors remain.
+    # But strictly speaking, if the user asks to delete "X", and "X" isn't there, 404 is correct.
     if not file_path.exists():
          raise HTTPException(status_code=404, detail="File not found")
 
     try:
-        # 3. Call the service to handle cleanup
+        # 3. Call the service to handle the complex cleanup
         report = delete_file_data(filename, UPLOAD_DIR)
         
         return {
