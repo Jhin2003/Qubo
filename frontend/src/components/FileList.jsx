@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Filelist.scss";
+
 import { useFetch } from "../hooks/fetchWithAuth";
 import { useSource } from "../context/SourceContext";
 import ItemActions from "./ItemActions";
@@ -11,6 +11,9 @@ import { FiPlus } from "react-icons/fi"; // Added FiPlus import
 import { MdClose } from "react-icons/md";
 
 import FileUploaderDialog from "./FileUploaderDialog"; 
+
+
+import "./FileList.scss";
 
 function FileList({ refreshToken = 0, onLoadingChange }) {
   const [files, setFiles] = useState([]);
