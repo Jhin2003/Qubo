@@ -64,8 +64,6 @@ def _extract_page_constraints(query: str) -> Optional[tuple | int]:
 
     return None
 
-
-# --- HELPER 4: JSONL Page Reader (Direct Access) ---
 # --- HELPER 4: JSONL Page Reader (Direct Access) ---
 def get_specific_pages_from_jsonl(filename: str, pages: tuple | int) -> Optional[str]:
     """
@@ -532,4 +530,5 @@ async def search_vectorstore(
 
     context = "\n\n".join(context_parts)
     print(intent)
+    console.log(context)
     return context, []

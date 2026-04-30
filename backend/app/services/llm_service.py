@@ -1,18 +1,14 @@
 import os
 import time
-import datetime  # <--- NEW IMPORT
+import datetime  
 import together
 from together import Together
-
-import re  # Missing in your snippet, added for regex
 from typing import List, Dict, Optional
-
 from dotenv import load_dotenv
 
+load_dotenv()  
 
-load_dotenv()  # loads .env file
 
-# Initialize the client
 client = Together(
     api_key=os.getenv("TOGETHER_API_KEY")
 )
