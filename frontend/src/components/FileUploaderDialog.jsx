@@ -94,6 +94,12 @@ export default function FileUploaderDialog({
       });
       if (!res.ok) throw new Error(`Upload failed with status ${res.status}`);
       const data = await safeJson(res);
+
+       data.forEach(element => {
+          if(element.error){
+            toast.error('Upload failed for data Please try again.', { id: toastId });
+          }
+      });
       
       onUpload && onUpload(data);
       clearAll();
