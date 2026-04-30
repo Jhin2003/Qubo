@@ -42,7 +42,6 @@ REWRITE_MODELS = [
 
 
 MODELS_ROUTER = [
-    "Qwen/Qwen2.5-7B-Instruct-Turbo",
     "meta-llama/Llama-3.3-70B-Instruct-Turbo",
     "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
     "mistralai/Mixtral-8x7B-Instruct-v0.1",
