@@ -110,8 +110,7 @@ export default function FileUploaderDialog({
       const results = data.results;
       console.log(results);
 
-      const results = data.results;
-      console.log(results);
+    
 
       results.forEach((element) => {
         if (element.status === "error") {
