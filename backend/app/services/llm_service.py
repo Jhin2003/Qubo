@@ -260,11 +260,11 @@ async def generate_response(context: str, query: str, history: List[Dict[str, st
         temperature = 0.0
         
     # Format the history
-    if history:
-        history_text = "\n".join([f"{msg['role'].capitalize()}: {msg['content']}" for msg in history])
-        history_block = f"RECENT CONVERSATION HISTORY:\n{history_text}\n"
-    else:
-        history_block = ""
+   # if history:
+    #    history_text = "\n".join([f"{msg['role'].capitalize()}: {msg['content']}" for msg in history])
+     #   history_block = f"RECENT CONVERSATION HISTORY:\n{history_text}\n"
+    #else:
+     #   history_block = ""
 
     # --- KEY UPDATE: ENHANCED SYSTEM PROMPT WITH FEW-SHOT EXAMPLES ---
     prompt_content = f"""
@@ -331,11 +331,11 @@ Response (Narrative with Citations):
 
     messages = [{"role": "user", "content": prompt_content}]
 
-    # Use the helper function with the GENERATION list
+    # Return Response
     return query_llm_with_fallback(
         messages, 
         selected_models, 
-        max_tokens=4000,  # UPDATED: Increased to allow for longer lists/summaries
+        max_tokens=4000, 
         temp=temperature
     )
 

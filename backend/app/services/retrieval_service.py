@@ -407,6 +407,7 @@ async def search_vectorstore(
             global_context = get_global_context_from_jsonl(source)
             if global_context:
                 print(f"[RETRIEVER] 📚 Returning Global Context (JSONL bypass).")
+                console.log(global_context)
                 return global_context, []
             else:
                 print(f"[RETRIEVER] ⚠️ JSONL failed. Falling back to Broad Search.")
@@ -530,5 +531,5 @@ async def search_vectorstore(
 
     context = "\n\n".join(context_parts)
     print(intent)
-    console.log(context)
+
     return context, []
