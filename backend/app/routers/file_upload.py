@@ -28,7 +28,7 @@ UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-# List all files with a secured token
+# List all files 
 @router.get("/files")
 async def list_files():  # Depend on get_current_user
     files = []
@@ -39,7 +39,7 @@ async def list_files():  # Depend on get_current_user
         })
     return {"files": files}
 
-# get a files with a secured tok
+# get file 
 @router.get("/files/{filename}")
 async def get_file(filename: str):
     file_path = UPLOAD_DIR / filename
@@ -55,7 +55,7 @@ async def upload_files(files: List[UploadFile] = File(...)):
     allowed_extensions = {".pdf", ".docx", ".txt"}
     for file in files:
         try:
-            filename = file.filename  # Securely handle the filename if necessary
+            filename = file.filename 
               
             file_extension = Path(filename).suffix.lower()
             
@@ -115,10 +115,7 @@ async def delete_file(filename: str):
     
     if file_path.parent != upload_dir_resolved:
         raise HTTPException(status_code=400, detail="Invalid filename")
-
-    # 2. Check existence (Optional: logic is handled in service, but good for 404s)
-    # Note: We loosen this check slightly in case the file is gone but vectors remain.
-    # But strictly speaking, if the user asks to delete "X", and "X" isn't there, 404 is correct.
+    
     if not file_path.exists():
          raise HTTPException(status_code=404, detail="File not found")
 

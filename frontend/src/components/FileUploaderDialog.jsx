@@ -114,12 +114,12 @@ export default function FileUploaderDialog({
         if (element.status === "error") {
           toast.error(
             `Failed to upload: ${element.filename}. this is not a Philippine Cultural History document`,
-            { id: toastId },
+            { id: toastId, duration: 6000 },
           );
         } else {
           toast.success(
             `Uploaded ${files.length} ${files.length > 1 ? "files" : "file"} successfully`,
-            { id: toastId },
+            { id: toastId, duration: 6000 },
           );
         }
       });
@@ -128,8 +128,6 @@ export default function FileUploaderDialog({
       clearAll();
       onClose && onClose();
     } catch (err) {
-      console.error("Error uploading files:", err);
-
       toast.error("Upload failed. Please try again.", { id: toastId });
     } finally {
       setIsUploading(false);
