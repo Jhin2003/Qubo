@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import "./filelist.scss";
+import "./Filelist.scss";
 import { useFetch } from "../hooks/fetchWithAuth";
 import { useSource } from "../context/SourceContext";
 import ItemActions from "./ItemActions";
