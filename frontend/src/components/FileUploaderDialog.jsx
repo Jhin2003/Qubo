@@ -113,7 +113,7 @@ export default function FileUploaderDialog({
       results.forEach((element) => {
         if (element.status === "error") {
           toast.error(
-            `Failed to upload: ${element.filename}. this is not a Philippine Cultural History document`,
+            `Failed to upload: ${element.filename}. This is not a Philippine Cultural History document`,
             { id: toastId, duration: 6000 },
           );
         } else {

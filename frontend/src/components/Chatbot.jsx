@@ -190,8 +190,9 @@ const renderMessageText = (text) => {
   };
 
   const handleSourceClick = (fileName, page) => {
-    navigate(`/view-pdf?file=${encodeURIComponent(fileName)}&page=${page}`);
-  };
+  const url = `http://localhost:8000/files/${encodeURIComponent(fileName)}#page=${page}`;
+  window.open(url, "_blank");
+};
 
   return (
     <div className="chat-container">

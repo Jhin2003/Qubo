@@ -928,3 +928,838 @@ are within the scope of their prescribed powers and func"
 -------------------- PROMPT END ---------------------
 ============================================================
 
+
+============================================================
+TIMESTAMP: 2026-04-30 21:44:04
+MODELS QUEUED: ['Qwen/Qwen2.5-7B-Instruct-Turbo', 'meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1', 'meta-llama/Llama-3.3-70B-Instruct-Turbo']
+-------------------- PROMPT START --------------------
+[USER]:
+
+        You are a strict document gatekeeper. 
+        Read the following text excerpt from the beginning of an uploaded document.
+        
+        Determine if the document's content is related to:
+        - Philippine history
+        - Philippine cultural history
+        - Filipino heritage or indigenous traditions
+        - Philippine historical events, figures, or literature
+
+        Text Excerpt:
+        "1
+RIZAL: THE FIRST EMO?
+Simple Life Lessons from The Extraordinary Story of José Rizal
+By Prof. Michael Charleston “Xiao” B. Chua, additional annotations by Dr. Floro C. Quibuyen
+Note: Xiao Chua, a faculty of the History Department at the De La Salle University and a member of the Sucesos
+Chapter of the Order of the Knights of Rizal, presented this paper during the exhibition “Through The Looking
+Glass: José Rizal” at the Manila Contemporary on 9 June 2012, Whitespace, Chino Roces Ave., Pasong Tamo
+Ext., Brgy. Magallanes, Makati City in the presence of the Supreme Commander of the Order of the Knights of
+Rizal, Sir Reghis M. Romero II, KGCR. In the spirit of Rizal’s annotations to Dr. Antonio Morga’s “Events in
+the Philippine Islands,” Dr. Floro Quibuyen, author of A Nation Aborted: Rizal, American Hegemony, and
+Philippine Nationalism, gives his expert annotations to the lecture in footnotes which will enhance or even give a
+contrary opinion to what the author wrote. This conversation between a young history teacher and a retired UP
+Professor may well represent the different and even fresh views on Rizal. Edited by Ms. Iris Angela Ferrer, Project
+Manager of Manila Contemporary.
+Introduction
+Jose Rizal is everywhere yet many think he is not relevant anymore. His monuments, built as
+reminders of his heroism, stand distant and unreachable on his pedestal, as if deliberately
+exaggerating our insignificance. It even comes to a point that one may say “I can’t be like him.”
+The western construct of a hero originated from the Greeks. It points to a strong-willed and
+supernatural character who consciously directs his abilities for the good of the people. More often
+than not reduced to titles and merits, a hero’s humanity may end being forgotten. The Filipino term
+bayani, on the other hand, depicts the same values but is attributed to someone more grounded.
+Coming from the Visayan term for warrior or bagani, one immediately finds a totally different
+perspective. This time, the persona serves others without expecting in return, despite being
+ordinary.1
+Historian Zeus Salazar classifies Rizal as a heróe, shaped by Western sensibilities and consciousness,
+as he was, in many ways, separate from the people. The mythic proportions of his character made it
+impossible for people to relate to him. He became a symbol, and more often than not, the only hero,
+of the revolution.2
+Nothing new about Rizal is going to be introduced in this paper. Instead of adding another academic
+treatise to the Rizal industry, I aim to give my take on his story by drawing simple life lessons to
+what many see as an extraordinary life. It is high time that we search our humanity in Rizal, and in
+turn, find Rizal in ourselves.3
+The First Emo: Biography of Rizal as a Romantic
+Rizal has been given many labels. He has been called a Philippine Nationalist and Martyr by British
+biographer Austin Coates, The Great Malayan by historical writer Carlos Quirino and even Kristong
+Pilipino by the Riza"
+
+        OUTPUT RULES:
+        Analyze carefully.
+        Return ONLY the word "YES" if it is related.
+        Return ONLY the word "NO" if it has absolutely nothing to do with the Philippines or its history.
+        Do NOT include punctuation or explanations.
+        
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-04-30 21:45:07
+MODELS QUEUED: ['Qwen/Qwen2.5-7B-Instruct-Turbo', 'meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1', 'meta-llama/Llama-3.3-70B-Instruct-Turbo']
+-------------------- PROMPT START --------------------
+[USER]:
+
+        You are a strict document gatekeeper. 
+        Read the following text excerpt from the beginning of an uploaded document.
+        
+        Determine if the document's content is related to:
+        - Philippine history
+        - Philippine cultural history
+        - Filipino heritage or indigenous traditions
+        - Philippine historical events, figures, or literature
+
+        Text Excerpt:
+        "THE LOCAL GOVERNMENT CODE OF THE PHILIPPINES
+BOOK I
+GENERAL PROVISIONS
+TITLE ONE. - BASIC PRINCIPLES
+CHAPTER 1. - THE CODE, POLICY AND APPLICATION
+SECTION 1. Title. - This Act shall be known and cited as the "Local Government Code of
+1991".
+SECTION 2. Declaration of Policy. - (a) It is hereby declared the policy of the State that the
+territorial and political subdivisions of the State shall enjoy genuine and meaningful local autonomy
+to enable them to attain their fullest development as self-reliant communities and make them more
+effective partners in the attainment of national goals. Toward this end, the State shall provide for a
+more responsive and accountable local government structure instituted through a system of
+decentralization whereby local government units shall be given more powers, authority,
+responsibilities, and resources. The process of decentralization shall proceed from the national
+government to the local government units.
+(b) It is also the policy of the State to ensure the accountability of local government units
+through the institution of effective mechanisms of recall, initiative and referendum.
+(c) It is likewise the policy of the State to require all national agencies and offices to conduct
+periodic consultations with appropriate local government units, non-governmental and
+people's organizations, and other concerned sectors of the community before any project
+or program is implemented in their respective jurisdictions.
+SECTION 3. Operative Principles of Decentralization. - The formulation and implementation of
+policies and measures on local autonomy shall be guided by the following operative principles:
+(a) There shall be an effective allocation among the different local government units of their
+respective powers, functions, responsibilities, and resources;
+(b) There shall be established in every local government unit an accountable, efficient, and
+dynamic organizational structure and operating mechanism that will meet the priority needs
+and service requirements of its communities;
+(c) Subject to civil service law, rules and regulations, local officials and employees paid wholly
+or mainly from local funds shall be appointed or removed, according to merit and fitness,
+by the appropriate appointing authority;
+(d) The vesting of duty, responsibility, and accountability in local government units shall be
+accompanied with provision for reasonably adequate resources to discharge their powers
+and effectively carry out their functions; hence, they shall have the power to create and
+broaden their own sources of revenue and the right to a just share in national taxes and an
+equitable share in the proceeds of the utilization and development of the national wealth
+within their respective areas;
+(e) Provinces with respect to component cities and municipalities, and cities and municipalities
+with respect to component Barangays, shall ensure that the acts of their component units
+are within the scope of their prescribed powers and func"
+
+        OUTPUT RULES:
+        Analyze carefully.
+        Return ONLY the word "YES" if it is related.
+        Return ONLY the word "NO" if it has absolutely nothing to do with the Philippines or its history.
+        Do NOT include punctuation or explanations.
+        
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-04-30 21:45:11
+MODELS QUEUED: ['Qwen/Qwen2.5-7B-Instruct-Turbo', 'meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1', 'meta-llama/Llama-3.3-70B-Instruct-Turbo']
+-------------------- PROMPT START --------------------
+[USER]:
+
+        You are a strict document gatekeeper. 
+        Read the following text excerpt from the beginning of an uploaded document.
+        
+        Determine if the document's content is related to:
+        - Philippine history
+        - Philippine cultural history
+        - Filipino heritage or indigenous traditions
+        - Philippine historical events, figures, or literature
+
+        Text Excerpt:
+        "1
+RIZAL: THE FIRST EMO?
+Simple Life Lessons from The Extraordinary Story of José Rizal
+By Prof. Michael Charleston “Xiao” B. Chua, additional annotations by Dr. Floro C. Quibuyen
+Note: Xiao Chua, a faculty of the History Department at the De La Salle University and a member of the Sucesos
+Chapter of the Order of the Knights of Rizal, presented this paper during the exhibition “Through The Looking
+Glass: José Rizal” at the Manila Contemporary on 9 June 2012, Whitespace, Chino Roces Ave., Pasong Tamo
+Ext., Brgy. Magallanes, Makati City in the presence of the Supreme Commander of the Order of the Knights of
+Rizal, Sir Reghis M. Romero II, KGCR. In the spirit of Rizal’s annotations to Dr. Antonio Morga’s “Events in
+the Philippine Islands,” Dr. Floro Quibuyen, author of A Nation Aborted: Rizal, American Hegemony, and
+Philippine Nationalism, gives his expert annotations to the lecture in footnotes which will enhance or even give a
+contrary opinion to what the author wrote. This conversation between a young history teacher and a retired UP
+Professor may well represent the different and even fresh views on Rizal. Edited by Ms. Iris Angela Ferrer, Project
+Manager of Manila Contemporary.
+Introduction
+Jose Rizal is everywhere yet many think he is not relevant anymore. His monuments, built as
+reminders of his heroism, stand distant and unreachable on his pedestal, as if deliberately
+exaggerating our insignificance. It even comes to a point that one may say “I can’t be like him.”
+The western construct of a hero originated from the Greeks. It points to a strong-willed and
+supernatural character who consciously directs his abilities for the good of the people. More often
+than not reduced to titles and merits, a hero’s humanity may end being forgotten. The Filipino term
+bayani, on the other hand, depicts the same values but is attributed to someone more grounded.
+Coming from the Visayan term for warrior or bagani, one immediately finds a totally different
+perspective. This time, the persona serves others without expecting in return, despite being
+ordinary.1
+Historian Zeus Salazar classifies Rizal as a heróe, shaped by Western sensibilities and consciousness,
+as he was, in many ways, separate from the people. The mythic proportions of his character made it
+impossible for people to relate to him. He became a symbol, and more often than not, the only hero,
+of the revolution.2
+Nothing new about Rizal is going to be introduced in this paper. Instead of adding another academic
+treatise to the Rizal industry, I aim to give my take on his story by drawing simple life lessons to
+what many see as an extraordinary life. It is high time that we search our humanity in Rizal, and in
+turn, find Rizal in ourselves.3
+The First Emo: Biography of Rizal as a Romantic
+Rizal has been given many labels. He has been called a Philippine Nationalist and Martyr by British
+biographer Austin Coates, The Great Malayan by historical writer Carlos Quirino and even Kristong
+Pilipino by the Riza"
+
+        OUTPUT RULES:
+        Analyze carefully.
+        Return ONLY the word "YES" if it is related.
+        Return ONLY the word "NO" if it has absolutely nothing to do with the Philippines or its history.
+        Do NOT include punctuation or explanations.
+        
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-04-30 21:49:22
+MODELS QUEUED: ['Qwen/Qwen2.5-7B-Instruct-Turbo', 'meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1', 'meta-llama/Llama-3.3-70B-Instruct-Turbo']
+-------------------- PROMPT START --------------------
+[USER]:
+
+        You are a strict document gatekeeper. 
+        Read the following text excerpt from the beginning of an uploaded document.
+        
+        Determine if the document's content is related to:
+        - Philippine history
+        - Philippine cultural history
+        - Filipino heritage or indigenous traditions
+        - Philippine historical events, figures, or literature
+
+        Text Excerpt:
+        "i Philippine Copyright 2018
+by Rex Book Store, Inc.
+and
+John Lee P. Candelaria
+Veronica C. Alporha
+RBS Readings in Philippine History
+First Edition
+ISBN: 978-971-23-8665-7
+Classification: Textbook (04-SS-00018-0)
+Published, copyrighted 2018, and distributed by Rex Book Store, Inc. (RBSI) with main office at 856 Nicanor Reyes Sr. St., Sampaloc,
+Manila/Tel. Nos.: 735-1364, 736-0567
+RBSI Branches:
+LUZON
+•MORAYTA: 856 N. Reyes Sr. St., Sampaloc, Manila / Tel. Nos.: 736-0169, 733-6746; Telefax: 736-4191 •RECTO: 2161-65 Freedom
+Building, C.M. Recto Avenue, Sampaloc, Manila / Tel. Nos.: 522-4521, 522-4305, 522-4107, 733-8637 •RECTO (La Consolacion): Mendiola,
+Manila • MAKATI: Unit UG-2, Star Centrum Bldg., Sen. Gil Puyat Ave., Makati City / Tel. No.: 818-5363; Telefax: 893-3744 •ROCKWELL:
+1st Floor, Ateneo Professional School, Rockwell Center, Bel-Air, Makati City / Tel. No.: 729-2015 •CUBAO: Unit 10 UGF, Doña
+Consolacion Bldg., Gen. Santos Ave., Araneta Center, Cubao, Quezon City /Telefax: 911-1070 •ORTIGAS: G/F East Tower, Philippine Stock
+Exchange Center, Exchange Road, Ortigas Center, Pasig City / Tel. No.: (02) 650-4347 •CAVITE: Block 4, Lot 20 Don Gregorio Heights
+2, Zone 1-A Aguinaldo Highway, Dasmariñas, Cavite / Telefax: (046) 416-1824 •CAVITE (Tanza): (Display Area) Block 5, Lot 6, City
+View 4 and 5, Brgy. Tanauan, Tanza, Cavite •NAGA: 1-1A Geronimo Bldg., Barlin St., Sta. Cruz, Naga City, Camarines Sur/Telefax: (054)
+811-6878 •LEGAZPI: Unit 6, 3rd Floor, A. Bichara Silverscreen, Legazpi City, Albay / Telefax: (052) 480-2244 •CALAPAN: Brgy. Salong,
+National Highway, Calapan City, Oriental Mindoro / Telefax: (043) 288-1650 •BATANES: L. Lopez St., Kayvaluganan, Basco, Batanes
+•TUGUEGARAO: 10 Arellano Ext., Brgy. Ugac Sur, Tuguegarao, Cagayan / Telefax: (078) 844-8072 •CABANATUAN: Fontelera Building,
+1271 Del Pilar Ext., Sangitan East, Cabanatuan City, Nueva Ecija / Tel. No.: (044) 464-2151; Telefax: (044) 600-5684 •URDANETA:
+Zone 6, Pinmaludpod, Urdaneta City, Pangasinan / Telefax: (075) 568-3975 •ANGELES: Unit H, JMS Bldg., MacArthur Highway, Brgy.
+Salapungan, Angeles City, Pampanga/Telefax: (045) 887-5371 • BAGUIO: Rex Hall Student Residences, Upper Gen. Luna cor. A. Bonifacio St.,
+Baguio City, Benguet / Tel. No.: (074) 422-0574
+VISAYAS
+•TACLOBAN: Brgy. 74 Marasbaras, Tacloban City, Leyte / Tel. No.: (053) 323-8976; Telefax: (053) 523-1784 •ILOILO: 75 Lopez Jaena St.,
+Brgy. San Isidro, Jaro, Iloilo City, Iloilo / Tel. No.: (033) 329-0332; Telefax: (033) 329-0336 •BACOLOD: 28 Brgy. 36, Purok Immaculada,
+Quezon Ave., Bacolod City, Negros Occidental •CEBU: 11 Sanciangko St., Cebu City / Tel. Nos.: (032) 416-9684, 254-6773, 505-4313;
+Telefax: (032) 254-6466
+MINDANAO
+•CAGAYAN DE ORO: J. Seriña St. cor. Vamenta Blvd., Carmen, Cagayan de Oro City, Misamis Oriental / Telefax: (088) 858-6775, 309-5881
+•DAVAO: 156 C.M. Recto St., Davao City, Davao / Tel. Nos.: (082) 300-5422, 305-5772; Telefax: (082) 221-0272 •GENERAL SANTOS:
+Aparente St., Dadiangas Hei"
+
+        OUTPUT RULES:
+        Analyze carefully.
+        Return ONLY the word "YES" if it is related.
+        Return ONLY the word "NO" if it has absolutely nothing to do with the Philippines or its history.
+        Do NOT include punctuation or explanations.
+        
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-04-30 21:51:09
+MODELS QUEUED: ['Qwen/Qwen2.5-7B-Instruct-Turbo', 'meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1', 'meta-llama/Llama-3.3-70B-Instruct-Turbo']
+-------------------- PROMPT START --------------------
+[USER]:
+
+        You are a strict document gatekeeper. 
+        Read the following text excerpt from the beginning of an uploaded document.
+        
+        Determine if the document's content is related to:
+        - Philippine history
+        - Philippine cultural history
+        - Filipino heritage or indigenous traditions
+        - Philippine historical events, figures, or literature
+
+        Text Excerpt:
+        "Table of Contents
+Acknowledgements ……………………………………………………………………………1
+Foreword……..………………………………………………………………………………..2
+An Overview of the Project……………………………………………………………………3
+Authors’ Profiles ……………………………………………………………………………….7
+Topic 1: Pre-16th Century Philippines Reading Materials
+A New Species of Homo in the Late Pleistocene of the Philippines………....……………….....11
+Upper Pleistocene Homo sapiens From the Tabon Cave
+(Palawan, The Philippines): Description and Dating of New Discoveries……………….....…...13
+The Austronesians: Historical and Comparative Perspective………………………….………...15
+The Austronesians: Historical and Comparative Perspective………………....……………..…..18
+The Austronesians: Historical and Comparative Perspective…………………………….……...20
+Soul Boats: A Filipino Journey of Self-Discovery………………………………………………22
+CHAO JU-KUA’S DESCRIPTION OF THE PHILIPPINES……………………………….......24
+“Questions and Challenges in Philippine Prehistory”...................................................................26
+Kalantiaw: The Code that Never Was …………...………………………………………………28
+The First People of Sulu…………………...…………………………………………………….30
+Topic 2: 16th -18th Century Philippines
+Customs of the Tagalogs………………………………………..………………………………..34
+Recopilacion de Leyes de los Reinos de las Indias……………………………………….……...36 Historia de los Padres Dominicos en las Islas Filipinas y
+en sus Misiones del Japon, China, Tung-kin y Formosa……………………………...…………38
+Historia General de Filipinas: Conquistas espirituales y temporales
+de estos españoles dominios, establecimientos progresos, y decadencias……………………...40
+Relacion de las Islas Filipinas…………..……………………………………………………….41
+Relacion de las Islas Filipinas…………..……………………………………………………….43
+Practica del Ministerio……….………………………………………………………………….45
+Conspiracy Against the Spaniards (1588).....................................................................................50
+Insurrections by Filipinos in the Seventeenth Century…………………………………………..55
+La Democracia…………………………………………………………………………………..59
+Topic 3: 19th Century Philippines
+A Visit to the Philippine Islands………………….……………………………………………...64
+State of the Philippines in 1810 in The Former Philippines Thru Foreign Eyes……….………..67
+Marcelo H. del Pilar (La Frailocracia and Aba Guinoong Barya)……………………………….70
+Edmund Plauchut in The Philippine Islands in La Solidaridad, Vol. 2: 1890………..………….72
+Internal Political Condition of the Philippines in Emma Blair and
+James Robertson (eds.), The Philippine
+Islands……………………………………………………………………...…………………….74
+Our aims in La Solidaridad……………..………………………………………………………..76
+The Causes of the Distress of the Philippines……….…………………………………………...77
+Album de Filipinas ca. 1879 Biblioteca Nacional de Espana …………………………………80 Topic 4: 1896 Philippine Revolution
+Acta de la Proclamación de Independencia del Pueblo Filipino….……………………………..83
+The Declaration of Atermio Ricarte……...……..……………………………………………….87
+Andres Bonifacio’s Letter to Julio Nakpil, February 13, 1897…………………………………..91
+Andres Bonifacio’s Letter to Emilio Jacinto, Ap"
+
+        OUTPUT RULES:
+        Analyze carefully.
+        Return ONLY the word "YES" if it is related.
+        Return ONLY the word "NO" if it has absolutely nothing to do with the Philippines or its history.
+        Do NOT include punctuation or explanations.
+        
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-04-30 22:14:50
+MODELS QUEUED: ['Qwen/Qwen2.5-7B-Instruct-Turbo', 'meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+    Given a chat history and the latest user question which might reference context in the chat history, 
+    formulate a standalone question which can be understood without the chat history. 
+    
+    RULES:
+    1. Do NOT answer the question. 
+    2. Just reformulate it if it contains pronouns (he, she, it, that) referring to previous context.
+    3. If the question is already standalone, return it exactly as is.
+    4. PRESERVE CONSTRAINTS: If the user asks for a specific format (table, bullet points), tone (funny, professional), page, Length, etc., YOU MUST KEEP THIS IN THE REWRITTEN QUERY.
+    5. GREETINGS: If the user says "Hello" or "Thanks", keep it as is.
+
+    Chat History:
+    User: hi
+Bot: I only answer questions about Philippine cultural history and Philippine history.
+
+    Latest User Question: 
+    explain jose rizal's life
+
+    Standalone Question:
+    
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-04-30 22:14:51
+MODELS QUEUED: ['meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+        You are an intent classifier for a retrieval system focused ONLY on Philippine cultural history and Philippine history.
+
+        First determine whether the user's query is related to:
+        - Philippine history
+        - Philippine culture
+        - Philippine historical figures
+        - Philippine historical events
+        - Philippine literature, traditions, or heritage
+
+        If the query is NOT related to Philippine cultural history or Philippine history, classify it as:
+        "OUT_OF_SCOPE"
+
+        If it IS related, classify it into ONE of the following categories:
+
+        1. "GLOBAL_SUMMARY":
+        The user wants a summary, outline, or overview of the entire document.
+        Examples: "Summarize the paper", "Give me the main points", "What is the document about?"
+
+        2. "BROAD_SEARCH":
+        The user asks for a list, comparison, or explanation requiring multiple pieces of information.
+        Examples: "List all the themes", "What are the five goals?", "Compare Rizal and Bonifacio"
+
+        3. "SPECIFIC_SEARCH":
+        The user asks for a precise fact, date, name, or definition.
+        Examples: "Who is Jose Rizal?", "When did Rizal go to Europe?", "What is the Katipunan?"
+
+        4. "PAGE_SPECIFIC":
+        The user explicitly asks about specific pages or page ranges.
+        Examples: "Summarize page 10", "What happens on pages 15-20?", "Read the last page"
+
+        5. "GREETING":
+        Conversational messages that do not require retrieval.
+        Examples: "Hi", "Hello", "Thanks", "Who are you?"
+
+        6. "NONSENSE":
+        The input is gibberish or meaningless.
+        Examples: "asdf", "sdsdsd", "..."
+
+        7. "OUT_OF_SCOPE":
+        The query is not about Philippine cultural history or Philippine history analyze carefully if it can be answered.
+        Examples: "Explain quantum physics", "Who is Elon Musk?"
+
+        User Query: "Explain Jose Rizal's life."
+
+        OUTPUT:
+        Return ONLY the category name.
+        Do NOT include explanations.
+        
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-04-30 22:15:06
+MODELS QUEUED: ['meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+ROLE: You are a meticulous academic historian. Your task is to analyze the provided sources (Context) and synthesize a response to the user's inquiry.
+
+GUIDELINES:
+1. Philippine History Inquiries: Only answer questions related to Philippine cultural history, history of the Philippines, Filipino heritage, indigenous traditions, Filipino icons, and historical events. If the question is outside this scope, respond with "I only answer questions about Philippine cultural history and Philippine history."
+2. STRICT SOURCE ADHERENCE (FACTS): You must derive all historical facts, dates, names, and events ONLY from the provided Context.
+3. FORMATTING PERMISSION (STYLE): You are explicitly allowed to structure the response as requested by the user (e.g., bullet points, tables, numbered lists, summaries). You may change the *format* of the information, provided the *factual content* remains strictly grounded in the Context.
+4. CITATION REQUIREMENT: Every historical assertion must be backed by an inline citation: [source, page].
+5. UNKNOWN INFO: If the provided archives (Context) do not contain the answer, reply strictly: "Please elaborate your question further."
+6. DIRECTNESS (CRITICAL): State facts directly and confidently. DO NOT start sentences with "Based on the provided sources," "The documents state," or "According to the context." Just answer the question.
+7. Do not answer if there is no Context or if its out of scope 
+
+=== FEW-SHOT EXAMPLES (LEARN FROM THESE PATTERNS) ===
+
+[EXAMPLE 1: Greeting]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Jose Rizal left for Spain in May 1882 without the knowledge of his parents, focused on finishing his medical studies.
+Query: Hello
+Response:
+Hello, how can i help you?
+
+[EXAMPLE 2: Standard Narrative Query]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Jose Rizal left for Spain in May 1882 without the knowledge of his parents, focused on finishing his medical studies.
+Query: Why did Rizal leave?
+Response:
+According to the records, Rizal departed for Spain in May 1882 primarily to complete his medical education, a departure undertaken without his parents' knowledge [Rizal_Bio.pdf, 12].
+
+[EXAMPLE 3: Formatting/List Request]
+Context:
+[1] Source: Propaganda_Movement.pdf, Page: 45
+Content: The movement had three main goals: assimilation of the Philippines as a province of Spain, representation in the Spanish Cortes, and equality before the law.
+Query: List the goals of the movement in bullet points.
+Response:
+The Propaganda Movement aimed to achieve the following:
+* **Assimilation:** Making the Philippines a formal province of Spain [Propaganda_Movement.pdf, 45].
+* **Representation:** Securing seats in the Spanish Cortes [Propaganda_Movement.pdf, 45].
+* **Equality:** Ensuring Filipinos were equal to Spaniards before the law [Propaganda_Movement.pdf, 45].
+
+[EXAMPLE 4: Negative/Unknown Constraint]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Rizal arrived in Spain in June.
+Query: What did Rizal eat for dinner on his first night?
+Response:
+The provided documents do not contain sufficient evidence to answer this inquiry.
+
+=======================================================
+
+NOW THE INQUIRY:
+
+Query:
+explain jose rizal's life
+
+Context:
+[1] Source: xiaos-rizal-lecture-the-first-emo-2016-update.pdf, Page: 1
+Content: More often
+than not reduced to titles and merits, a hero’s humanity may end being forgotten. The Filipino term
+bayani, on the other hand, depicts the same values but is attributed to someone more grounded. Coming from the Visayan term for warrior or bagani, one immediately finds a totally different
+perspective. This time, the persona serves others without expecting in return, despite being
+ordinary.1
+Historian Zeus Salazar classifies Rizal as a heróe, shaped by Western sensibilities and consciousness,
+as he was, in many ways, separate from the people. The mythic proportions of his character made it
+impossible for people to relate to him. He became a symbol, and more often than not, the only hero,
+of the revolution.2
+Nothing new about Rizal is going to be introduced in this paper. Instead of adding another academic
+treatise to the Rizal industry, I aim to give my take on his story by drawing simple life lessons to
+what many see as an extraordinary life. It is high time that we search our humanity in Rizal, and in
+turn, find Rizal
+
+[2] Source: xiaos-rizal-lecture-the-first-emo-2016-update.pdf, Page: 1
+Content: 1
+RIZAL: THE FIRST EMO? Simple Life Lessons from The Extraordinary Story of José Rizal
+By Prof. Michael Charleston “Xiao” B. Chua, additional annotations by Dr. Floro C. Quibuyen
+Note: Xiao Chua, a faculty of the History Department at the De La Salle University and a member of the Sucesos
+Chapter of the Order of the Knights of Rizal, presented this paper during the exhibition “Through The Looking
+Glass: José Rizal” at the Manila Contemporary on 9 June 2012, Whitespace, Chino Roces Ave., Pasong Tamo
+Ext., Brgy. Magallanes, Makati City in the presence of the Supreme Commander of the Order of the Knights of
+Rizal, Sir Reghis M. Romero II, KGCR. In the spirit of Rizal’s annotations to Dr. Antonio Morga’s “Events in
+the Philippine Islands,” Dr. Floro Quibuyen, author of A Nation Aborted: Rizal, American Hegemony, and
+Philippine Nationalism, gives his expert annotations to the
+
+[3] Source: xiaos-rizal-lecture-the-first-emo-2016-update.pdf, Page: 1
+Content: al industry, I aim to give my take on his story by drawing simple life lessons to
+what many see as an extraordinary life. It is high time that we search our humanity in Rizal, and in
+turn, find Rizal in ourselves.3
+The First Emo: Biography of Rizal as a Romantic
+Rizal has been given many labels. He has been called a Philippine Nationalist and Martyr by British
+biographer Austin Coates, The Great Malayan by historical writer Carlos Quirino and even Kristong
+Pilipino by the Rizalist Religious groups, now appropriated as title of the new book by mountaineer
+
+[4] Source: xiaos-rizal-lecture-the-first-emo-2016-update.pdf, Page: 1
+Content: . Antonio Morga’s “Events in
+the Philippine Islands,” Dr. Floro Quibuyen, author of A Nation Aborted: Rizal, American Hegemony, and
+Philippine Nationalism, gives his expert annotations to the lecture in footnotes which will enhance or even give a
+contrary opinion to what the author wrote. This conversation between a young history teacher and a retired UP
+Professor may well represent the different and even fresh views on Rizal. Edited by Ms. Iris Angela Ferrer, Project
+Manager of Manila Contemporary. Introduction
+Jose Rizal is everywhere yet many think he is not relevant anymore. His monuments, built as
+reminders of his heroism, stand distant and unreachable on his pedestal, as if deliberately
+exaggerating our insignificance. It even comes to a point that one may say “I can’t be like him.”
+The western construct of a hero originated from the Greeks. It points to a strong-willed and
+supernatural character who consciously directs his abilities for the good of the people.
+
+[5] Source: xiaos-rizal-lecture-the-first-emo-2016-update.pdf, Page: 2
+Content: His
+last love, his dulce extranjera, was no other than Josephine Bracken. Other women linked to Rizal may
+be considered in today’s terms as MUs (mutual understanding) and flings, consequences of his
+travelling. As Rizal enthusiast and member of his 1961 Centennial Commission, Vicente del Carmen,
+wrote:
+Rizal’s relationship with women embodied a wholesome philosophy of life. He was
+a lover of beautiful women but no one could say that he took liberties. His
+friendships were joyous and worthwhile experiences without any trace of deception. ...it is pleasing to note that there was never any sources of scandals, heartbreaks and
+disappointments.5
+Then, I dared to call Rizal The First Emo. This statement is one of my most benta jokes during my lectures, on a subject many perceive as
+boring. I discussed this with the people from Rock Ed Philippines, Aiza Seguerra and Gloc-9,
+among others, and researchers from the National Historical Commission of the Philippines (NHCP)
+during a consultation about the Rock Riz
+
+[6] Source: xiaos-rizal-lecture-the-first-emo-2016-update.pdf, Page: 3
+Content: other priests for leading the secularization of Philippine parishes, was once his housemate
+and mentor.11 Being involved in various nationalistic movements himself, especially after such
+incident, inspired young Jose to love the motherland as well. It was also through his connections,
+funds and efforts that Rizal was able to study at Ateneo and in Europe. So much of the happenings
+in Jose’s life was being guided by Paciano that it would be safe to say that there would be no Rizal
+the National Hero without him. During the revolution, Paciano became a member of the Katipunan, the general of the Philippine
+Revolution, and treasurer of the Revolutionary Government under Gen. Emilio Aguinaldo. Even
+their younger sisters, Trinidad and Josefa, became members of the women’s chapter of the
+Katipunan, the latter becoming its first president. Aside from their immediate family, one overlooked influence to young Pepe would be his yaya. Fondly writing about his yaya in his memoirs, he would recall how she would tell him tales about
+
+[7] Source: xiaos-rizal-lecture-the-first-emo-2016-update.pdf, Page: 3
+Content: Although, behind this façade was nothing but pure concern for his family. Biographers have written about the library of a thousand books in their home and how he would
+construct nipa huts that became playhouses for his children, particularly a sanctuary for little Pepe’s
+experimentations in art. His mother, Teodora Alonso Realonda, graduated from Colegio de Sta. Rosa— a rare feat for native
+women in that time. The home that she built encouraged learning and was founded on a deep faith
+in God. This can be seen in how Rizal, in spite of his questioning, never denied the existence of a
+Supreme Being.10
+Paciano Mercado, the eldest male among Rizal’s siblings (second of eleven Mercado children), was
+an influential force in their family’s and in Jose’s future. Father José Burgos, who was later garrotted
+with two other priests for leading the secularization of Philippine parishes, was once his housemate
+and mentor.11 Being involved in various nationalistic movements himself, especially after such
+incident, inspired young Jose to love the motherland as well. It was
+
+[8] Source: xiaos-rizal-lecture-the-first-emo-2016-update.pdf, Page: 3
+Content: He was focused and tireless, despite homesickness and frustrations, which all paid off as
+it ignited the fire of nationalism in his community. Not Born a Hero: It All Begins at Home
+Rizal was able to give so much love because he received a lot of it at home. His father, Francisco Rizal Mercado, was a great provider. He was the stereotypical father figure,
+strict and silent.
+
+[9] Source: xiaos-rizal-lecture-the-first-emo-2016-update.pdf, Page: 4
+Content: claims that he is 5’2”, average in comparison with his
+contemporaries.15 Regardless, what Jose lacked in appearance, he compensated with wanting to have
+not just a sound mind but a sound body. He was an able fencer, a chess player who made his own
+sets, a body builder who trained with a dumbbell, which fitness experts proclaimed as being too
+heavy for his built, and an expert marksman. In spite of these petty tauntings, the support for each other and the bayan always remained, especially
+when it mattered most. Teodora Alonso, when offered a pension by the Americans after her son’s
+death, refused and said, “The Rizals offered their lives to their mother country because of their
+inherent patriotism and not because of money.” The Rizals teach us how learning about the good
+starts at home, not only in principle but by example. Eyes Wide Not Shut: Developing Love of Fellowmen at a Young Age
+To have the Rizalian heart is to be aware of the injustices around us. His initial encounter with injustice happened in 1871, when his mother was unjust
+
+[10] Source: xiaos-rizal-lecture-the-first-emo-2016-update.pdf, Page: 5
+Content: 5
+He also joined the propaganda movement in Spain, which lobbied for the colonized Philippines to
+be considered as Spanish citizens. This meant having representation in the Spanish parliament or the
+Cortes, and also the power to expel the friars from Philippine lands. They were young students in a
+foreign land, yet they were not afraid to think big. Spain did not listen to their proposals, but the
+noise that they produced resonated all the way home. From this, Rizal teaches us that it’s okay to leave the country in order to get the appropriate
+intellectual capital, but only in order to be able to come back and return the favor to one’s
+motherland. Though he was just one person, his determination and passion for his country drove
+him to greatness. Heroes Just Want to Have Fun: Rizal’s Parisian Life
+In 1885, while in Paris, studying ophthalmology under Dr. Louis de Wecker, and in all his
+subsequent travels there, Rizal never forgot to have fun. With his best pals and multi-awarded
+painters, Juan Luna and Felix Resurre
+
+[11] Source: xiaos-rizal-lecture-the-first-emo-2016-update.pdf, Page: 7
+Content: utugon sa kanyang hilig
+upang pakinabangan ng bayan.”
+Rizal Controversial: Questioning Rizal’s Heroism
+Despite his many admirers, Rizal’s heroism has been continuously questioned on both historically
+probable and extremely crazy grounds. For instance, some have suggested that Rizal is the biological father of Adolf Hitler, leader of the
+German People and the architect of the holocaust that killed millions. This is based on the similarity
+of their emo-hairstyles and moustache, and the fact that Rizal studied in Heidelberg University where
+he would have met and had a one night stand with Hitler’s mother Klara Pölzl Hitler, as he was
+considered a babaero. But truth is, Hitler was born in Austria, not Germany, and was probably
+conceived in June 1888. By that time, Rizal was in London, busy copying with his own hand Morga’s
+Sucesos de las Islas Filipinas for his own annotated version.
+
+[12] Source: xiaos-rizal-lecture-the-first-emo-2016-update.pdf, Page: 7
+Content: 7
+Rizal developed many talents because he used his time wisely. He was able to balance his time for
+his interests with his time for serving others. The good news is, like Rizal, we also have the same
+24hours which was can easily discipline ourselves to make use of properly.19
+Time well spent can easily turn you to a bayani, as assured by Emilio Jacinto who talked about time
+management in the seventh Kartilya ng Katipunan, “Huwag mong sayangin ang panahon; ang
+yamang nawala'y mangyayaring magbalik; ngunit panahong nagdaan na’y di na muli pang
+magdadaan.” and Gregoria de Jesus, wife of Andres Bonifacio, presenting ideals about developing
+your interests, “Pagsikapang magkaroon ng anumang karunungan na tumutugon sa kanyang hilig
+upang pakinabangan ng bayan.”
+Rizal Controversial: Questioning Rizal’s Heroism
+Despite his many admirers, Rizal’s heroism has been
+
+[13] Source: xiaos-rizal-lecture-the-first-emo-2016-update.pdf, Page: 9
+Content: 9
+On his being an American-Sponsored Hero, Quibuyen agrees with other historians who say that
+Rizal was already a figurehead in his lifetime. His name was used as password and his photo
+displayed in meetings of the Katipunan. More so, even if the indios were not able to read his novels,
+for it was originally aimed at a Spanish audience, they talked about his inspiring and brazen acts
+against the Spaniards. When he eventually returned to the country, after finishing his first novel, the
+locals stood in awe of him, not only for the already circulating stories but also for his ability to make
+the blind see. In their consciousness by reading the Pasyon, the only one who was able to do that
+before him was Jesus Christ. So, the common folk who reverently practiced Catholicism looked up
+to him as a Messiah. Rizal became the Tagalog Christ, the reincarnation of Jesus, who would save
+the country from Spanish bondage. Next, on Rizal’s wanting hispanization, similar to what Father John Schumacher wrote in his opus
+The The Propaganda Movement
+
+[14] Source: xiaos-rizal-lecture-the-first-emo-2016-update.pdf, Page: 11
+Content: 11
+All things considered, his final statement upon death can easily be surmised as a reflection of his real
+intentions. Quibuyen recounts that Rizal praised the revolution and the revolutionaries, which
+included his brothers and sisters, in the second stanza of his farewell poem:
+In barricades embattled, fighting with delirium,
+others donate you their lives without doubts, without gloom,
+The site doesn’t matter: cypress, laurel or lily;
+gibbet or open field, combat or cruel martyrdom,
+are equal if demanded by country and home. Clearly, we see that Rizal did not want unnecessary bloodshed to attain independence, with
+unnecessary being the key word. Rizal’s Death: Conscious Hero
+The first time I went to the Rizal Shrine at Fort Santiago was in October 1994. I was ten years old. I
+saw National Artist Carlos “Botong” Francsico’s 1961 wall painting of Rizal being shot at his back. This was of course very intriguing for a ten-year old! At that time, I read books that said that he
+int
+
+[15] Source: xiaos-rizal-lecture-the-first-emo-2016-update.pdf, Page: 11
+Content: letter, meant to be opened only after his death, Rizal said
+“I wish to show those who deny us patriotism that we know how to die for our country and
+convictions. What matters death if one dies for what one loves, for native land and cherished ones.”
+He did not want to die like Father Burgos who was crying before the garrote. To his companions Father Vilaclara and Father March, his former Jesuit teachers at the Ateneo, he
+would mutter while in exile, “What a beautiful morning! On mornings like this, I used to take walks
+here (the beach) with my sweetheart....Is that the Ateneo? I spent many happy years there.” Rizal
+would continue to try to lighten things up with jokes, but none of them would laugh. An overtly familiar scene to all Filipinos, recounted numerous times by biographers and historians
+alike, is the walk to his death:
+Rizal arrives. Many are waiting, as executions were considered a past time in the time of the
+revolution. He asks the captain if he can face the firing squad.
+
+[16] Source: xiaos-rizal-lecture-the-first-emo-2016-update.pdf, Page: 11
+Content: Artist Carlos “Botong” Francsico’s 1961 wall painting of Rizal being shot at his back. This was of course very intriguing for a ten-year old! At that time, I read books that said that he
+intended to face the firing squad before the bullets reached him because he would not allow a
+traitor’s death, falling face down. These, with seeing the brass representation of his final footprints
+added to the interest that I was slowly having on his venerated person named Jose. It was 6:30AM of December 30, 1896 when Rizal began his final walk from Fort Santiago. Quibuyen, in his talks, always emphasized that Rizal chose to walk rather than be brought to the
+execution place in a carriage. He wanted his death to dramatic and walking would give it better
+theatrical momentum. In his 20 June 1892 letter, meant to be opened only after his death, Rizal said
+“I wish to show those who deny us patriotism that we know how to die for our country and
+convictions. What matters death if one dies for what one loves,
+
+[17] Source: xiaos-rizal-lecture-the-first-emo-2016-update.pdf, Page: 12
+Content: face his executors. He falls down, and dies facing the sky... It was 7:03 AM. Towards A Rizal We Can Emulate
+A well-meaning Ambeth Ocampo once wrote that Rizal was a conscious hero.21 He planned everything,
+even his death. This apparently offended some in the Rizal family because nagpakabayani has
+negative connotations, as it presents a guy who does heroic acts or who offers his life for an
+unworthy cause. To this, I respectfully disagree. Being a conscious hero is not a bad thing. Rizal consciously and
+sincerely chose to offer his energies for his countrymen. Yes, he did not see the fruits of his efforts,
+but the nationalistic spirit and the revolution that he ignited is priceless. Rizal was a man full of love
+who harnessed all this passions and emotions into actions. Although always branded as an elitist
+hero, one can never deny that love transcends class. Nationalism is not a monopoly of the poor. Even if he was not a member of the working class, one cannot deny his love for the country, to the
+
+[18] Source: xiaos-rizal-lecture-the-first-emo-2016-update.pdf, Page: 13
+Content: 2011. Mga lihim ng pamilya Rizal, dokumentaryo ni Howie Severino. I-
+Witness. GMA News and Public Affairs. Constantino, Renato. 1969. Veneration without understanding. Third national Rizal lecture, 30
+December 1969. de Guzman, Maria Odulio. 1967. The Filipino heroes (Ang mga bayaning Pilipino). Manila: National
+Bookstore, Inc. del Carmen, Vicente F. 1982. Rizal: An encyclopaedic collection, volume 1. Quezon City: New Day
+Publishers. Jacinto, Emilio. N.y. Ang kartilya ng katipunan. In Ang Pamana ni Andres Bonifacio, compiled by
+Emmanuel Encarnacion. Quezon City: Aklat Adarna, 1997, n.p. Guerrero, Leon Ma. 1998. The first Filipino: A biography of José Rizal. Manila: Guerrero Publishing. Joaquin, Nick. 1996. Rizal in saga: A life for student fans. Manila: Philippine
+
+[19] Source: xiaos-rizal-lecture-the-first-emo-2016-update.pdf, Page: 18
+Content: through studying Nature)—and not through the Revelation (the Gospels). Another important point, in Rizal’s perspective, Jesus Christ was a man and not God—in one of
+his letters to Blumentritt, Rizal referred to Jesus as “the grand genius...who preached truth and
+love, who suffered because of his mission, but on account of his suffering, the world had
+become better, if not saved” (Evidently, Rizal’s conception of Jesus is closer to that of the Iglesia
+ni Cristo than to that of Catholicism; but, apparently, neither the INC nor the Catholic Church
+seems to be aware of this). Thus, Rizal eventually deviated from the Catholicism of his mother. When his mother noticed this, she chided Rizal. Rizal replied by affirming his new-found
+position—which he maintained in his debate, by correspondence, with the Jesuit Superior Fr. Pastells. I discuss this in my A Nation Aborted
+11 FQ: Burgos was not merely a housemate—he was a Mentor—in the sense of Socrates
+being a mentor to Plato who
+
+[20] Source: xiaos-rizal-lecture-the-first-emo-2016-update.pdf, Page: 19
+Content: definitely was not due to any psychological interiority complex regarding his height. Let me
+stress this crucial point—Rizal had no need to compensate for any inferiority complex. What
+motivated him and provided the energy to drive him on to accomplish so much in such short
+time was love—the love that his mother first nurtured in him, and sustained by Paciano and his
+elder sisters—a love that was expressed in his love of knowledge and, finally, his nation. This
+may sound corny to people who have not experienced the true love of a mother, or whose love
+has not been fully nurtured to grow into an inner strength. The fundamental error of Radaiç is to look for the explanation of Rizal’s greatness in
+negative terms, in what he lacked; whereas a more fruitful way of approaching Rizal is to find
+the key to his èlan vital in positive terms, in what he had in abundance—this was the love that
+sustained him to the very end, so that he could write a beautiful farewell poem without
+bitterness, without hatred, and be at peace with the world, and rel
+
+[21] Source: xiaos-rizal-lecture-the-first-emo-2016-update.pdf, Page: 20
+Content: 20
+13 FQ: This happens to most toddlers learning to walk—note how we tend to romanticise,
+idealise, every little thing that Rizal has done. Ambeth Ocampo has even written about where
+Rizal’s “cargada” lay or what he ate for breakfast. All this cultist “rock star” trivialities must
+stop—if we want to study Rizal seriously. XC: The useless information, in the words of Dr. Ambeth Ocampo, I believe do serve a
+big purpose—to humanize our heroes so we can relate more to them. With this hopefully
+people would notice history as something that is interesting, and hopefully, will bring people to
+a more serious study of Rizal. One reason I became a historian is because of Dr. Ocampo’s
+writings.
+
+[22] Source: xiaos-rizal-lecture-the-first-emo-2016-update.pdf, Page: 21
+Content: way Rizal did is--as the latest research in the psychology of aging,
+shows—a good way to healthy longevity. The Longevity Project, an 80-decade study of the full
+life of 1,500 individuals (from aged 10 to their death), which involved several researchers
+(starting with Dr. Terman) has determined that the crucial factors to a long, healthy, productive
+and prosperous life are: 1) conscientiousness; 2) sustained, meaningful work, and 3) love,
+compassion and generosity. Note that all three factors characterise the personality of Rizal. Had
+not Rizal been executed at the age of 35, the odds are that he would have lived a long and
+productive life. Imagine what more he could have achieved in the arts and sciences! I’m
+reaching the conclusion that his early death—which he could have avoided by simply jumping
+
+[23] Source: xiaos-rizal-lecture-the-first-emo-2016-update.pdf, Page: 21
+Content: 18 FQ: A bit naughty of Jose Abueva—the image is quite original, and very possible! Creative thinkers/writers (be they gay or straight) do this—instead of falling asleep after
+climaxing, they reach out for a pen and paper to write on something that had nothing to do
+with the previous frenetic earth-shaking and mind-blowing exercise. Indeed, the rush of
+adrenaline and release of mind-stimulating and pleasure-inducing hormones like Dopamine, as
+well as heightened circulation of the blood/oxygen in the brain could produce sudden brilliant
+insights on matters that one has been thinking about for some time. My congratulations to
+Abueva for his naughty insight into Rizal—and thank you Xiao for sharing this with us. Moral of
+the story: It’s good to make love when one is engaged in creative/intellectual work! 19 FQ: Working the way Rizal did is--as the latest research in the psychology of aging,
+shows—a good way to healthy longevity. The Longevity Project, an 80-decade study of the full
+life of 1,500 individuals (from aged
+
+[24] Source: PHILIPPINE-HISTORY-SOURCE-BOOK-FINAL-SEP022021 (1).pdf, Page: 342
+Content: to be commended for stressing with this celebration the
+significance of the anniversary of the birthday of Jose Rizal. Indeed, it is time perhaps that our people should give to the day of his birth the same attention
+and importance that we give to the day of his death, for there are many things about Rizal that we
+can learn by reflection on his life which we might miss in reflecting on the tragedy and the glory
+of his death. The recent generations of our people have had many occasions in which to die for our country. When those times have come, it has been the heroism of Rizal in the face of death that inspired
+them in battle or in the face of the executioner. Today, however, you will perhaps agree with me that we are mainly concerned with living for
+our country.
+
+[25] Source: PHILIPPINE-HISTORY-SOURCE-BOOK-FINAL-SEP022021 (1).pdf, Page: 342
+Content: 332
+Ramon Magsaysay, Rizal Day Speech, June 19, 1956
+Recognizing the important role of Jose Rizal in the attainment of our country’s freedom,
+President Ramon Magsaysay signed the Republic Act 1425 also known as the Rizal Law on June
+12, 1956. Sponsored by Senator Claro M. Recto, the law requires “to include in the curricula of
+all public and private schools, colleges and universities courses on the life, works and writings of
+Jose Rizal, particularly his novels Noli Me Tangere and El Filibusterismo…” The enactment of
+the said law was Recto’s response to the postwar social crisis of neocolonialism and colonial
+mentality. The reading of Rizal’s novels according to him “would strengthen the Filipinism of the
+youth and foster patriotism.”
+In his speech on Rizal Day of 1956, a few days after he signed the Rizal Law, Magsaysay
+emphasized the need to remember Rizal on his birthday and the importance of “living
+
+[26] Source: PHILIPPINE-HISTORY-SOURCE-BOOK-FINAL-SEP022021 (1).pdf, Page: 343
+Content: weapons. And
+finally he used them effectively and decisively to defeat the enemy and bring freedom to his
+people. What do we not find in Rizal’s life? We do not find him fighting the battles of Lapu-Lapu with
+16th century swords or haranguing his countrymen with the rough, rustic eloquence of Dagohoy. We find him fighting the enemies of his time with the weapons of his time, with the polished
+satire of the19th century, seeking thereby not only to awaken the spirit of his own countrymen
+but also to stir up the sympathy of the most cultured centers of Europe towards the cause of his
+country’s freedom. Such was the realism of Rizal. Such was the constructive bent of his
+patriotism. Such was the positive spirit of his nationalism. Indeed, in every period of a country’s history, it is true nationalism that gives its people that
+necessary energy with which to conquer the problems of their times. It is the realistic,
+constructive, and the positive nationalism of Rizal which, by facing present problems with
+present solutions, will propel us in the right direction towards
+
+[27] Source: PHILIPPINE-HISTORY-SOURCE-BOOK-FINAL-SEP022021 (1).pdf, Page: 343
+Content: 333
+are concerned with giving life and strength to our national freedom and individual liberties. We
+are concerned with giving life to our Constitution and to the laws that our own free
+representatives have enacted for our welfare. In implementing this concern the question that we ask about Rizal is not so much “how did he
+die?” as “how did he live?” And this day is a good day in which to seek the answer. How did Rizal live? Perhaps we should first ask—What did he live for? Rizal lived for his
+country. How did he live for his country? He lived for it first by understanding the problems of
+the Philippines of his day. He faced the realities which the forces of his country had created
+around him. He singled out the enemies of his country’s freedom. And then he chose the most
+effective weapons with which to conquer them. He learned how to wield these weapons. And
+finally he used them effectively and decisively to defeat the enemy and bring freedom to his
+people. What do we not find in Rizal’s life? We do not find him fighting the battles of Lapu-Lapu
+
+[28] Source: PHILIPPINE-HISTORY-SOURCE-BOOK-FINAL-SEP022021 (1).pdf, Page: 344
+Content: same determination, the same
+resolute action, the same sense of duty that Rizal applied to the most heroic acts of his life. Let, then, this commemoration of Rizal’s 95th birthday inspire in each of us a firm determination
+to dedicate ourselves anew with a chastened spirit and renewed vigor to this our beloved country
+which Rizal, blessing her with his blood, has bequeathed to us, for us to love, to dignify, and to
+serve.
+
+[29] Source: PHILIPPINE-HISTORY-SOURCE-BOOK-FINAL-SEP022021 (1).pdf, Page: 344
+Content: If we
+must strengthen our freedom we must use the resources at hand. If we must defend that freedom,
+we must know who is its real enemy today and prepare to foil him with the weapons of today. If
+we want to help our country, we must be prepared to sacrifice ourselves. But to sacrifice
+ourselves we must be possessed of love—love for our God, our country, and our people. If our devotion to Rizal is sincere and genuine, then we must remember, each and every one of
+us, that we owe it to ourselves and to our country to seek constantly to discipline ourselves and
+dedicate our efforts to our country. As Rafael Palma has said, we have a right to believe that
+there is in each one of us a possible Rizal; and that what he has done, we too could do within our
+reach and capabilities, if we would only apply to our tasks the same determination, the same
+resolute action, the same sense of duty that Rizal applied to the most heroic acts of his life. Let, then, this commemoration of Rizal’s 95th birthday inspire in each of us
+
+[30] Source: PHILIPPINE-HISTORY-SOURCE-BOOK-FINAL-SEP022021 (1).pdf, Page: 574
+Content: be here at EDSA, the generals in the Armed Forces
+and the Philippine National Police, and the Filipino out there who stood up to be counted in these
+troubled times. The Filipino, crises and all, is truly worth living and dying for. Ngunit saan tayo tutungo mula rito? Jose Rizal, the first to articulate selfdetermination in a free society, provides the answer. Rizal counseled the Filipino to lead a life of commitment. “He must think national, go beyond
+self.”
+“A stone is worthless,” Rizal wrote, “if it is not part of an edifice.”
+
+Response (Narrative with Citations):
+
+-------------------- PROMPT END ---------------------
+============================================================
+
