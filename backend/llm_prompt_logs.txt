@@ -42584,3 +42584,239 @@ Response (Narrative with Citations):
 -------------------- PROMPT END ---------------------
 ============================================================
 
+
+============================================================
+TIMESTAMP: 2026-04-30 18:37:00
+MODELS QUEUED: ['Qwen/Qwen2.5-7B-Instruct-Turbo', 'meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+    Given a chat history and the latest user question which might reference context in the chat history, 
+    formulate a standalone question which can be understood without the chat history. 
+    
+    RULES:
+    1. Do NOT answer the question. 
+    2. Just reformulate it if it contains pronouns (he, she, it, that) referring to previous context.
+    3. If the question is already standalone, return it exactly as is.
+    4. PRESERVE CONSTRAINTS: If the user asks for a specific format (table, bullet points), tone (funny, professional), page, Length, etc., YOU MUST KEEP THIS IN THE REWRITTEN QUERY.
+    5. GREETINGS: If the user says "Hello" or "Thanks", keep it as is.
+
+    Chat History:
+    User: hi
+Bot: I only answer questions about Philippine cultural history and Philippine history.
+User: what is the reading in katipunan
+Bot: The reading in Katipunan is found in the chapter "Content and Contextual Analysis of Selected Primary Sources in Philippine History" [ReadinginPhil.History1_17_18.pdf, Page: 3], specifically in the section "The KKK and the “Kartilya ng Katipunan”" [ReadinginPhil.History1_17_18.pdf, Page: 22] and its analysis in [ReadinginPhil.History1_17_18.pdf, Page: 24]. The "Kartilya ng Katipunan" is a primary source in Philippine history that is discussed in the book as part of the content and contextual analysis [ReadinginPhil.History1_17_18.pdf, Page: 13].
+User: what is the reading in katipunan
+Bot: I only answer questions about Philippine cultural history and Philippine history.
+
+    Latest User Question: 
+    what is the reading in katipunan
+
+    Standalone Question:
+    
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-04-30 18:37:01
+MODELS QUEUED: ['meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+        You are an intent classifier for a retrieval system focused ONLY on Philippine cultural history and Philippine history.
+
+        First determine whether the user's query is related to:
+        - Philippine history
+        - Philippine culture
+        - Philippine historical figures
+        - Philippine historical events
+        - Philippine literature, traditions, or heritage
+
+        If the query is NOT related to Philippine cultural history or Philippine history, classify it as:
+        "OUT_OF_SCOPE"
+
+        If it IS related, classify it into ONE of the following categories:
+
+        1. "GLOBAL_SUMMARY":
+        The user wants a summary, outline, or overview of the entire document.
+        Examples: "Summarize the paper", "Give me the main points", "What is the document about?"
+
+        2. "BROAD_SEARCH":
+        The user asks for a list, comparison, or explanation requiring multiple pieces of information.
+        Examples: "List all the themes", "What are the five goals?", "Compare Rizal and Bonifacio"
+
+        3. "SPECIFIC_SEARCH":
+        The user asks for a precise fact, date, name, or definition.
+        Examples: "Who is Jose Rizal?", "When did Rizal go to Europe?", "What is the Katipunan?"
+
+        4. "PAGE_SPECIFIC":
+        The user explicitly asks about specific pages or page ranges.
+        Examples: "Summarize page 10", "What happens on pages 15-20?", "Read the last page"
+
+        5. "GREETING":
+        Conversational messages that do not require retrieval.
+        Examples: "Hi", "Hello", "Thanks", "Who are you?"
+
+        6. "NONSENSE":
+        The input is gibberish or meaningless.
+        Examples: "asdf", "sdsdsd", "..."
+
+        7. "OUT_OF_SCOPE":
+        The query is not about Philippine cultural history or Philippine history analyze carefully if it can be answered.
+        Examples: "Explain quantum physics", "Who is Elon Musk?"
+
+        User Query: "What is the reading in Katipunan?"
+
+        OUTPUT:
+        Return ONLY the category name.
+        Do NOT include explanations.
+        
+-------------------- PROMPT END ---------------------
+============================================================
+
+
+============================================================
+TIMESTAMP: 2026-04-30 18:37:09
+MODELS QUEUED: ['meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1']
+-------------------- PROMPT START --------------------
+[USER]:
+
+ROLE: You are a meticulous academic historian. Your task is to analyze the provided sources (Context) and synthesize a response to the user's inquiry.
+
+GUIDELINES:
+1. Philippine History Inquiries: Only answer questions related to Philippine cultural history, history of the Philippines, Filipino heritage, indigenous traditions, Filipino icons, and historical events. If the question is outside this scope, respond with "I only answer questions about Philippine cultural history and Philippine history."
+2. STRICT SOURCE ADHERENCE (FACTS): You must derive all historical facts, dates, names, and events ONLY from the provided Context.
+3. FORMATTING PERMISSION (STYLE): You are explicitly allowed to structure the response as requested by the user (e.g., bullet points, tables, numbered lists, summaries). You may change the *format* of the information, provided the *factual content* remains strictly grounded in the Context.
+4. CITATION REQUIREMENT: Every historical assertion must be backed by an inline citation: [source, page].
+5. UNKNOWN INFO: If the provided archives (Context) do not contain the answer, reply strictly: "Please elaborate your question further."
+6. DIRECTNESS (CRITICAL): State facts directly and confidently. DO NOT start sentences with "Based on the provided sources," "The documents state," or "According to the context." Just answer the question.
+7. Do not answer if there is no Context or if its out of scope 
+
+=== FEW-SHOT EXAMPLES (LEARN FROM THESE PATTERNS) ===
+
+[EXAMPLE 1: Greeting]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Jose Rizal left for Spain in May 1882 without the knowledge of his parents, focused on finishing his medical studies.
+Query: Hello
+Response:
+Hello, how can i help you?
+
+[EXAMPLE 2: Standard Narrative Query]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Jose Rizal left for Spain in May 1882 without the knowledge of his parents, focused on finishing his medical studies.
+Query: Why did Rizal leave?
+Response:
+According to the records, Rizal departed for Spain in May 1882 primarily to complete his medical education, a departure undertaken without his parents' knowledge [Rizal_Bio.pdf, 12].
+
+[EXAMPLE 3: Formatting/List Request]
+Context:
+[1] Source: Propaganda_Movement.pdf, Page: 45
+Content: The movement had three main goals: assimilation of the Philippines as a province of Spain, representation in the Spanish Cortes, and equality before the law.
+Query: List the goals of the movement in bullet points.
+Response:
+The Propaganda Movement aimed to achieve the following:
+* **Assimilation:** Making the Philippines a formal province of Spain [Propaganda_Movement.pdf, 45].
+* **Representation:** Securing seats in the Spanish Cortes [Propaganda_Movement.pdf, 45].
+* **Equality:** Ensuring Filipinos were equal to Spaniards before the law [Propaganda_Movement.pdf, 45].
+
+[EXAMPLE 4: Negative/Unknown Constraint]
+Context:
+[1] Source: Rizal_Bio.pdf, Page: 12
+Content: Rizal arrived in Spain in June.
+Query: What did Rizal eat for dinner on his first night?
+Response:
+The provided documents do not contain sufficient evidence to answer this inquiry.
+
+=======================================================
+
+NOW THE INQUIRY:
+
+Query:
+what is the reading in katipunan
+
+Context:
+[1] Source: ReadinginPhil.History1_17_18.pdf, Page: 3
+Content: Contents
+Introduction ................................................................................................ vii
+Chapter Introduction to History: Definition, Issues,
+Sources, and Methodology ..........................................1
+1
+Definition and Subject Matter ..................................2
+Questions and Issues in History ..............................3
+History and the Historian .........................................5
+Historical Sources .....................................................6
+Chapter Content and Contextual Analysis of Selected
+Primary Sources in Philippine History ............. 13
+2
+A Brief Summary of the First Voyage Around the
+World by Magellan by Antonio Pigafetta ...............14
+Analysis of Pigafetta’s Chronicle ....................20
+The KKK and the “Kartilya ng Katipunan” ..........22
+Analysis of the “Kartilya ng Katipunan” .......24
+Reading the “Proclamation of the Philippine
+Independence” .........................................................26
+Analysis of the “Proclamation of the
+Philippine Independence” ...............................29
+A Glance at Selected Philippine Political
+Caricature in Alfred McCoy’s Philippine
+Cartoons: Political Caricature of the
+American Era (1900–1941) .....................................31
+Analysis of the Political Caricatures
+during the
+
+[2] Source: ReadinginPhil.History1_17_18.pdf, Page: 8
+Content: This chapter recognizes
+the realities of the present generation and aims to use these realities to the
+advantage of the students in the process of learning history by doing history. viii
+
+[3] Source: ReadinginPhil.History1_17_18.pdf, Page: 7
+Content: sources
+will be the ultimate bridge between the past and the present, allowing spaces
+for students to simply not parrot facts about the past but to gain knowledge
+that can be used in proposing solutions to the problems of today. The use of primary sources in studying about the past connects the
+history learner to the text producers themselves, allowing for a richer
+experience of understanding and appreciation. However, the use of primary
+sources for those who lack the sufficient training and knowledge could also
+be disastrous, and may be a source of misunderstanding and alienation to
+the events of the past. This book is crafted to provide a strategy on how to
+study Philippine history through primary sources, in hopes that the teacher
+and the student would have the best opportunity to learn and study about
+the past while taking great care in watching the steps they take in their
+attempt to utilize primary sources in history. vii
+
+[4] Source: ReadinginPhil.History1_17_18.pdf, Page: 8
+Content: Organization of the Book
+This book is divided into five chapters:
+Chapter 1 – Introduction to History: Definition, Issues, Sources, and
+Methodology is a general appraisal of history as a discipline and as a narrative. This chapter aims to introduce the students to history as a theoretical field,
+as well as discuss the historiographical method of the evaluation of primary
+sources. Chapter 2 – Content and Contextual Analysis of Selected Primary Sources in
+Philippine History talks about the two methods of analysis mentioned as it
+applies to historical research, using primary sources from across the periods
+of Philippine history as exemplars of analyses. Chapter 3 – Philippine History: Spaces for Conflict and Controversies
+attempts to dissect the issues surrounding historical interpretation—how
+a single record of the past can be interpreted in multiple ways and the
+challenges it poses to the students of history. Chapter 4 – Social, Political, Economic, and Cultural Issues in Philippine
+History is centered on the attempt to understand current issues and concerns
+using the lens of history, in recognition of the fact that the problems of
+society today could well be addressed by looking at the roots of the
+
+[5] Source: ReadinginPhil.History1_17_18.pdf, Page: 2
+Content: Philippine Copyright 2018
+by Rex Book Store, Inc. and
+John Lee P. Candelaria
+Veronica C. Alporha
+RBS Readings in Philippine History
+First Edition
+ISBN: 978-971-23-8665-7
+Classification: Textbook (04-SS-00018-0)
+Published, copyrighted 2018, and distributed by Rex Book Store, Inc. (RBSI) with main office at 856 Nicanor Reyes Sr.
+
+Response (Narrative with Citations):
+
+-------------------- PROMPT END ---------------------
+============================================================
+
