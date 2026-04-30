@@ -110,17 +110,11 @@ export default function FileUploaderDialog({
       const results = data.results;
       console.log(results)
 
-      if (Array.isArray(results)) {
-        results.forEach((file) => {
-          if (file.status === "error") {
-            toast.error(`${file.filename}: ${file.error}`, { id: toastId });
-          } else {
-            toast.success(`Uploaded: ${file.filename}`, { id: toastId });
-          }
-        });
-      } else {
-        console.error("Unexpected response format:", data);
-      }
+       results.forEach(element => {
+        if(element.error){
+          console.log(isError)
+        }
+      });
 
       onUpload && onUpload(data);
       clearAll();
