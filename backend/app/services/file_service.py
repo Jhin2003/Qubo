@@ -1,8 +1,6 @@
 import os
 import json
 import hashlib
-import io
-import tempfile
 from datetime import datetime
 from pathlib import Path
 
@@ -15,6 +13,8 @@ from langchain_experimental.text_splitter import SemanticChunker
 from app.services.loaders import clear_vectorstore_cache
 from langchain_community.vectorstores.utils import DistanceStrategy
 import numpy as np
+
+from app.services.llm_service import analyze_document_relevance
 
 # --- Local Imports ---
 from .loaders import get_embedder, get_vectorstore
@@ -66,14 +66,12 @@ def process_file(file_path: str, filename: str):
             if os.path.exists(file_path): os.remove(file_path)
             return 0, None
 
-        # --- 2. Semantic Thresholding (Gatekeeper) ---
+     
+        # --- 2. Hybrid Semantic Thresholding (Gatekeeper) ---
         print(f"Evaluating relevance of '{filename}'...")
         
-        # Define what we are looking for
         target_topic = "Philippine cultural history, history of the Philippines, Filipino heritage, indigenous traditions, Filipino icons, and historical events."
         target_vector = embedding_model.embed_query(target_topic)
-        
-        # Sample the first few pages to gauge the document's topic (max ~3000 chars to avoid token limits)
         sample_text = " ".join([t for _, t in page_texts[:5]])[:3000]
         doc_vector = embedding_model.embed_query(sample_text)
         
@@ -83,22 +81,34 @@ def process_file(file_path: str, filename: str):
         norm_b = np.linalg.norm(doc_vector)
         similarity = dot_product / (norm_a * norm_b)
         
-        # Adjust this threshold based on your specific embedding model (0.5 to 0.7 is usually a good starting point)
-        RELEVANCE_THRESHOLD = 0.5
+        print(f"[GATEKEEPER] Embedding Similarity Score: {similarity:.2f}")
         
-        if similarity < RELEVANCE_THRESHOLD:
-            print(f"❌ Rejected '{filename}': Not relevant to Philippine cultural history. (Score: {similarity:.2f})")
-            if os.path.exists(file_path):
-                os.remove(file_path)
-                print(f"🗑️ Deleted invalid file: {file_path}")
-
-            raise HTTPException(
-            status_code=400,
-            detail=f"Document rejected: not relevant to Philippine cultural history (score={similarity:.2f})"
-            )
+        # --- THE CASCADE LOGIC ---
+        AUTO_REJECT_THRESHOLD = 0.30
+        AUTO_APPROVE_THRESHOLD = 0.75
+        
+        if similarity < AUTO_REJECT_THRESHOLD:
+            print(f"❌ Stage 1 Rejection: '{filename}' is completely unrelated. (Score: {similarity:.2f})")
+            if os.path.exists(file_path): os.remove(file_path)
+            raise HTTPException(status_code=400, detail="Document rejected: Clearly not relevant to Philippine history.")
             
-        
+        elif similarity >= AUTO_APPROVE_THRESHOLD:
+            print(f"✅ Stage 1 Approval: '{filename}' strongly matches. Skipping LLM. (Score: {similarity:.2f})")
+            
+        else:
+            # Stage 2: Ambiguous score (e.g., 0.50). Let the LLM decide!
+            print(f"⚖️ Ambiguous score ({similarity:.2f}). Consulting LLM Analyzer...")
+            is_relevant = analyze_document_relevance(sample_text)
+            
+            if not is_relevant:
+                print(f"❌ Stage 2 Rejection: LLM determined '{filename}' is not relevant.")
+                if os.path.exists(file_path): os.remove(file_path)
+                raise HTTPException(status_code=400, detail="Document rejected: Failed LLM content check.")
+            else:
+                print(f"✅ Stage 2 Approval: LLM verified '{filename}'.")
 
+        print(f"✅ Document '{filename}' approved. Proceeding to chunking.") 
+        
         # --- 3. Setup Directories ---
         base_dir = Path("data_store")
         output_dir = base_dir / "chunked_output"

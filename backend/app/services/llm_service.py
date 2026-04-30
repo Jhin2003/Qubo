@@ -43,6 +43,58 @@ MODELS_ROUTER = [
     "mistralai/Mixtral-8x7B-Instruct-v0.1",
 ]
 
+def analyze_document_relevance(sample_text: str) -> bool:
+    """
+    Scans a small sample of a document to determine if it relates 
+    to Philippine history/culture. Returns True if relevant, False otherwise.
+    """
+    try:
+        ANALYZER_PROMPT = """
+        You are a strict document gatekeeper. 
+        Read the following text excerpt from the beginning of an uploaded document.
+        
+        Determine if the document's content is related to:
+        - Philippine history
+        - Philippine cultural history
+        - Filipino heritage or indigenous traditions
+        - Philippine historical events, figures, or literature
+
+        Text Excerpt:
+        "{sample_text}"
+
+        OUTPUT RULES:
+        Analyze carefully.
+        Return ONLY the word "YES" if it is related.
+        Return ONLY the word "NO" if it has absolutely nothing to do with the Philippines or its history.
+        Do NOT include punctuation or explanations.
+        """
+        
+        messages = [{"role": "user", "content": ANALYZER_PROMPT.format(sample_text=sample_text)}]
+        
+        # Use FAST models to save time/money, and limit output to 5 tokens.
+        raw_text = query_llm_with_fallback(
+            messages=messages, 
+            model_list=MODELS_FAST,  
+            max_tokens=5, 
+            temp=0.0
+        ).strip().upper()
+        
+        print(f"[ANALYZER] Relevance check result: '{raw_text}'")
+        
+        if "YES" in raw_text:
+            return True
+        elif "NO" in raw_text:
+            return False
+            
+        # Default to True if the LLM output something weird
+        print(f"[WARN] Unclear analyzer intent: {raw_text}. Allowing document.")
+        return True
+
+    except Exception as e:
+        print(f"[WARN] Document analyzer error ({e}). Defaulting to allowing document.")
+        return True # We allow the document through if the API crashes
+    
+    
 # --- HELPER 1: Internal Classifier ---
 def _classify_query_intent(query: str) -> str:
     """

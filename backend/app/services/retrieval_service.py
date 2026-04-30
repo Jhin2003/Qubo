@@ -154,6 +154,7 @@ import json
 from pathlib import Path
 from typing import Optional
 
+
 def get_global_context_from_jsonl(filename: str) -> Optional[str]:
     """
     Retrieves a snapshot of the document by sampling a chunk at every 5% interval.
@@ -197,19 +198,22 @@ def get_global_context_from_jsonl(filename: str) -> Optional[str]:
             chunk = all_chunks[index]
             page_num = chunk['metadata'].get('page', '?')
             
-            context_parts.append(f"\n--- {percent}% MARK (Page {page_num}) ---")
-            context_parts.append(chunk['content'])
+            # ---> FIX: Added Source: {filename} here <---
+            context_parts.append(f"\n--- {percent}% MARK ---\nSource: {filename}, Page: {page_num}")
+            context_parts.append(f"Content: {chunk['content']}")
             
             seen_indices.add(index)
 
     # 4. Always ensure the very last chunk (100%) is included
     if (total_chunks - 1) not in seen_indices:
         last_chunk = all_chunks[-1]
-        context_parts.append(f"\n--- 100% MARK (Page {last_chunk['metadata'].get('page', '?')}) ---")
-        context_parts.append(last_chunk['content'])
+        page_num = last_chunk['metadata'].get('page', '?')
+        
+        # ---> FIX: Added Source: {filename} here <---
+        context_parts.append(f"\n--- 100% MARK ---\nSource: {filename}, Page: {page_num}")
+        context_parts.append(f"Content: {last_chunk['content']}")
 
-    return "\n".join(context_parts)
-# --- Context shaping helpers (Unchanged) ---
+    return "\n\n".join(context_parts)
 
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
 
@@ -407,7 +411,7 @@ async def search_vectorstore(
             global_context = get_global_context_from_jsonl(source)
             if global_context:
                 print(f"[RETRIEVER] 📚 Returning Global Context (JSONL bypass).")
-                console.log(global_context)
+               
                 return global_context, []
             else:
                 print(f"[RETRIEVER] ⚠️ JSONL failed. Falling back to Broad Search.")

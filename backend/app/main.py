@@ -11,8 +11,8 @@ load_dotenv()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Runs once per worker when the process starts
-   # warmup()
+   
+    warmup()
     yield
 
 app = FastAPI(lifespan=lifespan)

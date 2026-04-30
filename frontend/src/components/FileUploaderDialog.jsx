@@ -85,7 +85,7 @@ export default function FileUploaderDialog({
 
 
     try {
-      const res = await fetch(uploadUrl, {
+      const res = await fetch("http://localhost:8000/upload", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,
