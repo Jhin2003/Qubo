@@ -7,8 +7,8 @@ from fastapi import APIRouter, UploadFile, File, HTTPException,Depends
 from fastapi.responses import FileResponse
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.responses import JSONResponse
+from app.services.file_service import process_file, delete_file_data # Import the new function
 
-from app.services.file_service import process_file
 
 import dotenv
 import os
@@ -102,10 +102,7 @@ async def upload_files(files: List[UploadFile] = File(...)):
 
     return {"results": results}
 
-# ... imports ...
-from app.services.file_service import process_file, delete_file_data # Import the new function
 
-# ... (Previous code) ...
 
 @router.delete("/files/{filename}")
 async def delete_file(filename: str):

@@ -1763,3 +1763,70 @@ Response (Narrative with Citations):
 -------------------- PROMPT END ---------------------
 ============================================================
 
+
+============================================================
+TIMESTAMP: 2026-04-30 22:42:59
+MODELS QUEUED: ['Qwen/Qwen2.5-7B-Instruct-Turbo', 'meta-llama/Llama-3.3-70B-Instruct-Turbo', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1', 'meta-llama/Llama-3.3-70B-Instruct-Turbo']
+-------------------- PROMPT START --------------------
+[USER]:
+
+        You are a strict document gatekeeper. 
+        Read the following text excerpt from the beginning of an uploaded document.
+        
+        Determine if the document's content is related to:
+        - Philippine history
+        - Philippine cultural history
+        - Filipino heritage or indigenous traditions
+        - Philippine historical events, figures, or literature
+
+        Text Excerpt:
+        "THE LOCAL GOVERNMENT CODE OF THE PHILIPPINES
+BOOK I
+GENERAL PROVISIONS
+TITLE ONE. - BASIC PRINCIPLES
+CHAPTER 1. - THE CODE, POLICY AND APPLICATION
+SECTION 1. Title. - This Act shall be known and cited as the "Local Government Code of
+1991".
+SECTION 2. Declaration of Policy. - (a) It is hereby declared the policy of the State that the
+territorial and political subdivisions of the State shall enjoy genuine and meaningful local autonomy
+to enable them to attain their fullest development as self-reliant communities and make them more
+effective partners in the attainment of national goals. Toward this end, the State shall provide for a
+more responsive and accountable local government structure instituted through a system of
+decentralization whereby local government units shall be given more powers, authority,
+responsibilities, and resources. The process of decentralization shall proceed from the national
+government to the local government units.
+(b) It is also the policy of the State to ensure the accountability of local government units
+through the institution of effective mechanisms of recall, initiative and referendum.
+(c) It is likewise the policy of the State to require all national agencies and offices to conduct
+periodic consultations with appropriate local government units, non-governmental and
+people's organizations, and other concerned sectors of the community before any project
+or program is implemented in their respective jurisdictions.
+SECTION 3. Operative Principles of Decentralization. - The formulation and implementation of
+policies and measures on local autonomy shall be guided by the following operative principles:
+(a) There shall be an effective allocation among the different local government units of their
+respective powers, functions, responsibilities, and resources;
+(b) There shall be established in every local government unit an accountable, efficient, and
+dynamic organizational structure and operating mechanism that will meet the priority needs
+and service requirements of its communities;
+(c) Subject to civil service law, rules and regulations, local officials and employees paid wholly
+or mainly from local funds shall be appointed or removed, according to merit and fitness,
+by the appropriate appointing authority;
+(d) The vesting of duty, responsibility, and accountability in local government units shall be
+accompanied with provision for reasonably adequate resources to discharge their powers
+and effectively carry out their functions; hence, they shall have the power to create and
+broaden their own sources of revenue and the right to a just share in national taxes and an
+equitable share in the proceeds of the utilization and development of the national wealth
+within their respective areas;
+(e) Provinces with respect to component cities and municipalities, and cities and municipalities
+with respect to component Barangays, shall ensure that the acts of their component units
+are within the scope of their prescribed powers and func"
+
+        OUTPUT RULES:
+        Analyze carefully.
+        Return ONLY the word "YES" if it is related.
+        Return ONLY the word "NO" if it has absolutely nothing to do with the Philippines or its history.
+        Do NOT include punctuation or explanations.
+        
+-------------------- PROMPT END ---------------------
+============================================================
+
