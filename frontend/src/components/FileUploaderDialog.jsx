@@ -107,19 +107,15 @@ export default function FileUploaderDialog({
       if (!res.ok) throw new Error(`Upload failed with status ${res.status}`);
       const data = await safeJson(res);
 
-      if (Array.isArray(data.files)) {
-        data.results.forEach((file) => {
-          
+      const results = data.results;
 
-          if(file.error){
-            toast.error(file.error, file.name, { id: toastId });
-           
+      if (Array.isArray(results)) {
+        results.forEach((file) => {
+          if (file.status === "error") {
+            toast.error(`${file.filename}: ${file.error}`, { id: toastId });
+          } else {
+            toast.success(`Uploaded: ${file.filename}`, { id: toastId });
           }
-          else{
-             // example: show success toast per file
-          toast.success(`Uploaded: ${file.filename}`, { id: toastId });
-          }
-      
         });
       } else {
         console.error("Unexpected response format:", data);
