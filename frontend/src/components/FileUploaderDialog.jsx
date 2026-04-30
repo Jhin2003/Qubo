@@ -108,6 +108,7 @@ export default function FileUploaderDialog({
       const data = await safeJson(res);
 
       const results = data.results;
+      console.log(results)
 
       if (Array.isArray(results)) {
         results.forEach((file) => {
