@@ -400,7 +400,7 @@ async def search_vectorstore(
     # FIX 1: Allow "precise" mode to trigger the Router
     if mode in ["adaptive", "precise"]:
         print(f"\n[RETRIEVER] 🧠 Analyzing intent for: '{query}' (Mode: {mode})")
-        intent = await _classify_query_intent(query)
+        intent = _classify_query_intent(query)
         print(f"[RETRIEVER] 🎯 Intent Detected: {intent}")
 
                 
@@ -485,9 +485,7 @@ async def search_vectorstore(
 
     # 3. Dense Retrieval
     
-    # FIX 2: The "Source Filtering" Bug Fix
-    # If we are looking for 1 specific file, we need to fetch MANY chunks (e.g. 100) 
-    # because the top 20 might be dominated by other files.
+ 
     search_filter = {"source": source} if source else None
     dense_docs, dense_scores = fetch_candidates(
         vectorstore, 
@@ -505,9 +503,7 @@ async def search_vectorstore(
         candidates = dense_docs
 
     # 5. Reranking
-    # We trigger reranking if:
-    # A) The intent is BROAD (we have 30+ docs, need to sort them)
-    # B) The mode is "precise" (User explicitly asked for quality)
+   
     if intent == "BROAD_SEARCH" or mode in ["precise", "adaptive"]:
         ranked_docs, ranked_scores = rerank_with_ce(query_to_use, candidates, top_k=k)
     else:

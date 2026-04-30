@@ -58,34 +58,64 @@ export default function Chatbot() {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
-  const renderMessageText = (text) => {
+ const renderMessageText = (text) => {
     if (!text) return null;
-    let cleanedText = text.replace(/\*\*/g, ""); 
+    let cleanedText = text.replace(/\*\*/g, "");
 
-    // 2. Replace asterisks used as bullets with a real bullet point
-    // This regex looks for a "*" or "-" at the start of a line followed by a space
+    // Replace asterisks/hyphens used as bullets with a real bullet point
     cleanedText = cleanedText.replace(/(^|\n)[\*|-] /g, "$1• ");
 
     const parts = cleanedText.split(/(\[.*?\])/g);
+    
     return parts.map((part, index) => {
       if (part.startsWith("[") && part.endsWith("]")) {
         const content = part.slice(1, -1);
-        const [fileNameRaw, pageRaw] = content.split(",");
-        if (fileNameRaw && pageRaw) {
-          const cleanFileName = fileNameRaw.trim();
-          const cleanPage = pageRaw.trim();
-          const displayContent = content.replace(/\.pdf/gi, "");
+
+        // --- NEW: ROBUST PARSING LOGIC ---
+        // This regex handles formats like:
+        // "file.pdf, 5", "file.pdf, p. 5", "file.pdf - Page 5", "Source: file.pdf | pg 5"
+        // Match 1: Filename (everything up to the separator)
+        // Match 2: Page number (just the digits)
+        const match = content.match(/^(.*?)(?:,|\||-|;|\s+)\s*(?:p\.?|page|pg\.?)?\s*(\d+)\s*$/i);
+
+        let cleanFileName = null;
+        let cleanPage = null;
+
+        if (match && match[1] && match[2]) {
+          // Found a match! Clean up prefixes like "Source:" or "File:" if the LLM added them
+          cleanFileName = match[1].replace(/^(source|file|doc):\s*/i, "").trim();
+          cleanPage = match[2].trim();
+        } else if (content.includes(",")) {
+          // Fallback: If it has a comma, but didn't match the regex above
+          const splitParts = content.split(",");
+          const potentialPage = splitParts.pop(); // Take the last part
+          const potentialFile = splitParts.join(",").trim(); // Rejoin the rest
+
+          // Only treat it as a citation if the last part actually contains a number
+          if (/\d/.test(potentialPage)) {
+            cleanFileName = potentialFile;
+            cleanPage = potentialPage.replace(/\D/g, ""); // Strip out any non-digits
+          }
+        }
+
+        // If we successfully found a valid file and page, render the pill
+        if (cleanFileName && cleanPage) {
+          const displayContent = cleanFileName.replace(/\.pdf/gi, "");
           return (
             <span
               key={index}
               className="citation-pill"
               title={`View ${cleanFileName} on page ${cleanPage}`}
               onClick={() => handleSourceClick(cleanFileName, cleanPage)}
+              style={{ cursor: "pointer" }} // Ensure it looks clickable
             >
-              [{displayContent}]
+              [{displayContent}, p. {cleanPage}]
             </span>
           );
         }
+        
+        // If it was in brackets but didn't contain a page number (e.g., "[Note]"), 
+        // return it as normal text so it doesn't just disappear.
       }
       return part;
     });

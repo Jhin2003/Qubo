@@ -20,31 +20,32 @@ client = Together(
 # --- CONFIGURATION: FALLBACK MODEL LISTS ---
 # ... (Keep your existing model lists here) ...
 MODELS_PRECISE = [
-   
     "meta-llama/Llama-3.3-70B-Instruct-Turbo",
     "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
-    "mistralai/Mixtral-8x7B-Instruct-v0.1"
+    "mistralai/Mixtral-8x7B-Instruct-v0.1",
 ]
 
 MODELS_FAST = [
-    "Qwen/Qwen3-VL-8B-Instruct"
+    'Qwen/Qwen2.5-7B-Instruct-Turbo',
+     "meta-llama/Llama-3.3-70B-Instruct-Turbo",
     "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
     "mistralai/Mixtral-8x7B-Instruct-v0.1",
     "meta-llama/Llama-3.3-70B-Instruct-Turbo"
 ]
 
 REWRITE_MODELS = [
-    "Qwen/Qwen3-VL-8B-Instruct"
+    "Qwen/Qwen2.5-7B-Instruct-Turbo",
+     "meta-llama/Llama-3.3-70B-Instruct-Turbo",
     "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
     "mistralai/Mixtral-8x7B-Instruct-v0.1"
 ]
 
 
-
 MODELS_ROUTER = [
+    "Qwen/Qwen2.5-7B-Instruct-Turbo",
     "meta-llama/Llama-3.3-70B-Instruct-Turbo",
     "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
-    "mistralai/Mixtral-8x7B-Instruct-v0.1"
+    "mistralai/Mixtral-8x7B-Instruct-v0.1",
 ]
 
 # --- HELPER 1: Internal Classifier ---
@@ -93,8 +94,8 @@ def _classify_query_intent(query: str) -> str:
         Examples: "asdf", "sdsdsd", "..."
 
         7. "OUT_OF_SCOPE":
-        The query is NOT about Philippine cultural history or Philippine history.
-        Examples: "What is the capital of France?", "Explain quantum physics", "Who is Elon Musk?"
+        The query is not about Philippine cultural history or Philippine history analyze carefully if it can be answered.
+        Examples: "Explain quantum physics", "Who is Elon Musk?"
 
         User Query: "{query}"
 
@@ -125,7 +126,6 @@ def _classify_query_intent(query: str) -> str:
         if "GREETING" in raw_text or "HI" in raw_text:
             return "GREETING"
         
-        # FIX: Added the underscore to match the prompt/LLM output
         if "OUT_OF_SCOPE" in raw_text or "OUT OF SCOPE" in raw_text:
             return "OUT_OF_SCOPE"
 
@@ -282,6 +282,7 @@ GUIDELINES:
 4. CITATION REQUIREMENT: Every historical assertion must be backed by an inline citation: [source, page].
 5. UNKNOWN INFO: If the provided archives (Context) do not contain the answer, reply strictly: "Please elaborate your question further."
 6. DIRECTNESS (CRITICAL): State facts directly and confidently. DO NOT start sentences with "Based on the provided sources," "The documents state," or "According to the context." Just answer the question.
+7. Do not answer if there is no Context or if its out of scope 
 
 === FEW-SHOT EXAMPLES (LEARN FROM THESE PATTERNS) ===
 

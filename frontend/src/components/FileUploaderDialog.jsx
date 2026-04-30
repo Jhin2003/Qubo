@@ -94,7 +94,7 @@ export default function FileUploaderDialog({
       });
       if (!res.ok) throw new Error(`Upload failed with status ${res.status}`);
       const data = await safeJson(res);
-     
+      
       onUpload && onUpload(data);
       clearAll();
       onClose && onClose();

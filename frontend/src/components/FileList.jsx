@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import "./FileList.scss";
+import "./filelist.scss";
 import { useFetch } from "../hooks/fetchWithAuth";
 import { useSource } from "../context/SourceContext";
 import ItemActions from "./ItemActions";
@@ -25,6 +25,11 @@ function FileList({ refreshToken = 0, onLoadingChange }) {
   const navigate = useNavigate();
   const { source, setSource } = useSource();
   const fileInputRef = useRef(null);
+
+
+  // React code
+const API_URL = import.meta.env.VITE_API_URL;
+
 
   const fetchFiles = async () => {
     try {
@@ -88,7 +93,7 @@ function FileList({ refreshToken = 0, onLoadingChange }) {
     try {
       const deletePromises = selectedFiles.map((filename) =>
         fetchWithAuth(
-          `http://localhost:8000/files/${encodeURIComponent(filename)}`,
+          `${API_URL}/files/${encodeURIComponent(filename)}`,
           { method: "DELETE" },
         ),
       );
@@ -112,7 +117,7 @@ function FileList({ refreshToken = 0, onLoadingChange }) {
     setActionLoading((s) => ({ ...s, [file.filename]: true }));
     try {
       const res = await fetchWithAuth(
-        `http://localhost:8000/files/${encodeURIComponent(file.filename)}`,
+        `${API_URL}/files/${encodeURIComponent(file.filename)}`,
         { method: "DELETE" },
       );
       if (!res || !res.ok) throw new Error("Delete failed.");
@@ -289,7 +294,7 @@ function FileList({ refreshToken = 0, onLoadingChange }) {
       <FileUploaderDialog
         open={openDialog}
         onClose={() => setOpenDialog(false)}
-        uploadUrl="http://localhost:8000/upload"
+        uploadUrl="${API_URL}/upload"
         onUpload={(data) => {
           console.log("Uploaded:", data);
           handleUploaded();

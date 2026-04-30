@@ -7,6 +7,7 @@ from datetime import datetime
 from pathlib import Path
 
 # --- Dependencies ---
+from fastapi import HTTPException
 import pdfplumber
 from langchain_text_splitters import TokenTextSplitter
 from langchain_community.vectorstores import FAISS
@@ -90,9 +91,13 @@ def process_file(file_path: str, filename: str):
             if os.path.exists(file_path):
                 os.remove(file_path)
                 print(f"🗑️ Deleted invalid file: {file_path}")
-            return 0, None
+
+            raise HTTPException(
+            status_code=400,
+            detail=f"Document rejected: not relevant to Philippine cultural history (score={similarity:.2f})"
+            )
             
-        print(f"✅ Document passed relevance check (Score: {similarity:.2f}). Proceeding with chunking...")
+        
 
         # --- 3. Setup Directories ---
         base_dir = Path("data_store")
@@ -176,12 +181,20 @@ def process_file(file_path: str, filename: str):
         print(f"Processed {len(texts)} chunks for '{filename}'.")
         return len(chunks_with_pages), output_path
 
+    except HTTPException:
+        # ✅ Let FastAPI errors pass through unchanged
+        raise
+
     except Exception as e:
-        print(f"An error occurred while processing '{filename}': {e}")
-        # Clean up the file if it failed midway
+        print(f"Unexpected error processing '{filename}': {e}")
+
         if os.path.exists(file_path):
             os.remove(file_path)
-        return 0, None
+
+        raise HTTPException(
+            status_code=500,
+            detail="Internal server error while processing file."
+        )
 
 
 def delete_file_data(filename: str, upload_dir: Path) -> dict:

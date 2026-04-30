@@ -6,11 +6,20 @@ import os
 from fastapi import APIRouter, UploadFile, File, HTTPException,Depends
 from fastapi.responses import FileResponse
 from fastapi.security import OAuth2PasswordBearer
-
+from fastapi.responses import JSONResponse
 
 from app.services.file_service import process_file
 
+import dotenv
+import os
+
+
 router = APIRouter()
+dotenv.load_dotenv()
+
+
+
+STORAGE_URL = os.getenv("STORAGE_URL")
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DATA_STORE = BASE_DIR / "data_store"
@@ -26,7 +35,7 @@ async def list_files():  # Depend on get_current_user
     for file in UPLOAD_DIR.glob("*.pdf"):
         files.append({
             "filename": file.name,
-            "url": f"http://localhost:8000/files/{file.name}",  # Adjust URL based on your server URL
+            "url": f"{STORAGE_URL}/files/{file.name}", 
         })
     return {"files": files}
 
@@ -69,12 +78,27 @@ async def upload_files(files: List[UploadFile] = File(...)):
                 "output_file": str(output_path),
                 "message": "✅ Uploaded and processed successfully",
             })
-        except Exception as e:
+
+        except HTTPException as e:
+            # ✅ Preserve proper error info
             results.append({
-                "filename": file.filename,
-                "error": str(e),
-                "message": "❌ Failed to upload or process",
+                "filename": filename,
+                "status": "error",
+                "code": e.status_code,
+                "error": e.detail,
+                "message": "Processing failed"
             })
+
+        except Exception as e:
+            # ✅ Unexpected errors
+            results.append({
+                "filename": filename,
+                "status": "error",
+                "code": 500,
+                "error": str(e),
+                "message": "Internal server error"
+            })
+
 
     return {"results": results}
 
