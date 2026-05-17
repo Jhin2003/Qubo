@@ -1,18 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-
 import { useFetch } from "../hooks/fetchWithAuth";
 import { useSource } from "../context/SourceContext";
 import ItemActions from "./ItemActions";
-// 1. IMPORT NEW ICONS HERE
 import { FaTrashAlt, FaFilePdf, FaFileWord, FaFileAlt } from "react-icons/fa";
 import { CiFileOn, CiSquareCheck } from "react-icons/ci";
 import { FiPlus } from "react-icons/fi"; // Added FiPlus import
 import { MdClose } from "react-icons/md";
-
 import FileUploaderDialog from "./FileUploaderDialog"; 
-
-
 import "./FileList.scss";
 
 function FileList({ refreshToken = 0, onLoadingChange }) {
