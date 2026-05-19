@@ -190,7 +190,7 @@ const renderMessageText = (text) => {
   };
 
   const handleSourceClick = (fileName, page) => {
-  const url = `http://localhost:8000/files/${encodeURIComponent(fileName)}#page=${page}`;
+  const url = `${API_URL}/files/${encodeURIComponent(fileName)}#page=${page}`;
   window.open(url, "_blank");
 };
 
