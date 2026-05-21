@@ -10,6 +10,8 @@ import { MdClose } from "react-icons/md";
 import FileUploaderDialog from "./FileUploaderDialog"; 
 import "./FileList.scss";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function FileList({ refreshToken = 0, onLoadingChange }) {
   const [files, setFiles] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -25,13 +27,10 @@ function FileList({ refreshToken = 0, onLoadingChange }) {
   const fileInputRef = useRef(null);
 
 
-  // React code
-const API_URL = import.meta.env.VITE_API_URL;
-
 
   const fetchFiles = async () => {
     try {
-      const response = await fetchWithAuth("http://localhost:8000/files", {
+      const response = await fetchWithAuth(`${API_URL}/files`, {
         method: "GET",
       });
       if (!response) return;

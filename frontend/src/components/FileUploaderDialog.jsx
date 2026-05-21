@@ -97,7 +97,7 @@ export default function FileUploaderDialog({
     const token = localStorage.getItem("auth_token");
 
     try {
-      const res = await fetch("http://localhost:8000/upload", {
+      const res = await fetch(`${API_URL}/upload`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
